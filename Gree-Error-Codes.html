@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gree Error Codes</title>
+<meta name="description" content="คู่มือรหัสข้อผิดพลาด GREE RAC / LCAC / GMV สำหรับช่างศูนย์บริการ">
+<meta name="theme-color" content="#0F1B2D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF1F6; --surface:#FFFFFF; --surface-2:#F5F7FA; --ink:#0F1B2D; --ink-2:#46566E; --ink-3:#7E8DA4;
+  --line:#D6DEE8; --line-2:#E7ECF2; --brand:#1C4FB8; --brand-2:#163F94; --on-brand:#FFFFFF;
+  --k-comm:#6A4BE0; --k-sensor:#0A879E; --k-prot:#D23B26; --k-fault:#B26B00; --k-status:#18915C;
+  --lcd:#06111F; --lcd-2:#0B1B30; --led:#5FF2FF; --led-off:rgba(95,242,255,.07); --led-red:#FF5A4E; --led-grn:#47E59A;
+  --shadow:0 1px 0 rgba(15,27,45,.04),0 16px 36px -24px rgba(15,27,45,.35);
+  --r-sm:10px; --r-md:14px; --r-lg:22px;
+  --f-d:'Chakra Petch','IBM Plex Sans Thai',system-ui,sans-serif;
+  --f-b:'IBM Plex Sans Thai','Chakra Petch',system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A111C; --surface:#111A28; --surface-2:#162234; --ink:#E7EEF8; --ink-2:#A3B2C7; --ink-3:#6F8099;
+  --line:#243249; --line-2:#1B273A; --brand:#5B8BFF; --brand-2:#7AA1FF; --on-brand:#08111F;
+  --k-comm:#9C86FF; --k-sensor:#38C6DE; --k-prot:#FF6E5A; --k-fault:#F0A43A; --k-status:#45D18F;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 16px 36px -24px rgba(0,0,0,.8); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A111C; --surface:#111A28; --surface-2:#162234; --ink:#E7EEF8; --ink-2:#A3B2C7; --ink-3:#6F8099;
+  --line:#243249; --line-2:#1B273A; --brand:#5B8BFF; --brand-2:#7AA1FF; --on-brand:#08111F;
+  --k-comm:#9C86FF; --k-sensor:#38C6DE; --k-prot:#FF6E5A; --k-fault:#F0A43A; --k-status:#45D18F;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 16px 36px -24px rgba(0,0,0,.8); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-b);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background-color .3s,color .3s}
+h1,h2,h3,h4{font-family:var(--f-d);line-height:1.2;margin:0;font-weight:700}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2.5px solid var(--brand);outline-offset:2px;border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+mark{background:color-mix(in oklab,var(--brand) 22%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:40;background:color-mix(in oklab,var(--bg) 84%,transparent);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line-2)}
+.bar-in{max-width:1320px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:10px 20px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;min-width:0}
+.brand-m{width:34px;height:34px;border-radius:10px;background:var(--lcd);display:grid;place-items:center;flex:none;box-shadow:inset 0 0 0 1px rgba(95,242,255,.25)}
+.brand-m svg{width:22px;height:22px}
+.brand b{font-family:var(--f-d);font-size:17px;display:block;line-height:1.1;white-space:nowrap}
+.brand-t>span{display:block;font-size:12px;color:var(--ink-3);white-space:nowrap}
+.sp{flex:1}
+.chip{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:14px;transition:transform .16s var(--ease),border-color .2s}
+.chip:hover{border-color:var(--brand)}
+.chip:active{transform:scale(.95)}
+.chip svg{width:17px;height:17px}
+.hzd{width:7px;height:7px;border-radius:50%;background:var(--k-status);box-shadow:0 0 0 3px color-mix(in oklab,var(--k-status) 22%,transparent)}
+.hz{font-family:var(--f-d);font-weight:600;font-variant-numeric:tabular-nums}
+.cnt{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--brand);color:var(--on-brand);font-size:12px;font-weight:600;display:inline-grid;place-items:center}
+.cnt[data-n="0"]{display:none}
+@media (max-width:560px){.hide-s{display:none}.brand-t>span{display:none}}
+@media (max-width:420px){.bar-in{gap:6px;padding:10px 14px}.chip{padding:0 10px}.brand b{font-size:15px}.brand-m{width:30px;height:30px}}
+.brand,.brand-t{min-width:0}.brand b{overflow:hidden;text-overflow:ellipsis}
+
+.wrap{max-width:1320px;margin:0 auto;padding:0 20px}
+
+/* workspace */
+.work{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;padding-top:22px;align-items:start}
+@media (min-width:1080px){.work{grid-template-columns:400px minmax(0,1fr);gap:28px}.side{position:sticky;top:78px}}
+
+/* LCD panel — the memorable element */
+.panel{background:linear-gradient(180deg,#E9EEF4,#DCE3EC);border-radius:26px;padding:14px;box-shadow:var(--shadow),inset 0 1px 0 #fff}
+:root[data-theme="dark"] .panel{background:linear-gradient(180deg,#1A2536,#141D2B);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.06)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .panel{background:linear-gradient(180deg,#1A2536,#141D2B);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.06)}}
+.lcd{position:relative;background:radial-gradient(120% 120% at 50% 0%,var(--lcd-2),var(--lcd) 70%);border-radius:16px;padding:16px 18px 14px;color:#CFE9FF;overflow:hidden;box-shadow:inset 0 2px 10px rgba(0,0,0,.6),inset 0 0 0 1px rgba(95,242,255,.12)}
+.lcd::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px);pointer-events:none}
+.lcd-top{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-d);font-size:11.5px;letter-spacing:.06em;color:rgba(207,233,255,.55)}
+.leds{display:flex;gap:12px}
+.led{display:inline-flex;align-items:center;gap:5px}
+.led i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.12);transition:background-color .2s,box-shadow .2s}
+.led.on.run i{background:var(--led-grn);box-shadow:0 0 8px var(--led-grn)}
+.led.on.err i{background:var(--led-red);box-shadow:0 0 10px var(--led-red);animation:blink 1s steps(2,start) infinite}
+@keyframes blink{to{visibility:hidden}}
+.digits{display:flex;justify-content:center;gap:12px;padding:16px 0 8px;min-height:130px;align-items:center}
+.dg{width:62px;height:104px;transform:skewX(-7deg)}
+.dg polygon{fill:var(--led-off);transition:fill .12s linear,filter .12s linear}
+.dg polygon.on{fill:var(--led);filter:drop-shadow(0 0 4px rgba(95,242,255,.75))}
+.lcd-msg{position:relative;z-index:1;text-align:center;min-height:44px;font-size:14px;color:rgba(207,233,255,.8);line-height:1.5}
+.lcd-msg b{color:#fff;font-weight:600}
+.lcd-msg button{background:none;border:0;color:var(--led);text-decoration:underline;text-underline-offset:3px;padding:0;font-size:14px}
+
+.pad{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
+.key{height:44px;border-radius:11px;border:0;background:linear-gradient(180deg,#FFFFFF,#EEF2F7);box-shadow:0 1px 0 rgba(15,27,45,.12),0 2px 0 #C9D3DF,inset 0 1px 0 #fff;font-family:var(--f-d);font-weight:700;font-size:17px;color:#1A2840;transition:transform .08s,box-shadow .08s}
+.key:active,.key.hit{transform:translateY(2px);box-shadow:0 0 0 rgba(15,27,45,.12),0 0 0 #C9D3DF,inset 0 1px 0 #fff}
+.key.fn{background:linear-gradient(180deg,#24324A,#1A2539);color:#CFE9FF;box-shadow:0 2px 0 #0D1522,inset 0 1px 0 rgba(255,255,255,.08);font-size:14px}
+.key.fn:active,.key.fn.hit{box-shadow:0 0 0 #0D1522}
+.key.lc{font-weight:600}
+:root[data-theme="dark"] .key:not(.fn){background:linear-gradient(180deg,#2A374D,#212C3F);color:#E7EEF8;box-shadow:0 2px 0 #0D1522,inset 0 1px 0 rgba(255,255,255,.07)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .key:not(.fn){background:linear-gradient(180deg,#2A374D,#212C3F);color:#E7EEF8;box-shadow:0 2px 0 #0D1522,inset 0 1px 0 rgba(255,255,255,.07)}}
+.pad-note{font-size:12px;color:var(--ink-3);margin:10px 4px 2px;text-align:center}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px}
+.stat b{display:block;font-family:var(--f-d);font-size:22px;line-height:1.1}
+.stat span{font-size:12.5px;color:var(--ink-3)}
+
+/* search & filters */
+.head h1{font-size:clamp(26px,3.4vw,38px)}
+.head p{margin:6px 0 16px;color:var(--ink-2);max-width:70ch}
+.search{display:flex;align-items:center;gap:10px;height:54px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface);padding:0 8px 0 16px;box-shadow:var(--shadow);transition:border-color .2s,box-shadow .2s}
+.search:focus-within{border-color:var(--brand);box-shadow:0 0 0 4px color-mix(in oklab,var(--brand) 18%,transparent)}
+.search svg{width:20px;height:20px;color:var(--ink-3);flex:none}
+.search input{flex:1;min-width:0;border:0;background:transparent;outline:none;font-size:17px}
+.search kbd{font-family:var(--f-d);font-size:12px;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:var(--ink-3)}
+.search .clr{border:0;background:var(--surface-2);width:34px;height:34px;border-radius:10px;color:var(--ink-2)}
+@media (max-width:640px){.search kbd{display:none}}
+.recent{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center;font-size:13px;color:var(--ink-3)}
+.recent button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font-family:var(--f-d);font-weight:600;font-size:13px;color:var(--ink-2)}
+.filters{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin:16px 0 10px}
+.seg{position:relative;display:flex;gap:2px;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow-x:auto;scrollbar-width:none;width:max-content;max-width:100%}
+.seg::-webkit-scrollbar{display:none}
+.seg button{position:relative;z-index:1;flex:none;border:0;background:transparent;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:500;color:var(--ink-2);display:inline-flex;gap:6px;align-items:center;transition:color .25s}
+.seg button[aria-pressed="true"]{color:var(--on-brand)}
+.seg button .n{font-family:var(--f-d);font-size:12px;font-weight:600;padding:0 6px;border-radius:999px;background:var(--line-2);transition:background-color .25s}
+.seg button[aria-pressed="true"] .n{background:rgba(255,255,255,.22)}
+.seg .ind{position:absolute;z-index:0;top:4px;bottom:4px;left:0;border-radius:10px;background:var(--brand);transition:transform .4s var(--ease),width .4s var(--ease);will-change:transform,width}
+.kinds{display:flex;gap:6px;flex-wrap:wrap}
+.kind{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13.5px;color:var(--ink-2);transition:background-color .2s,border-color .2s,color .2s}
+.kind i{width:8px;height:8px;border-radius:50%;background:var(--c,var(--ink-3))}
+.kind[aria-pressed="true"]{border-color:var(--c,var(--ink));background:color-mix(in oklab,var(--c,var(--ink)) 12%,var(--surface));color:var(--ink)}
+.result-meta{font-size:13.5px;color:var(--ink-3);margin:6px 2px 12px}
+
+/* list */
+.grp-h{display:flex;align-items:baseline;gap:10px;margin:22px 2px 10px}
+.grp-h h2{font-size:18px}
+.grp-h span{font-size:13px;color:var(--ink-3)}
+.grp-h:first-child{margin-top:4px}
+.list{display:grid;gap:8px}
+.row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;width:100%;text-align:left;padding:12px 14px 12px 12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
+  transition:border-color .2s,transform .2s var(--ease),box-shadow .2s;content-visibility:auto;contain-intrinsic-size:auto 76px}
+.row:hover{border-color:color-mix(in oklab,var(--brand) 50%,var(--line));box-shadow:var(--shadow)}
+.row:active{transform:scale(.99)}
+.code{font-family:var(--f-d);font-weight:700;font-size:20px;letter-spacing:.02em;min-width:66px;height:46px;padding:0 10px;border-radius:11px;background:var(--lcd);color:var(--led);display:grid;place-items:center;text-shadow:0 0 8px rgba(95,242,255,.55);white-space:nowrap}
+.code.long{font-size:14px}
+.row-t{min-width:0}
+.row-t b{display:block;font-weight:600;font-size:15.5px;line-height:1.4}
+.row-m{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:3px;font-size:12.5px;color:var(--ink-3)}
+.kd{display:inline-flex;align-items:center;gap:5px;color:var(--c)}
+.kd i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.row svg.chev{width:18px;height:18px;color:var(--ink-3)}
+.empty{padding:36px 20px;text-align:center;border:1.5px dashed var(--line);border-radius:var(--r-md);color:var(--ink-2)}
+.empty b{display:block;font-family:var(--f-d);font-size:19px;color:var(--ink);margin-bottom:4px}
+
+/* params */
+.sec{padding-top:56px}
+.sec-h{margin-bottom:16px}
+.sec-h h2{font-size:clamp(22px,2.8vw,30px)}
+.sec-h p{margin:6px 0 0;color:var(--ink-2);max-width:70ch}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:22px}
+.tool{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:16px;display:grid;gap:10px;align-content:start}
+.tool h3{font-size:16px}
+.tool p{margin:0;font-size:13px;color:var(--ink-3)}
+.tin{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;font-size:14px;color:var(--ink-2)}
+.tin input{width:96px;height:38px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);text-align:right;padding:0 10px;font-family:var(--f-d);font-weight:600;font-size:16px;outline:none}
+.tin input:focus{border-color:var(--brand)}
+.verdict{border-radius:10px;padding:9px 12px;font-size:14px;background:var(--surface-2);color:var(--ink-2);line-height:1.5}
+.verdict.ok{background:color-mix(in oklab,var(--k-status) 13%,var(--surface));color:var(--ink)}
+.verdict.bad{background:color-mix(in oklab,var(--k-prot) 13%,var(--surface));color:var(--ink)}
+.verdict b{font-family:var(--f-d)}
+.pgroups{display:grid;gap:14px}
+.pgroup{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.pgroup h3{font-size:16px;padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--line-2)}
+.prow{display:grid;grid-template-columns:44px minmax(0,1fr) 64px minmax(0,1.4fr);gap:12px;padding:12px 16px;border-bottom:1px solid var(--line-2);font-size:14.5px}
+.prow:last-child{border-bottom:0}
+.prow .no{font-family:var(--f-d);font-weight:600;color:var(--ink-3)}
+.prow .u{font-family:var(--f-d);color:var(--ink-2)}
+.prow .names div+div{margin-top:4px}
+.prow .ref{white-space:pre-line;color:var(--ink-2)}
+@media (max-width:720px){.prow{grid-template-columns:36px minmax(0,1fr) auto}.prow .ref{grid-column:2/-1}}
+
+/* dialogs */
+dialog{border:0;padding:0;background:transparent;color:var(--ink);max-width:none;max-height:none}
+dialog::backdrop{background:rgba(4,10,22,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+dialog[open]::backdrop{animation:fade .3s var(--ease)}
+@keyframes fade{from{opacity:0}}
+.sheet{width:min(680px,calc(100vw - 24px));max-height:min(90vh,920px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:0 40px 80px -30px rgba(0,0,0,.55);overscroll-behavior:contain}
+dialog[open] .sheet{animation:pop .42s var(--ease)}
+dialog.closing .sheet{animation:popOut .2s ease-in forwards}
+dialog.closing::backdrop{animation:fade .2s ease-in reverse forwards}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.97)}}
+@keyframes popOut{to{opacity:0;transform:translateY(10px) scale(.98)}}
+@media (max-width:640px){
+  dialog.modal{margin:auto 0 0;width:100%}
+  .modal .sheet{width:100%;max-height:92vh;border-radius:22px 22px 0 0;border-bottom:0}
+  dialog.modal[open] .sheet{animation:up .42s var(--ease)}
+  dialog.modal.closing .sheet{animation:down .24s ease-in forwards}
+  @keyframes up{from{transform:translateY(100%)}}
+  @keyframes down{to{transform:translateY(100%)}}
+}
+.sh{position:sticky;top:0;z-index:2;display:flex;gap:14px;align-items:flex-start;padding:16px 18px;background:color-mix(in oklab,var(--surface) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line-2)}
+.sh .grow{flex:1;min-width:0}
+.sh h3{font-size:20px;line-height:1.35}
+.sh .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--line-2);color:var(--ink-2)}
+.tag.k{background:color-mix(in oklab,var(--c) 14%,transparent);color:var(--c)}
+.ib{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink-2);flex:none;transition:border-color .2s,color .2s,transform .12s}
+.ib:hover{border-color:var(--brand);color:var(--brand)}
+.ib:active{transform:scale(.92)}
+.ib svg{width:18px;height:18px}
+.sb{padding:18px}
+.big7{display:flex;gap:6px;padding:10px 12px;border-radius:12px;background:var(--lcd);flex:none}
+.big7 .dg{width:30px;height:50px}
+.h4{font-family:var(--f-d);font-size:15px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.h4 small{font-family:var(--f-b);font-weight:500;font-size:12.5px;color:var(--ink-3)}
+.checks{list-style:none;padding:0;margin:0 0 20px;display:grid;gap:6px}
+.checks label{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--line-2);border-radius:12px;background:var(--surface-2);cursor:pointer;transition:background-color .2s,border-color .2s}
+.checks input{appearance:none;-webkit-appearance:none;width:22px;height:22px;border-radius:7px;border:2px solid var(--line);margin:1px 0 0;display:grid;place-items:center;transition:background-color .2s,border-color .2s;background:var(--surface)}
+.checks input:checked{background:var(--k-status);border-color:var(--k-status)}
+.checks input:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+.checks label:has(input:checked){border-color:color-mix(in oklab,var(--k-status) 45%,var(--line-2))}
+.checks label:has(input:checked) span{color:var(--ink-3);text-decoration:line-through;text-decoration-color:color-mix(in oklab,var(--ink-3) 60%,transparent)}
+.prog{height:4px;border-radius:999px;background:var(--line-2);overflow:hidden;margin:-2px 0 12px}
+.prog i{display:block;height:100%;background:var(--k-status);transform-origin:left;transition:transform .45s var(--ease)}
+.parts{display:grid;gap:6px;margin-bottom:20px}
+.part{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 12px;border:1px solid var(--line-2);border-radius:12px}
+.part span{flex:1;font-size:14.5px}
+.part button{height:32px;border-radius:9px;border:1px solid var(--line);background:var(--surface);padding:0 10px;font-size:13px;display:inline-flex;align-items:center;gap:4px;transition:background-color .2s,color .2s,border-color .2s}
+.part button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.part button svg{width:14px;height:14px}
+.xref{border:1px dashed color-mix(in oklab,var(--k-fault) 55%,var(--line));background:color-mix(in oklab,var(--k-fault) 7%,var(--surface));border-radius:12px;padding:12px 14px;margin-bottom:18px;font-size:14px}
+.xref b{font-family:var(--f-d)}
+.xref button{display:block;width:100%;text-align:left;border:0;background:none;padding:6px 0 0;color:var(--ink);font-size:14px}
+.xref button span{font-family:var(--f-d);font-weight:700;color:var(--brand)}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;border-radius:12px;border:1px solid transparent;font-weight:600;font-size:14.5px;transition:transform .14s var(--ease),background-color .2s,border-color .2s}
+.btn:active{transform:scale(.97)}
+.btn svg{width:18px;height:18px}
+.btn-p{background:var(--brand);color:var(--on-brand)}
+.btn-p:hover{background:var(--brand-2)}
+.btn-l{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.btn-l:hover{border-color:var(--brand)}
+.btn-s{height:36px;font-size:13.5px;padding:0 12px;border-radius:10px}
+
+.drawer{margin:0 0 0 auto;height:100%;max-height:100vh}
+.drawer .sheet{height:100vh;max-height:100vh;width:min(440px,100vw);border-radius:0;border-width:0 0 0 1px;display:flex;flex-direction:column}
+dialog.drawer[open] .sheet{animation:inR .42s var(--ease)}
+dialog.drawer.closing .sheet{animation:outR .22s ease-in forwards}
+@keyframes inR{from{transform:translateX(100%)}}
+@keyframes outR{to{transform:translateX(100%)}}
+.pick{flex:1;overflow:auto;padding:14px 18px;display:grid;gap:8px;align-content:start}
+.pi{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px}
+.pi b{font-weight:600;font-size:14.5px}
+.pi small{grid-column:1;font-size:12.5px;color:var(--ink-3)}
+.qty{grid-row:1/3;grid-column:2;display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.qty button{width:32px;height:32px;border:0;background:var(--surface-2);font-size:17px}
+.qty span{min-width:30px;text-align:center;font-family:var(--f-d);font-weight:600}
+.pick-f{border-top:1px solid var(--line);padding:14px 18px;background:var(--surface-2);display:grid;gap:10px}
+
+.toast{position:fixed;left:50%;bottom:22px;z-index:70;transform:translate(-50%,calc(100% + 40px));visibility:hidden;transition:transform .4s var(--ease),visibility .4s;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;box-shadow:0 14px 30px -12px rgba(0,0,0,.5);max-width:calc(100vw - 32px)}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+
+.wm{position:fixed;right:14px;bottom:12px;z-index:30;font-family:var(--f-d);font-size:11.5px;font-weight:600;letter-spacing:.08em;color:var(--ink-3);opacity:.7;pointer-events:none;background:color-mix(in oklab,var(--surface) 75%,transparent);padding:4px 10px;border-radius:999px;border:1px solid var(--line-2)}
+.foot{margin-top:64px;border-top:1px solid var(--line);padding:26px 0 70px;font-size:13.5px;color:var(--ink-3)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <a class="brand" href="#top" aria-label="กลับด้านบน">
+      <span class="brand-m"><svg viewBox="0 0 24 24" fill="none" stroke="#5FF2FF" stroke-width="2.4" stroke-linecap="round"><path d="M7 5h10M17 5v6M7 12h10M7 12v7M7 19h10"/></svg></span>
+      <span class="brand-t"><b>Gree Error Codes</b><span>RAC · LCAC · GMV สำหรับช่างศูนย์บริการ</span></span>
+    </a>
+    <div class="sp"></div>
+    <button class="chip" id="hzBtn" type="button" title="อัตรารีเฟรชของจอ กดเพื่อวัดใหม่"><span class="hzd"></span><span class="hz" id="hz">— Hz</span></button>
+    <button class="chip" id="themeBtn" type="button" aria-label="สลับโหมดสว่าง/มืด"></button>
+    <button class="chip" id="pickBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l1 2h3v15H5V6h3z"/><path d="M9 11h6M9 15h4"/></svg><span class="hide-s">ใบเบิกอะไหล่</span><span class="cnt" id="pickCnt" data-n="0">0</span></button>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+  <div class="work">
+    <aside class="side">
+      <div class="panel">
+        <div class="lcd" aria-live="polite">
+          <div class="lcd-top"><span>GREE DISPLAY</span><div class="leds"><span class="led run" id="ledRun"><i></i>RUN</span><span class="led err" id="ledErr"><i></i>ERROR</span></div></div>
+          <div class="digits" id="digits" aria-hidden="true"></div>
+          <div class="lcd-msg" id="lcdMsg">กดรหัสที่เห็นบนหน้าจอแอร์</div>
+        </div>
+        <div class="pad" id="pad" aria-label="แป้นกดรหัส"></div>
+        <p class="pad-note">กดตามตัวอักษรบนจอแอร์ หรือพิมพ์จากคีย์บอร์ดก็ได้</p>
+      </div>
+      <div class="stats" id="stats"></div>
+    </aside>
+
+    <section aria-labelledby="h1">
+      <div class="head">
+        <h1 id="h1">ค้นหารหัสข้อผิดพลาด</h1>
+        <p>พิมพ์รหัส อาการ หรือชื่ออะไหล่ ระบบค้นข้าม RAC, LCAC และ GMV พร้อมกัน แตะรหัสเพื่อดูสาเหตุแบบเช็กลิสต์และเพิ่มอะไหล่ลงใบเบิก</p>
+      </div>
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span class="sr">ค้นหา</span><input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="เช่น E6, การสื่อสาร, คอมเพรสเซอร์, เซ็นเซอร์"><kbd>/</kbd><button class="clr" id="qClr" type="button" aria-label="ล้างคำค้น" hidden>✕</button></label>
+      <div class="recent" id="recent" hidden></div>
+      <div class="filters">
+        <div class="seg" id="sysSeg" role="group" aria-label="เลือกระบบ"></div>
+        <div class="seg" id="gmvSeg" role="group" aria-label="หมวด GMV" hidden></div>
+        <div class="kinds" id="kinds" role="group" aria-label="ประเภทรหัส"></div>
+      </div>
+      <p class="result-meta" id="meta"></p>
+      <div id="results"></div>
+
+      <section class="sec" id="params" aria-labelledby="pH">
+        <div class="sec-h"><h2 id="pH">ค่าอ้างอิง GMV ขณะทำงานปกติ</h2><p>พารามิเตอร์อ้างอิงสำหรับการทำงานที่ถูกต้อง (GMV X DC Inverter โหมดทำความเย็น) พร้อมเครื่องมือเช็กค่าที่วัดได้ตามเกณฑ์ในตาราง</p></div>
+        <div class="tools" id="tools"></div>
+        <div class="pgroups" id="pgroups"></div>
+      </section>
+    </section>
+  </div>
+</main>
+
+<footer class="foot"><div class="wrap">ข้อมูลรหัสข้อผิดพลาดและค่าอ้างอิงจากฐานข้อมูลเดิมของศูนย์บริการ GREE ตรวจสอบรุ่นเครื่องก่อนเปลี่ยนอะไหล่ทุกครั้ง เพราะรหัสเดียวกันอาจมีความหมายต่างกันในแต่ละระบบ</div></footer>
+<div class="wm" aria-hidden="true">🛠️ GREE.PHUTTHIWAT</div>
+
+<dialog class="modal" id="dlg" aria-label="รายละเอียดรหัส"><div class="sheet" id="dlgBody"></div></dialog>
+<dialog class="drawer" id="pickDlg" aria-label="ใบเบิกอะไหล่">
+  <div class="sheet">
+    <div class="sh"><div class="grow"><h3>ใบเบิกอะไหล่</h3><p style="margin:2px 0 0;color:var(--ink-2);font-size:14px">อะไหล่ที่เลือกจากรหัสต่าง ๆ รวมไว้ที่นี่</p></div><button class="ib" data-close aria-label="ปิด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="pick" id="pickList"></div>
+    <div class="pick-f"><div class="acts"><button class="btn btn-p btn-s" id="pickCopy" type="button">คัดลอกใบเบิก</button><button class="btn btn-l btn-s" id="pickClear" type="button">ล้างทั้งหมด</button></div></div>
+  </div>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== ฐานข้อมูลเดิม (คัดลอกจากไฟล์ต้นฉบับโดยไม่แก้ไข) ===== */
+const racErrorCodes = [
+    { code: 'E6', name: 'การสื่อสารผิดพลาดระหว่างเครื่องในและเครื่องนอก', causes: 'สายสื่อสารระหว่างเครื่องในและเครื่องนอกชำรุด, บอร์ดหลักเครื่องนอกหรือเครื่องในเสียหาย, แรงดันไฟฟ้าตก', parts: ['บอร์ดหลักเครื่องนอก', 'บอร์ดหลักเครื่องใน', 'สายสื่อสาร'] },
+    { code: 'H5', name: 'การป้องกันโมดูล IPM', causes: 'กระแสไฟเกิน, แรงดันไฟฟ้าผันผวน, โมดูล IPM ร้อนเกินไป, คอมเพรสเซอร์ทำงานหนักผิดปกติ', parts: ['บอร์ดหลักเครื่องนอก', 'โมดูล IPM (ถ้าแยกชิ้น)', 'คอมเพรสเซอร์'] },
+    { code: 'L3 / LA', name: 'พัดลมเครื่องนอกผิดพลาด', causes: 'มอเตอร์พัดลมหรือสายไฟชำรุด, บอร์ดหลักเครื่องนอกเสียหาย, ใบพัดลมติดขัดหรือหลุด', parts: ['มอเตอร์พัดลมเครื่องนอก', 'ใบพัดลมเครื่องนอก', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'H6', name: 'มอเตอร์เครื่องในทำงานผิดพลาด', causes: 'ขั้วต่อมอเตอร์หลวม, มอเตอร์เสียหาย, บอร์ดหลักเครื่องในเสียหาย', parts: ['มอเตอร์พัดลมเครื่องใน', 'บอร์ดหลักเครื่องใน', 'สายไฟมอเตอร์'] },
+    { code: 'HC', name: 'การป้องกันวงจร PFC', causes: 'บอร์ดหลักเครื่องนอกเสียหาย, คุณภาพไฟไม่ดี (แรงดันไฟ AC แกว่ง), การเชื่อมต่อปลั๊กไฟ/ขั้วต่อ/รีแอกเตอร์หลวม, คอยล์ร้อน/เย็นสกปรก', parts: ['บอร์ดหลักเครื่องนอก', 'รีแอกเตอร์', 'เทอร์มินัลบล็อก'] },
+    { code: 'H7', name: 'คอมเพรสเซอร์หลุดซิงค์', causes: 'แรงดันไฟผิดปกติ, คอยล์ร้อน/เย็นสกปรก, ท่อระบบตัน, วาล์วไม่เปิด, น้ำยาแอร์เกิน, สายไฟหลวม, บอร์ดหรือคอมเพรสเซอร์เสียหาย', parts: ['คอมเพรสเซอร์', 'บอร์ดหลักเครื่องนอก', 'คาปาซิเตอร์'] },
+    { code: 'F0 (ขาดน้ำยา)', name: 'การป้องกันน้ำยาแอร์ขาด / ระบบหมุนเวียนหยุด', causes: 'ท่อเชื่อมต่อเครื่องใน-เครื่องนอกรั่วหรือหลวม, วาล์วน้ำยาเสียหาย, เซ็นเซอร์อุณหภูมิเสียหาย', parts: ['น้ำยาแอร์ (R32/R410a)', 'วาล์วน้ำยา (เหลว/แก๊ส)', 'เซ็นเซอร์อุณหภูมิ'] },
+    { code: 'PH', name: 'แรงดันไฟ DC Bus สูงเกินไป', causes: 'แรงดันไฟ AC จ่ายสูงเกิน (เช่น เกิน 300V), คุณภาพไฟไม่ดี, บอร์ดหลักเสียหาย', parts: ['บอร์ดหลักเครื่องนอก', 'อุปกรณ์ป้องกันแรงดันเกิน'] },
+    { code: 'PL', name: 'แรงดันไฟ DC Bus ต่ำเกินไป', causes: 'แรงดันไฟ AC จ่ายต่ำเกิน (เช่น ต่ำกว่า 90V), สายไฟต่อผิดหรือหลวม, บอร์ดหลักเครื่องนอกเสียหาย', parts: ['บอร์ดหลักเครื่องนอก', 'เทอร์มินัลบล็อก', 'สายไฟหลัก'] },
+    { code: 'E8', name: 'การป้องกันอุณหภูมิสูงเกินไป', causes: 'คอยล์ร้อน/เย็นสกปรก, พื้นที่ระบายอากาศไม่ดี, ใบพัดลมแตกหัก, เซ็นเซอร์อุณหภูมิเสียหาย, บอร์ดหลักเสียหาย', parts: ['เซ็นเซอร์อุณหภูมิ', 'มอเตอร์พัดลม', 'น้ำยาทำความสะอาดคอยล์'] },
+    { code: 'C5', name: 'จัมเปอร์แคปเครื่องในผิดพลาด', causes: 'จัมเปอร์แคปไม่ได้ติดตั้ง, ติดตั้งไม่แน่น, สัมผัสไม่ดี', parts: ['จัมเปอร์แคปเครื่องใน', 'บอร์ดหลักเครื่องใน'] },
+    { code: 'C4', name: 'จัมเปอร์แคปเครื่องนอกผิดพลาด', causes: 'จัมเปอร์แคปไม่ได้ติดตั้ง, ติดตั้งไม่แน่น', parts: ['จัมเปอร์แคปเครื่องนอก', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'F1', name: 'เซ็นเซอร์อุณหภูมิเครื่องใน เปิด/ลัดวงจร', causes: 'เซ็นเซอร์เสียหาย, สายเซ็นเซอร์ไม่ได้ต่อหรือสัมผัสไม่ดี', parts: ['เซ็นเซอร์อุณหภูมิเครื่องใน', 'บอร์ดหลักเครื่องใน'] },
+    { code: 'F2', name: 'เซ็นเซอร์อุณหภูมิคอยล์เย็น เปิด/ลัดวงจร', causes: 'เซ็นเซอร์เสียหาย, สายเซ็นเซอร์ไม่ได้ต่อหรือสัมผัสไม่ดี', parts: ['เซ็นเซอร์อุณหภูมิคอยล์เย็น', 'บอร์ดหลักเครื่องใน'] },
+    { code: 'F3', name: 'เซ็นเซอร์อุณหภูมิเครื่องนอก เปิด/ลัดวงจร', causes: 'เซ็นเซอร์เสียหาย, สายเซ็นเซอร์ลัดวงจรกับท่อทองแดงหรือตัวเครื่อง, บอร์ดหลักเครื่องนอกเสียหาย', parts: ['เซ็นเซอร์อุณหภูมิเครื่องนอก', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'F4', name: 'เซ็นเซอร์อุณหภูมิคอยล์ร้อน เปิด/ลัดวงจร', causes: 'เซ็นเซอร์เสียหาย, สายเซ็นเซอร์ลัดวงจร, บอร์ดหลักเครื่องนอกเสียหาย', parts: ['เซ็นเซอร์อุณหภูมิคอยล์ร้อน', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'F5', name: 'เซ็นเซอร์อุณหภูมิ (ทั่วไป) เปิด/ลัดวงจร', causes: 'เซ็นเซอร์เสียหาย, สายเซ็นเซอร์ลัดวงจร, บอร์ดหลักเครื่องนอกเสียหาย', parts: ['เซ็นเซอร์อุณหภูมิ', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'U8', name: 'สัญญาณ Zero-crossing เครื่องในผิดพลาด', causes: 'แหล่งจ่ายไฟผิดปกติ, บอร์ดหลักเครื่องในเสียหาย', parts: ['บอร์ดหลักเครื่องใน', 'สายไฟเลี้ยง'] },
+    { code: 'E5', name: 'การป้องกันกระแสเกิน', causes: 'แรงดันไฟไม่เสถียร, คอยล์สกปรก, ท่อตัน, น้ำยาเกิน, บอร์ดหรือคอมเพรสเซอร์เสียหาย', parts: ['บอร์ดหลักเครื่องนอก', 'คอมเพรสเซอร์', 'คาปาซิเตอร์'] },
+    { code: 'H3', name: 'การป้องกันคอมเพรสเซอร์โอเวอร์โหลด', causes: 'สายไฟโอเวอร์โหลดหลวม, ตัวป้องกันเสียหาย, สายไฟลัดวงจร, น้ำยาแอร์รั่วหรือท่อตัน, บอร์ดหลักเสียหาย', parts: ['โอเวอร์โหลดโปรเทคเตอร์', 'คอมเพรสเซอร์', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'EA', name: 'สัญญาณเตือนน้ำยาแอร์รั่ว', causes: 'ตรวจพบการรั่วไหลของน้ำยาแอร์ในระบบ', parts: ['น้ำยาแอร์', 'อุปกรณ์ตรวจหารอยรั่ว', 'วาล์วน้ำยา'] },
+    { code: 'FE', name: 'เซ็นเซอร์น้ำยาแอร์ผิดพลาด', causes: 'อายุการใช้งานเซ็นเซอร์น้ำยาแอร์หมด หรือเสียหาย', parts: ['เซ็นเซอร์น้ำยาแอร์', 'บอร์ดหลักเครื่องนอก'] },
+    { code: '67', name: 'เซ็นเซอร์อุณหภูมิวาล์วอากาศ เปิด/ลัดวงจร', causes: 'เซ็นเซอร์ไม่ได้ต่อหรือเสียหาย, สายเซ็นเซอร์ลัดวงจร, บอร์ดหลักเครื่องนอกเสียหาย', parts: ['เซ็นเซอร์อุณหภูมิวาล์วอากาศ', 'บอร์ดหลักเครื่องนอก'] },
+    { code: '65', name: 'เซ็นเซอร์อุณหภูมิวาล์วน้ำยาเหลว เปิด/ลัดวงจร', causes: 'เซ็นเซอร์ไม่ได้ต่อหรือเสียหาย, สายเซ็นเซอร์ลัดวงจร, บอร์ดหลักเครื่องนอกเสียหาย', parts: ['เซ็นเซอร์อุณหภูมิวาล์วน้ำยาเหลว', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'E1', name: 'การป้องกันแรงดันสูงในระบบ', causes: 'สวิตช์แรงดันสูงเสียหายหรือต่อสายหลวม, คอยล์สกปรก, การระบายอากาศไม่ดี, น้ำยาเกิน, ท่อตัน, บอร์ดหลักเสียหาย', parts: ['สวิตช์แรงดันสูง', 'บอร์ดหลักเครื่องนอก', 'น้ำยาทำความสะอาดคอยล์'] },
+    { code: 'E3', name: 'การป้องกันแรงดันต่ำในระบบ', causes: 'สวิตช์แรงดันต่ำเสียหาย, น้ำยาแอร์รั่ว', parts: ['สวิตช์แรงดันต่ำ', 'น้ำยาแอร์'] },
+    { code: 'E4', name: 'การป้องกันอุณหภูมิไอเสียคอมเพรสเซอร์สูง', causes: 'อุณหภูมิไอเสียสูงเกินกำหนด (ดูรายละเอียดในหัวข้อการป้องกันคอมเพรสเซอร์โอเวอร์โหลด)', parts: ['เซ็นเซอร์อุณหภูมิไอเสีย', 'คอมเพรสเซอร์'] },
+    { code: 'E7', name: 'โหมดการทำงานขัดแย้งกัน', causes: 'ในระบบ Multi-Split มีเครื่องในบางตัวสั่งทำความเย็น แต่บางตัวสั่งทำความร้อนพร้อมกัน', parts: ['รีโมทคอนโทรล', 'บอร์ดหลักเครื่องใน'] },
+    { code: 'EE', name: 'การอ่านค่า EEPROM ผิดพลาด', causes: 'บอร์ดหลักเครื่องนอกเสียหาย', parts: ['บอร์ดหลักเครื่องนอก', 'ชิป EEPROM (ถ้าซ่อมระดับชิ้นส่วน)'] },
+    { code: 'F0 (กู้คืนน้ำยา)', name: 'โหมดการกู้คืนน้ำยาแอร์', causes: 'ไม่ใช่รหัสข้อผิดพลาด แต่เป็นสถานะการทำงานระหว่างการซ่อมบำรุง (โหมดกู้คืนน้ำยาแอร์)', parts: ['เครื่องกู้คืนน้ำยา', 'ถังน้ำยาเปล่า'] },
+    { code: 'HE', name: 'การป้องกันคอมเพรสเซอร์สูญเสียอำนาจแม่เหล็ก', causes: 'บอร์ดหลักเครื่องนอกเสียหาย, คอมเพรสเซอร์เสียหาย', parts: ['คอมเพรสเซอร์', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'L9', name: 'การป้องกันกำลังไฟสูง', causes: 'ดูรายละเอียดในหัวข้อการป้องกันอุณหภูมิสูง การป้องกันกระแสเกิน และการป้องกัน IPM', parts: ['บอร์ดหลักเครื่องนอก', 'คอมเพรสเซอร์'] },
+    { code: 'LC', name: 'การสตาร์ทล้มเหลว', causes: 'คอมเพรสเซอร์ไม่สามารถสตาร์ทได้ (ดูรายละเอียดในหัวข้อการสตาร์ทล้มเหลว)', parts: ['คอมเพรสเซอร์', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'LD', name: 'การป้องกันคอมเพรสเซอร์ขาดเฟส', causes: 'สายไฟคอมเพรสเซอร์สัมผัสไม่ดี, บอร์ดหลักเครื่องนอกเสียหาย, คอมเพรสเซอร์เสียหาย', parts: ['คอมเพรสเซอร์', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'P5', name: 'การป้องกันกระแสเกินเฟสของคอมเพรสเซอร์', causes: 'ดูรายละเอียดในหัวข้อการป้องกัน IPM', parts: ['บอร์ดหลักเครื่องนอก', 'คอมเพรสเซอร์'] },
+    { code: 'OE', name: 'ข้อผิดพลาดเครื่องนอกที่ไม่ระบุ', causes: 'ดูรายละเอียดในหัวข้อข้อผิดพลาดเครื่องนอกที่ไม่ระบุ', parts: ['บอร์ดหลักเครื่องนอก', 'บอร์ดไดรฟ์'] },
+    { code: 'P6', name: 'การสื่อสารผิดพลาดระหว่างบอร์ดไดรฟ์และบอร์ดควบคุมหลัก', causes: 'การเชื่อมต่อระหว่างบอร์ดไม่ดี, บอร์ดไดรฟ์เสียหาย, บอร์ดหลักเครื่องนอกเสียหาย', parts: ['บอร์ดไดรฟ์', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'P7', name: 'วงจรเซ็นเซอร์อุณหภูมิโมดูลผิดพลาด', causes: 'บอร์ดหลักเครื่องนอกเสียหาย', parts: ['บอร์ดหลักเครื่องนอก', 'เซ็นเซอร์อุณหภูมิโมดูล'] },
+    { code: 'P8', name: 'การป้องกันอุณหภูมิโมดูลสูงเกินไป', causes: 'ช่องระบายอากาศเครื่องนอกสกปรก, สกรู IPM หรือฮีทซิงค์ติดตั้งไม่ดี, บอร์ดหลักเสียหาย', parts: ['บอร์ดหลักเครื่องนอก', 'ซิลิโคนระบายความร้อน'] },
+    { code: 'PF', name: 'เซ็นเซอร์อุณหภูมิแวดล้อมบนบอร์ดไดรฟ์ผิดพลาด', causes: 'การสัมผัสของเซ็นเซอร์ไม่ดี, เซ็นเซอร์บนบอร์ดไดรฟ์เสียหาย', parts: ['บอร์ดไดรฟ์', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'PU', name: 'การชาร์จตัวเก็บประจุผิดพลาด', causes: 'บอร์ดหลักเครื่องนอกเสียหาย, การต่อสายไฟเครื่องนอกผิดพลาด หรือแรงดันไฟเลี้ยงต่ำ', parts: ['บอร์ดหลักเครื่องนอก', 'คาปาซิเตอร์'] },
+    { code: 'rF', name: 'โมดูล RF ผิดพลาด', causes: 'สายเชื่อมต่อโมดูล RF สัมผัสไม่ดี, โมดูล RF เสียหาย, วงจรอินเทอร์เฟซ RF บนบอร์ดหลักผิดปกติ', parts: ['โมดูล RF', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'U1', name: 'วงจรตรวจจับกระแสเฟสคอมเพรสเซอร์ผิดพลาด', causes: 'บอร์ดหลักเครื่องนอกเสียหาย', parts: ['บอร์ดหลักเครื่องนอก', 'คอมเพรสเซอร์'] },
+    { code: 'U2', name: 'การป้องกันคอมเพรสเซอร์ขาดเฟส', causes: 'สายไฟคอมเพรสเซอร์สัมผัสไม่ดี, บอร์ดหลักเครื่องนอกเสียหาย, คอมเพรสเซอร์เสียหาย', parts: ['คอมเพรสเซอร์', 'บอร์ดหลักเครื่องนอก'] },
+    { code: 'U3', name: 'แรงดันไฟ DC Bus ตกผิดพลาด', causes: 'แรงดันไฟฟ้าไม่เสถียร มีการแกว่งตัวสูง', parts: ['บอร์ดหลักเครื่องนอก', 'อุปกรณ์ปรับแรงดันไฟฟ้า'] },
+    { code: 'U5', name: 'การตรวจจับกระแสไฟฟ้าของทั้งระบบผิดพลาด', causes: 'ระบบขาดน้ำยาแอร์, วงจรบนบอร์ดควบคุมเครื่องนอกทำงานล้มเหลว', parts: ['บอร์ดหลักเครื่องนอก', 'น้ำยาแอร์'] },
+    { code: 'U7', name: 'วาล์ว 4 ทาง สลับโหมดผิดพลาด', causes: 'แรงดันไฟต่ำกว่า AC175V, สายไฟวาล์ว 4 ทางหลวมหรือขาด, วาล์ว 4 ทางเสียหาย', parts: ['วาล์ว 4 ทาง', 'บอร์ดหลักเครื่องนอก', 'สายไฟวาล์ว'] },
+    { code: 'U9', name: 'สัญญาณ Zero-crossing เครื่องนอกผิดพลาด', causes: 'บอร์ดหลักเครื่องนอกเสียหาย', parts: ['บอร์ดหลักเครื่องนอก', 'สายไฟเลี้ยง'] },
+    { code: 'E2', name: 'การป้องกันคอยล์เย็นแข็งตัว', causes: 'ไม่ใช่รหัสข้อผิดพลาด แต่เป็นสถานะการทำงานระหว่างการทำความเย็น', parts: ['เซ็นเซอร์อุณหภูมิ', 'บอร์ดหลักเครื่องใน'] },
+    { code: 'E9', name: 'การป้องกันลมหนาวเกินไป', causes: 'ไม่ใช่รหัสข้อผิดพลาด แต่เป็นสถานะการทำงานระหว่างการทำความร้อน', parts: ['เซ็นเซอร์อุณหภูมิ', 'บอร์ดหลักเครื่องใน'] },
+    { code: 'LP', name: 'ความจุของเครื่องในและเครื่องนอกไม่สัมพันธ์กัน', causes: 'ขนาดความจุ (BTU) ของเครื่องในและเครื่องนอกไม่ตรงกันหรือไม่สามารถจับคู่กันได้', parts: ['บอร์ดหลักเครื่องนอก', 'บอร์ดหลักเครื่องใน'] },
+    { code: 'FC', name: 'ไมโครสวิตช์ผิดพลาด (ประตูเลื่อน)', causes: 'มอเตอร์ควบคุมประตูเลื่อนต่อกับบอร์ดหลักผิดปกติ, ประตูเลื่อนติดขัด, แผ่นตรวจวัดแสงผิดพลาด', parts: ['ไมโครสวิตช์', 'มอเตอร์ประตูเลื่อน'] },
+    { code: 'JF', name: 'การสื่อสารผิดพลาดระหว่างเครื่องในและแผงตรวจจับ', causes: 'การเชื่อมต่อระหว่างเครื่องในและแผงตรวจจับไม่ดี, บอร์ดหลักเครื่องในเสียหาย, แผงตรวจจับเสียหาย', parts: ['แผงตรวจจับ', 'บอร์ดหลักเครื่องใน'] },
+    { code: 'L1', name: 'เซ็นเซอร์ความชื้นผิดพลาด', causes: 'การสื่อสาร WIFI ผิดปกติ, เซ็นเซอร์เสียหาย, บอร์ดแสดงผลเสียหาย', parts: ['เซ็นเซอร์ความชื้น', 'บอร์ดแสดงผล'] },
+    { code: 'กำลังละลายน้ำแข็ง', name: 'การละลายน้ำแข็ง', causes: 'ไม่ใช่รหัสข้อผิดพลาด แต่เป็นสถานะการทำงานระหว่างการทำความร้อน', parts: ['เซ็นเซอร์อุณหภูมิ', 'บอร์ดหลักเครื่องนอก'] }
+];
+
+/* ==========================================================================
+   ข้อมูล LCAC
+   ========================================================================== */
+const lcacErrorCodesData = [
+    { code: "C0", meaning: "การสื่อสารผิดพลาดระหว่างรีโมทแบบมีสายและเครื่องใน", cause: "1. สายเชื่อมต่อผิดปกติ 2. บอร์ดหลักหรือวงจรสื่อสารของรีโมทผิดปกติ", parts: ["รีโมทแบบมีสาย", "บอร์ดหลักเครื่องใน", "สายสื่อสาร"] },
+    { code: "C1", meaning: "เซ็นเซอร์อุณหภูมิห้อง เปิดวงจรหรือลัดวงจร", cause: "1. เซ็นเซอร์เสียหาย 2. เซ็นเซอร์หลุดหรือเชื่อมต่อไม่แน่น 3. วงจรตรวจจับบนบอร์ดหลักผิดปกติ", parts: ["เซ็นเซอร์อุณหภูมิห้อง", "บอร์ดหลักเครื่องใน"] },
+    { code: "C2", meaning: "เซ็นเซอร์อุณหภูมิคอยล์เย็น เปิดวงจรหรือลัดวงจร", cause: "1. เซ็นเซอร์เสียหาย 2. เซ็นเซอร์หลุดหรือเชื่อมต่อไม่แน่น 3. วงจรตรวจจับบนบอร์ดหลักผิดปกติ", parts: ["เซ็นเซอร์อุณหภูมิคอยล์เย็น", "บอร์ดหลักเครื่องใน"] },
+    { code: "CJ", meaning: "ข้อผิดพลาดจัมเปอร์แคปของเครื่องใน", cause: "1. บอร์ดหลักเครื่องในไม่ได้ติดตั้งจัมเปอร์แคป หรือติดตั้งไม่ถูกต้อง 2. จัมเปอร์แคปเชื่อมต่อไม่แน่น", parts: ["จัมเปอร์แคปเครื่องใน", "บอร์ดหลักเครื่องใน"] },
+    { code: "CE", meaning: "ข้อผิดพลาดเซ็นเซอร์อุณหภูมิของรีโมทแบบมีสาย", cause: "วงจรสุ่มตัวอย่างของรีโมทผิดปกติ, เซ็นเซอร์อุณหภูมิรีโมทผิดปกติ", parts: ["รีโมทแบบมีสาย", "เซ็นเซอร์อุณหภูมิภายนอก"] },
+    { code: "CP", meaning: "ข้อผิดพลาดการตั้งค่ารีโมทแบบมีสายหลายตัว (Multiple Master)", cause: "การตั้งค่า Multiple Master Units โดยรีโมทแบบมีสายผิดปกติ", parts: ["รีโมทแบบมีสาย", "สายสื่อสาร"] },
+    { code: "dH", meaning: "ข้อผิดพลาดวงจรบอร์ดของรีโมทแบบมีสาย", cause: "รีโมทแบบมีสายผิดปกติ", parts: ["รีโมทแบบมีสาย", "สายสื่อสาร"] },
+    { code: "E0", meaning: "ข้อผิดพลาดมอเตอร์พัดลมเครื่องใน", cause: "1. ขั้วต่อมอเตอร์หรือขั้วต่อสัญญาณตอบกลับเชื่อมต่อไม่แน่น 2. มอเตอร์เสียหาย 3. บอร์ดหลักของเครื่องในเสียหาย", parts: ["มอเตอร์พัดลมเครื่องใน", "บอร์ดหลักเครื่องใน"] },
+    { code: "E9", meaning: "การป้องกันน้ำเต็มของเครื่องใน", cause: "1. ท่อน้ำทิ้งอุดตัน, วาล์วน้ำหรือการตรวจจับผิดปกติ 2. การเชื่อมต่อเซ็นเซอร์ระดับน้ำผิดปกติ 3. ปั๊มน้ำผิดปกติ", parts: ["ปั๊มน้ำ", "เซ็นเซอร์ระดับน้ำ", "บอร์ดหลักเครื่องใน"] },
+    { code: "L1", meaning: "ข้อผิดพลาดเซ็นเซอร์ความชื้นเครื่องใน", cause: "1. เซ็นเซอร์ความชื้นผิดปกติ 2. การเชื่อมต่อเซ็นเซอร์ความชื้นผิดปกติ 3. วงจรตรวจจับความชื้นบนบอร์ดหลักผิดปกติ", parts: ["เซ็นเซอร์ความชื้น", "บอร์ดหลักเครื่องใน"] },
+    { code: "L4", meaning: "ข้อผิดพลาดวงจรจ่ายไฟของรีโมทแบบมีสาย", cause: "แหล่งจ่ายไฟของรีโมทแบบมีสายผิดปกติ หรือวงจรเสียหาย", parts: ["รีโมทแบบมีสาย", "สายสื่อสาร"] },
+    { code: "L5", meaning: "การป้องกันกระแสเกินของแหล่งจ่ายไฟรีโมทแบบมีสาย", cause: "การเดินสายไฟของรีโมทแบบมีสายผิดปกติ หรือวงจรเสียหาย", parts: ["รีโมทแบบมีสาย", "สายสื่อสาร"] },
+    { code: "90", meaning: "การป้องกันแรงดันต่ำของบัส DC ในบอร์ดขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "1. แรงดันไฟฟ้า AC อินพุตต่ำเกินไป 2. วงจรสุ่มตัวอย่างแรงดันไฟฟ้าผิดปกติ", parts: ["บอร์ดอินเวอร์เตอร์เครื่องใน", "มอเตอร์พัดลมเครื่องใน"] },
+    { code: "91", meaning: "การป้องกันแรงดันสูงของบัส DC ในบอร์ดขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "1. แรงดันไฟฟ้า AC อินพุตสูงเกินไป 2. วงจรสุ่มตัวอย่างแรงดันไฟฟ้าผิดปกติ", parts: ["บอร์ดอินเวอร์เตอร์เครื่องใน", "มอเตอร์พัดลมเครื่องใน"] },
+    { code: "93", meaning: "การป้องกันโมดูล IPM ของบอร์ดขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "1. แรงดันไฟฟ้าจ่ายผิดปกติ 2. บอร์ดหลักเสียหาย, การระบายความร้อน IPM ไม่ดี", parts: ["บอร์ดอินเวอร์เตอร์เครื่องใน", "มอเตอร์พัดลมเครื่องใน"] },
+    { code: "95", meaning: "พัดลมอินเวอร์เตอร์เครื่องในสตาร์ทไม่สำเร็จ", cause: "1. พัดลมเครื่องในผิดพลาด 2. บอร์ดหลักผิดพลาด", parts: ["มอเตอร์พัดลมเครื่องใน", "บอร์ดหลักเครื่องใน"] },
+    { code: "96", meaning: "การป้องกันเฟสขาดของพัดลมอินเวอร์เตอร์เครื่องใน", cause: "1. พัดลมเครื่องในผิดพลาด 2. บอร์ดหลักผิดพลาด", parts: ["มอเตอร์พัดลมเครื่องใน", "บอร์ดหลักเครื่องใน"] },
+    { code: "97", meaning: "การรีเซ็ตโมดูลขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "1. บอร์ดหลักเสียหาย 2. แรงดันไฟฟ้าจ่ายผิดปกติ", parts: ["บอร์ดหลักเครื่องใน", "บอร์ดจ่ายไฟ"] },
+    { code: "98", meaning: "การป้องกันกระแสเกินของพัดลมอินเวอร์เตอร์เครื่องใน", cause: "1. พัดลมเครื่องในติดขัด 2. พัดลมเครื่องในลัดวงจร 3. บอร์ดหลักเสียหาย", parts: ["มอเตอร์พัดลมเครื่องใน", "บอร์ดหลักเครื่องใน"] },
+    { code: "9A", meaning: "ข้อผิดพลาดวงจรตรวจจับกระแสของบอร์ดขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "บอร์ดหลักเสียหาย", parts: ["บอร์ดหลักเครื่องใน"] },
+    { code: "9b", meaning: "การป้องกันการซิงโครไนซ์ของพัดลมอินเวอร์เตอร์เครื่องใน", cause: "1. พัดลมเครื่องในติดขัด 2. บอร์ดหลักติดขัด", parts: ["มอเตอร์พัดลมเครื่องใน", "บอร์ดหลักเครื่องใน"] },
+    { code: "9C", meaning: "ข้อผิดพลาดการสื่อสารระหว่างบอร์ดควบคุมหลักและบอร์ดขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "บอร์ดหลักติดขัด", parts: ["บอร์ดหลักเครื่องใน", "สายสื่อสาร"] },
+    { code: "9d", meaning: "การป้องกันอุณหภูมิสูงของโมดูลขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "1. การติดตั้งแผงระบายความร้อนไม่ดี 2. วงจรสุ่มตัวอย่างอุณหภูมิผิดปกติ", parts: ["บอร์ดอินเวอร์เตอร์เครื่องใน", "ซิลิโคนระบายความร้อน"] },
+    { code: "9E", meaning: "ข้อผิดพลาดเซ็นเซอร์อุณหภูมิโมดูลขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "1. วงจรสุ่มตัวอย่างอุณหภูมิผิดปกติ 2. บอร์ดหลักติดขัด", parts: ["บอร์ดหลักเครื่องใน", "เซ็นเซอร์อุณหภูมิ"] },
+    { code: "9F", meaning: "ข้อผิดพลาดชิปหน่วยความจำของบอร์ดขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "บอร์ดหลักติดขัด", parts: ["บอร์ดหลักเครื่องใน"] },
+    { code: "9H", meaning: "ข้อผิดพลาดวงจรชาร์จของบอร์ดขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "บอร์ดหลักติดขัด", parts: ["บอร์ดหลักเครื่องใน"] },
+    { code: "9L", meaning: "การป้องกันแรงดันไฟฟ้า AC อินพุตผิดปกติของบอร์ดขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "แรงดันไฟฟ้าจ่ายผิดปกติ", parts: ["บอร์ดหลักเครื่องใน", "แหล่งจ่ายไฟ"] },
+    { code: "9P", meaning: "การป้องกัน Zero-Crossing ของ AC อินพุตบอร์ดขับพัดลมอินเวอร์เตอร์เครื่องใน", cause: "บอร์ดหลักติดขัด", parts: ["บอร์ดหลักเครื่องใน"] },
+    { code: "L6", meaning: "จำนวนเครื่องในในระบบหลายเครื่องไม่สอดคล้องกัน", cause: "การตั้งค่ารีโมทแบบมีสายผิดพลาด กรุณารีเซ็ตตามคู่มือ", parts: ["รีโมทแบบมีสาย", "บอร์ดหลักเครื่องใน"] },
+    { code: "L7", meaning: "ซีรีส์ของเครื่องในในระบบหลายเครื่องไม่สอดคล้องกัน", cause: "ประเภท ความสามารถในการทำความเย็น และรุ่นของเครื่องในที่เชื่อมต่อกับเครื่องนอกเดียวกันจะต้องสอดคล้องกัน", parts: ["รีโมทแบบมีสาย", "บอร์ดหลักเครื่องใน"] },
+    { code: "E6", meaning: "ข้อผิดพลาดการสื่อสารระหว่างเครื่องในและเครื่องนอก", cause: "โปรดดูที่หัวข้อ 'ข้อผิดพลาดการสื่อสาร'", parts: ["สายสื่อสาร", "บอร์ดหลักเครื่องใน", "บอร์ดหลักเครื่องนอก"] },
+    { code: "H5", meaning: "การป้องกันโมดูล IPM ของเครื่องนอก", cause: "โปรดดูที่หัวข้อ 'การป้องกัน IPM ของเครื่องนอก'", parts: ["บอร์ด IPM เครื่องนอก", "คอมเพรสเซอร์"] },
+    { code: "L3 / L8", meaning: "ข้อผิดพลาดพัดลมเครื่องนอก", cause: "1. มอเตอร์หรือสายไฟมอเตอร์เสียหาย 2. บอร์ดหลักเครื่องนอกเสียหาย 3. ใบพัดลมติดขัดหรือหลวม", parts: ["มอเตอร์พัดลมเครื่องนอก", "บอร์ดหลักเครื่องนอก"] },
+    { code: "HC", meaning: "การป้องกันวงจร PFC", cause: "1. บอร์ดหลักเครื่องนอกเสียหาย 2. คุณภาพกริดไฟไม่ดี แรงดันไฟฟ้า AC แกว่ง 3. การเชื่อมต่อปลั๊กไฟ สายดิน หรือรีแอกเตอร์ไม่แน่น 4. คอยล์ร้อน/เย็นสกปรกหรืออุดตัน", parts: ["บอร์ด PFC เครื่องนอก", "รีแอกเตอร์ / ตัวเหนี่ยวนำ"] },
+    { code: "H7", meaning: "คอมเพรสเซอร์หลุดสเต็ป", cause: "1. แรงดันไฟฟ้าจ่ายผิดปกติ 2. คอนเดนเซอร์หรืออีแวปสกปรก/อุดตัน 3. ลมเข้า-ออกไม่สะดวก 4. ท่อระบบอุดตัน วาล์วไม่เปิด 5. สารทำความเย็นมากเกินไป 6. สายไฟหลวม 7. บอร์ดหลักเสียหาย 8. คอมเพรสเซอร์เสียหาย", parts: ["คอมเพรสเซอร์", "บอร์ดหลักเครื่องนอก", "วาล์ว"] },
+    { code: "E3", meaning: "การป้องกันการขาดสารทำความเย็น, การหยุดหมุนเวียนสารทำความเย็น", cause: "1. ท่อเชื่อมต่อระหว่างเครื่องในและเครื่องนอกเสียหายหรือจุดเชื่อมต่อหลวม 2. วาล์วน้ำ/วาล์วอากาศเสื่อมสภาพ 3. เซ็นเซอร์อุณหภูมิเสียหายหรือเสื่อมสภาพ", parts: ["สารทำความเย็น (R32/R410A)", "สวิตช์แรงดันต่ำ"] },
+    { code: "PH", meaning: "แรงดันไฟบัส DC สูง", cause: "1. แรงดันไฟฟ้า AC สูงเกินไป (เช่น เกิน 300V) 2. คุณภาพไฟไม่ดี 3. บอร์ดหลักเสียหาย", parts: ["บอร์ดหลักเครื่องนอก", "ตัวกรองไฟ AC / รีแอกเตอร์"] },
+    { code: "PL", meaning: "แรงดันไฟบัส DC ต่ำ", cause: "1. แรงดันไฟฟ้า AC ต่ำเกินไป (เช่น น้อยกว่า 90V) 2. การเดินสายไฟผิดปกติ 3. บอร์ดหลักเครื่องนอกเสียหาย", parts: ["บอร์ดหลักเครื่องนอก", "แหล่งจ่ายไฟ"] },
+    { code: "H4", meaning: "การป้องกันโอเวอร์โหลด", cause: "โหมดทำความเย็น: คอนเดนเซอร์สกปรก, ลมเข้า-ออกไม่สะดวก, ใบพัดลมแตก/มอเตอร์เสีย, เซ็นเซอร์คอนเดนเซอร์เสีย. โหมดทำความร้อน: อีแวปสกปรก, ลมเข้า-ออกไม่สะดวก, ใบพัดลมแตก, เซ็นเซอร์อีแวปเสีย", parts: ["มอเตอร์พัดลมเครื่องนอก", "เซ็นเซอร์อุณหภูมิ (คอนเดนเซอร์/อีแวป)", "บอร์ดหลักเครื่องนอก"] },
+    { code: "C4", meaning: "จัมเปอร์แคปของเครื่องนอก", cause: "จัมเปอร์แคปของเครื่องนอกไม่ได้ติดตั้ง หรือติดตั้งไม่ถูกต้อง", parts: ["จัมเปอร์แคปเครื่องนอก", "บอร์ดหลักเครื่องนอก"] },
+    { code: "F3", meaning: "เซ็นเซอร์อุณหภูมิเครื่องนอก เปิดวงจร/ลัดวงจร", cause: "1. เซ็นเซอร์หลุดหรือเสียหาย 2. สายเซ็นเซอร์เสียหายหรือลัดวงจร 3. บอร์ดหลักเครื่องนอกเสียหาย", parts: ["เซ็นเซอร์อุณหภูมิแวดล้อมภายนอก", "บอร์ดหลักเครื่องนอก"] },
+    { code: "C3", meaning: "เซ็นเซอร์อุณหภูมิคอนเดนเซอร์เครื่องนอก เปิดวงจร/ลัดวงจร", cause: "1. เซ็นเซอร์หลุดหรือเสียหาย 2. สายเซ็นเซอร์เสียหายหรือลัดวงจร 3. บอร์ดหลักเครื่องนอกเสียหาย", parts: ["เซ็นเซอร์อุณหภูมิคอนเดนเซอร์", "บอร์ดหลักเครื่องนอก"] },
+    { code: "C6", meaning: "เซ็นเซอร์อุณหภูมิไอเสีย เปิดวงจร/ลัดวงจร", cause: "1. เซ็นเซอร์หลุดหรือเสียหาย 2. สายเซ็นเซอร์เสียหายหรือลัดวงจร 3. บอร์ดหลักเครื่องนอกเสียหาย", parts: ["เซ็นเซอร์อุณหภูมิไอเสีย", "บอร์ดหลักเครื่องนอก"] },
+    { code: "dc", meaning: "เซ็นเซอร์อุณหภูมิทางดูดคอมเพรสเซอร์ เปิดวงจร/ลัดวงจร", cause: "1. เซ็นเซอร์หลุดหรือเสียหาย 2. สายเซ็นเซอร์เสียหายหรือลัดวงจร 3. บอร์ดหลักเครื่องนอกเสียหาย", parts: ["เซ็นเซอร์อุณหภูมิทางดูด", "บอร์ดหลักเครื่องนอก"] },
+    { code: "A5", meaning: "เซ็นเซอร์อุณหภูมิท่อเข้าคอนเดนเซอร์ เปิดวงจร/ลัดวงจร", cause: "1. เซ็นเซอร์หลุดหรือเสียหาย 2. สายเซ็นเซอร์เสียหายหรือลัดวงจร 3. บอร์ดหลักเครื่องนอกเสียหาย", parts: ["เซ็นเซอร์อุณหภูมิท่อเข้าคอนเดนเซอร์", "บอร์ดหลักเครื่องนอก"] },
+    { code: "A7", meaning: "เซ็นเซอร์อุณหภูมิท่อออกคอนเดนเซอร์ เปิดวงจร/ลัดวงจร", cause: "1. เซ็นเซอร์หลุดหรือเสียหาย 2. สายเซ็นเซอร์เสียหายหรือลัดวงจร 3. บอร์ดหลักเครื่องนอกเสียหาย", parts: ["เซ็นเซอร์อุณหภูมิท่อออกคอนเดนเซอร์", "บอร์ดหลักเครื่องนอก"] },
+    { code: "PA", meaning: "การป้องกันกระแสเกิน", cause: "1. แรงดันไฟฟ้าไม่เสถียร 2. แรงดันไฟฟ้าต่ำเกินไป 3. คอนเดนเซอร์หรืออีแวปสกปรก 4. ลมเข้า-ออกไม่สะดวก 5. ท่อระบบอุดตัน 6. สารทำความเย็นมากเกินไป 7. บอร์ดหลักเสียหาย 8. คอมเพรสเซอร์เสียหาย", parts: ["คอมเพรสเซอร์", "บอร์ดหลักเครื่องนอก"] },
+    { code: "67", meaning: "เซ็นเซอร์อุณหภูมิของวาล์วอากาศ เปิดวงจร/ลัดวงจร", cause: "1. เซ็นเซอร์หลุดหรือเสียหาย 2. สายเซ็นเซอร์เสียหายหรือลัดวงจร 3. บอร์ดหลักเครื่องนอกเสียหาย", parts: ["เซ็นเซอร์อุณหภูมิวาล์วอากาศ", "บอร์ดหลักเครื่องนอก"] },
+    { code: "65", meaning: "เซ็นเซอร์อุณหภูมิของวาล์วน้ำยาเหลว เปิดวงจร/ลัดวงจร", cause: "1. เซ็นเซอร์หลุดหรือเสียหาย 2. สายเซ็นเซอร์เสียหายหรือลัดวงจร 3. บอร์ดหลักเครื่องนอกเสียหาย", parts: ["เซ็นเซอร์อุณหภูมิวาล์วน้ำยาเหลว", "บอร์ดหลักเครื่องนอก"] },
+    { code: "E1", meaning: "การป้องกันแรงดันสูงของระบบ", cause: "1. การเชื่อมต่อระหว่างสายไฟและสวิตช์แรงดันสูงไม่แน่น 2. สวิตช์แรงดันสูงเสียหาย 3. สิ่งสกปรกอุดตันในคอนเดนเซอร์/อีแวป 4. บอร์ดหลักเสียหาย", parts: ["สวิตช์แรงดันสูง", "บอร์ดหลักเครื่องนอก"] },
+    { code: "E4", meaning: "การป้องกันอุณหภูมิไอเสียสูงของคอมเพรสเซอร์", cause: "โปรดดูที่หัวข้อ 'การป้องกันคอมเพรสเซอร์โอเวอร์โหลด'", parts: ["เซ็นเซอร์อุณหภูมิไอเสีย", "คอมเพรสเซอร์"] },
+    { code: "E7", meaning: "โหมดการทำงานขัดแย้งกัน", cause: "เมื่อระบบจับคู่อิสระผิดพลาด เครื่องในบางตัวจะทำงานโหมดทำความร้อน ในขณะที่บางตัวทำความเย็น ทำให้โหมดขัดแย้งกัน", parts: ["รีโมทแบบมีสาย", "บอร์ดหลักเครื่องใน"] },
+    { code: "EE", meaning: "ข้อผิดพลาดในการอ่าน EEPROM", cause: "บอร์ดหลักเครื่องนอกเสียหาย", parts: ["บอร์ดหลักเครื่องนอก"] },
+    { code: "Fo", meaning: "โหมดการกู้คืนสารทำความเย็น", cause: "การกู้คืนสารทำความเย็น โหมดนี้ทำงานในระหว่างการบำรุงรักษา (ไม่ใช่รหัสข้อผิดพลาด)", parts: ["สารทำความเย็น", "วาล์วชุดแมนนิโฟลด์"] },
+    { code: "HE", meaning: "การป้องกันการสูญเสียอำนาจแม่เหล็กของคอมเพรสเซอร์", cause: "1. บอร์ดหลักเครื่องนอกเสียหาย 2. คอมเพรสเซอร์เสียหาย", parts: ["คอมเพรสเซอร์", "บอร์ดหลักเครื่องนอก"] },
+    { code: "L9", meaning: "การป้องกันพลังงานสูง", cause: "โปรดดูที่หัวข้อ 'การป้องกันอุณหภูมิสูง, การป้องกันกระแสเกิน, การป้องกัน IPM ของเครื่องนอก'", parts: ["บอร์ดหลักเครื่องนอก", "คอมเพรสเซอร์"] },
+    { code: "Lc", meaning: "สตาร์ทไม่สำเร็จ", cause: "โปรดดูที่หัวข้อ 'การสตาร์ทล้มเหลว'", parts: ["คอมเพรสเซอร์", "บอร์ดหลักเครื่องนอก"] },
+    { code: "P5", meaning: "กระแสเกินเฟสของคอมเพรสเซอร์", cause: "ดูที่หัวข้อ 'การป้องกัน IPM ของเครื่องนอก'", parts: ["คอมเพรสเซอร์", "บอร์ด IPM เครื่องนอก"] },
+    { code: "oE", meaning: "ข้อผิดพลาดเครื่องนอกที่ไม่ได้กำหนด", cause: "โปรดดูที่หัวข้อ 'ข้อผิดพลาดเครื่องนอกที่ไม่ระบุ'", parts: ["บอร์ดหลักเครื่องนอก"] },
+    { code: "P6", meaning: "ข้อผิดพลาดการสื่อสารระหว่างบอร์ดไดรฟ์และบอร์ดควบคุมหลัก", cause: "1. การเชื่อมต่อระหว่างบอร์ดไดรฟ์และบอร์ดหลักไม่ดี 2. บอร์ดไดรฟ์เสียหาย 3. บอร์ดหลักเครื่องนอกเสียหาย", parts: ["บอร์ดไดรฟ์ (IPM)", "บอร์ดหลักเครื่องนอก"] },
+    { code: "P7", meaning: "ข้อผิดพลาดวงจรเซ็นเซอร์อุณหภูมิโมดูล", cause: "บอร์ดหลักเครื่องนอกเสียหาย", parts: ["บอร์ดหลักเครื่องนอก", "เซ็นเซอร์อุณหภูมิโมดูล"] },
+    { code: "P8", meaning: "การป้องกันอุณหภูมิสูงของโมดูล", cause: "1. ลมเข้า-ออกของเครื่องนอกสกปรกและอุดตัน 2. สกรู IPM ของบอร์ดหลักไม่แน่น หรือแผงระบายความร้อนไม่แน่น", parts: ["บอร์ดหลักเครื่องนอก", "ซิลิโคนระบายความร้อน", "มอเตอร์พัดลมเครื่องนอก"] },
+    { code: "PF", meaning: "ข้อผิดพลาดเซ็นเซอร์อุณหภูมิแวดล้อมบนบอร์ดไดรฟ์", cause: "1. การสัมผัสไม่ดีของเซ็นเซอร์อุณหภูมิแวดล้อมบนบอร์ดไดรฟ์ 2. เซ็นเซอร์อุณหภูมิแวดล้อมบนบอร์ดไดรฟ์ผิดพลาด", parts: ["บอร์ดไดรฟ์", "เซ็นเซอร์อุณหภูมิแวดล้อม"] },
+    { code: "PU", meaning: "ข้อผิดพลาดการชาร์จตัวเก็บประจุ", cause: "1. บอร์ดหลักเครื่องนอกเสียหาย 2. การเดินสายไฟของเครื่องนอกผิดพลาดหรือแรงดันไฟฟ้าต่ำ", parts: ["บอร์ดหลักเครื่องนอก", "ตัวเก็บประจุ"] },
+    { code: "U1", meaning: "ข้อผิดพลาดวงจรตรวจจับกระแสเฟสคอมเพรสเซอร์", cause: "บอร์ดหลักเครื่องนอกเสียหาย", parts: ["บอร์ดหลักเครื่องนอก"] },
+    { code: "U2", meaning: "การป้องกันเฟสขาดของคอมเพรสเซอร์", cause: "1. การเชื่อมต่อสายไฟคอมเพรสเซอร์ไม่ดี 2. บอร์ดหลักเครื่องนอกเสียหาย 3. คอมเพรสเซอร์เสียหาย", parts: ["คอมเพรสเซอร์", "บอร์ดหลักเครื่องนอก"] },
+    { code: "U3", meaning: "ข้อผิดพลาดแรงดันไฟบัส DC ตก", cause: "แรงดันไฟฟ้าไม่เสถียรและมีความผันผวนสูง", parts: ["บอร์ดหลักเครื่องนอก", "แหล่งจ่ายไฟ"] },
+    { code: "U5", meaning: "ข้อผิดพลาดการตรวจจับกระแสของทั้งยูนิต", cause: "1. ทั้งยูนิตขาดสารทำความเย็น 2. วงจรบนบอร์ดควบคุมเครื่องนอกล้มเหลว ต้องเปลี่ยนบอร์ดควบคุม", parts: ["บอร์ดหลักเครื่องนอก", "สารทำความเย็น"] },
+    { code: "U7", meaning: "ข้อผิดพลาดการสลับวาล์ว 4 ทาง", cause: "1. แรงดันไฟฟ้าต่ำกว่า AC175V 2. สายไฟที่ขั้ววาล์ว 4 ทางหลวมหรือขาด 3. วาล์ว 4 ทางเสียหาย", parts: ["วาล์ว 4 ทาง", "บอร์ดหลักเครื่องนอก"] },
+    { code: "U8", meaning: "ข้อผิดพลาด Zero-crossing ของเครื่องนอก", cause: "บอร์ดหลักเครื่องนอกเสียหาย", parts: ["บอร์ดหลักเครื่องนอก"] },
+    { code: "E2", meaning: "การป้องกันการแข็งตัวของอีแวป", cause: "ไม่ใช่รหัสข้อผิดพลาด แต่เป็นรหัสสถานะระหว่างกระบวนการทำความเย็น", parts: ["เซ็นเซอร์อุณหภูมิอีแวป", "บอร์ดหลักเครื่องใน"] },
+    { code: "LP", meaning: "เครื่องในและเครื่องนอกไม่เข้าคู่กัน", cause: "ความจุของเครื่องในและเครื่องนอกไม่ตรงกัน", parts: ["บอร์ดหลักเครื่องใน", "บอร์ดหลักเครื่องนอก"] },
+    { code: "กำลังละลายน้ำแข็ง", meaning: "การละลายน้ำแข็ง", cause: "ไม่ใช่รหัสข้อผิดพลาด แต่เป็นรหัสสถานะระหว่างกระบวนการทำความร้อน", parts: ["เซ็นเซอร์อุณหภูมิ", "บอร์ดหลักเครื่องนอก"] }
+];
+
+/* ==========================================================================
+   ข้อมูล GMV — เครื่องใน
+   ========================================================================== */
+const gmvIndoorErrors = [
+    { code: 'L0', desc: 'เครื่องในทำงานผิดปกติ', parts: '1. แผงวงจรหลักเครื่องใน, 2. รีโมท/แผงควบคุม' },
+    { code: 'L1', desc: 'การป้องกันพัดลมในห้อง', parts: '1. มอเตอร์พัดลมเครื่องใน, 2. แผงวงจรขับพัดลม' },
+    { code: 'L2', desc: 'การป้องกันฮีตเตอร์เสริม', parts: '1. ฮีตเตอร์เสริม, 2. รีเลย์ฮีตเตอร์' },
+    { code: 'L3', desc: 'การป้องกันน้ำเต็ม', parts: '1. สวิตช์วัดระดับน้ำ, 2. ปั๊มระบายน้ำ' },
+    { code: 'L4', desc: 'แหล่งจ่ายไฟของรีโมทแบบมีสายผิดปกติ', parts: '1. สายไฟรีโมท, 2. รีโมทแบบมีสาย' },
+    { code: 'L5', desc: 'การป้องกันการแข็งตัว', parts: '1. เซ็นเซอร์อุณหภูมิท่อ, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'L6', desc: 'โหมดการทำงานขัดแย้งกัน', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลักเครื่องใน (ตรวจสอบการตั้งค่า)' },
+    { code: 'L7', desc: 'ไม่พบเครื่องในหลัก', parts: '1. แผงวงจรหลักเครื่องใน, 2. สายสื่อสาร' },
+    { code: 'L8', desc: 'แหล่งจ่ายไฟไม่เพียงพอ', parts: '1. แหล่งจ่ายไฟ/เบรกเกอร์, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'L9', desc: 'การควบคุมเครื่องเดียวหลายเครื่อง จำนวนเครื่องในไม่สอดคล้องกัน (เครือข่าย HBS)', parts: '1. สายสื่อสาร HBS, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'LA', desc: 'การควบคุมเครื่องเดียวหลายเครื่อง ซีรีส์เครื่องในไม่สอดคล้องกัน (เครือข่าย HBS)', parts: '1. แผงวงจรหลักเครื่องใน, 2. คู่มือการตั้งค่า HBS' },
+    { code: 'LH', desc: 'สัญญาณเตือนเนื่องจากคุณภาพอากาศแย่', parts: '1. เซ็นเซอร์คุณภาพอากาศ, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'LC', desc: 'เครื่องในไม่เข้าคู่กับเครื่องนอก', parts: '1. แผงวงจรหลักเครื่องใน, 2. แผงวงจรหลักเครื่องนอก (ตรวจสอบรุ่น)' },
+    { code: 'LL', desc: 'สวิตช์การไหลของน้ำผิดปกติ', parts: '1. สวิตช์วัดการไหลของน้ำ, 2. สายไฟสวิตช์' },
+    { code: 'LE', desc: 'ความเร็วรอบของปั๊มน้ำ EC DC ผิดปกติ', parts: '1. ปั๊มน้ำ EC DC, 2. แผงวงจรขับปั๊มน้ำ' },
+    { code: 'LF', desc: 'การตั้งค่าวาล์วแบ่ง (Shunt Valve) ผิดพลาด', parts: '1. วาล์วแบ่ง, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'LJ', desc: 'การตั้งค่ารหัสสวิตช์ DIP ฟังก์ชันผิดพลาด', parts: '1. คู่มือการตั้งค่า DIP Switch, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'LP', desc: 'Zero-crossing ของมอเตอร์ PG ผิดปกติ', parts: '1. มอเตอร์ PG, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'LU', desc: 'สาขาของเครื่องในไม่สอดคล้องกันสำหรับระบบทำความร้อนแบบกู้คืน', parts: '1. แผงวงจรหลักเครื่องใน, 2. วาล์วสาขา' },
+    { code: 'Lb', desc: 'เครื่องในไม่สอดคล้องกัน (ระบบทำความร้อนซ้ำ-ลดความชื้น)', parts: '1. แผงวงจรหลักเครื่องใน, 2. การตั้งค่าระบบ' },
+    { code: 'd1', desc: 'แผงวงจรเครื่องในขัดข้อง', parts: '1. แผงวงจรหลักเครื่องใน, 2. ฟิวส์' },
+    { code: 'd2', desc: 'เซ็นเซอร์อุณหภูมิน้ำส่วนล่างของถังน้ำผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิน้ำ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'd3', desc: 'เซ็นเซอร์อุณหภูมิแวดล้อมผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิแวดล้อม, 2. สายไฟเซ็นเซอร์' },
+    { code: 'd4', desc: 'เซ็นเซอร์อุณหภูมิท่อน้ำเข้าผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิท่อน้ำเข้า, 2. สายไฟเซ็นเซอร์' },
+    { code: 'd5', desc: 'เซ็นเซอร์อุณหภูมิท่อกลางผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิท่อกลาง, 2. สายไฟเซ็นเซอร์' },
+    { code: 'd6', desc: 'เซ็นเซอร์อุณหภูมิท่อน้ำออกผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิท่อน้ำออก, 2. สายไฟเซ็นเซอร์' },
+    { code: 'd7', desc: 'เซ็นเซอร์ความชื้นผิดปกติ', parts: '1. เซ็นเซอร์ความชื้น, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'd8', desc: 'เซ็นเซอร์อุณหภูมิน้ำผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิน้ำ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'd9', desc: 'จัมเปอร์แคปผิดปกติ', parts: '1. จัมเปอร์แคป, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'dA', desc: 'ที่อยู่เว็บของเครื่องในผิดปกติ', parts: '1. แผงวงจรหลักเครื่องใน, 2. รีโมท/แผงควบคุม' },
+    { code: 'dH', desc: 'แผงวงจรของรีโมทแบบมีสายผิดปกติ', parts: '1. รีโมทแบบมีสาย, 2. สายไฟรีโมท' },
+    { code: 'dC', desc: 'การตั้งค่าความจุของรหัสสวิตช์ DIP ผิดปกติ', parts: '1. คู่มือการตั้งค่า DIP Switch, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'dL', desc: 'เซ็นเซอร์อุณหภูมิลมออกผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิลมออก, 2. สายไฟเซ็นเซอร์' },
+    { code: 'dE', desc: 'เซ็นเซอร์ CO2 ในห้องผิดปกติ', parts: '1. เซ็นเซอร์ CO2, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'dF', desc: 'เซ็นเซอร์อุณหภูมิน้ำส่วนบนของถังน้ำผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิน้ำส่วนบน, 2. สายไฟเซ็นเซอร์' },
+    { code: 'dJ', desc: 'เซ็นเซอร์อุณหภูมิน้ำย้อนกลับผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิน้ำย้อนกลับ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'dP', desc: 'เซ็นเซอร์อุณหภูมิท่อเข้าของเครื่องกำเนิดผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'dU', desc: 'เซ็นเซอร์อุณหภูมิท่อระบายน้ำของเครื่องกำเนิดผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'db', desc: 'สถานะการตรวจสอบ', parts: '1. แผงวงจรหลักเครื่องใน, 2. อุปกรณ์ตรวจสอบ' },
+    { code: 'dd', desc: 'เซ็นเซอร์อุณหภูมิพลังงานแสงอาทิตย์ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'dn', desc: 'ชิ้นส่วนสวิงผิดปกติ', parts: '1. มอเตอร์สวิง, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'dy', desc: 'เซ็นเซอร์อุณหภูมิน้ำผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิน้ำ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'y1', desc: 'เซ็นเซอร์อุณหภูมิท่อเข้า 2 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิท่อเข้า, 2. สายไฟเซ็นเซอร์' },
+    { code: 'y2', desc: 'เซ็นเซอร์อุณหภูมิท่อออก 2 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิท่อออก, 2. สายไฟเซ็นเซอร์' },
+    { code: 'y7', desc: 'เซ็นเซอร์อุณหภูมิอากาศบริสุทธิ์ขาเข้าผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'y8', desc: 'เซ็นเซอร์กล่องลมของเครื่องในผิดปกติ', parts: '1. เซ็นเซอร์, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'yA', desc: 'อุปกรณ์ IFD ผิดปกติ', parts: '1. แผงวงจร IFD, 2. สายไฟ' },
+    { code: 'o1', desc: 'การป้องกันแรงดันต่ำของบัสบาร์เครื่องใน', parts: '1. แผงวงจรหลักเครื่องใน, 2. แหล่งจ่ายไฟ' },
+    { code: 'o2', desc: 'การป้องกันแรงดันสูงของบัสบาร์เครื่องใน', parts: '1. แผงวงจรหลักเครื่องใน, 2. แหล่งจ่ายไฟ' },
+    { code: 'o3', desc: 'การป้องกันโมดูล IPM ของเครื่องใน', parts: '1. โมดูล IPM, 2. แผงวงจรขับ' },
+    { code: 'o4', desc: 'สตาร์ทเครื่องในไม่สำเร็จ', parts: '1. มอเตอร์พัดลม, 2. แผงวงจรขับ' },
+    { code: 'o5', desc: 'การป้องกันกระแสเกินของเครื่องใน', parts: '1. แผงวงจรขับ, 2. มอเตอร์พัดลม' },
+    { code: 'o6', desc: 'วงจรตรวจจับกระแสของเครื่องในผิดปกติ', parts: '1. แผงวงจรหลักเครื่องใน, 2. เซ็นเซอร์วัดกระแส' },
+    { code: 'o7', desc: 'การป้องกันการหลุดซิงโครไนซ์ของเครื่องใน', parts: '1. แผงวงจรขับ, 2. มอเตอร์' },
+    { code: 'o8', desc: 'การสื่อสารของไดรฟ์เครื่องในผิดปกติ', parts: '1. สายสื่อสาร, 2. แผงวงจรขับ' },
+    { code: 'o9', desc: 'การสื่อสารของบอร์ดควบคุมหลักเครื่องในผิดปกติ', parts: '1. สายสื่อสาร, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'oA', desc: 'การป้องกันอุณหภูมิสูงของโมดูล IPM ไดรฟ์เครื่องใน', parts: '1. พัดลมระบายความร้อน, 2. แผงวงจรขับ' },
+    { code: 'ob', desc: 'เซ็นเซอร์อุณหภูมิของไดรฟ์เครื่องในผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. แผงวงจรขับ' },
+    { code: 'oC', desc: 'วงจรชาร์จของเครื่องในผิดปกติ', parts: '1. รีเลย์ชาร์จ, 2. ตัวต้านทานชาร์จ' },
+    { code: 'o0', desc: 'ไดรฟ์ผิดปกติอื่นๆ', parts: '1. แผงวงจรขับ, 2. แผงวงจรหลักเครื่องใน' }
+];
+
+/* ==========================================================================
+   ข้อมูล GMV — เครื่องนอก
+   ========================================================================== */
+const gmvOutdoorErrors = [
+    { code: 'E0', desc: 'เครื่องนอกทำงานผิดปกติ', parts: '1. แผงวงจรหลักเครื่องนอก, 2. รีโมท/แผงควบคุม' },
+    { code: 'E1', desc: 'การป้องกันแรงดันสูงเกิน', parts: '1. สวิตช์แรงดันสูง, 2. เซ็นเซอร์แรงดัน' },
+    { code: 'E2', desc: 'การป้องกันอุณหภูมิท่อจ่ายต่ำ', parts: '1. เซ็นเซอร์อุณหภูมิท่อจ่าย, 2. วาล์วขยายตัว (EXV)' },
+    { code: 'E3', desc: 'การป้องกันแรงดันต่ำเกิน', parts: '1. สวิตช์แรงดันต่ำ, 2. เซ็นเซอร์แรงดัน' },
+    { code: 'E4', desc: 'การป้องกันอุณหภูมิท่อจ่ายคอมเพรสเซอร์สูงเกิน', parts: '1. เซ็นเซอร์อุณหภูมิท่อจ่าย, 2. คอมเพรสเซอร์' },
+    { code: 'Ed', desc: 'การป้องกันอุณหภูมิโมดูล IPM ไดรฟ์ต่ำ', parts: '1. แผงวงจรขับ IPM, 2. ฮีตเตอร์ทำความร้อน IPM' },
+    { code: 'F0', desc: 'แผงวงจรหลักเครื่องนอกขัดข้อง', parts: '1. แผงวงจรหลักเครื่องนอก, 2. ฟิวส์' },
+    { code: 'F1', desc: 'เซ็นเซอร์แรงดันสูงผิดปกติ', parts: '1. เซ็นเซอร์แรงดันสูง, 2. สายไฟเซ็นเซอร์' },
+    { code: 'F3', desc: 'เซ็นเซอร์แรงดันต่ำผิดปกติ', parts: '1. เซ็นเซอร์แรงดันต่ำ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'F5', desc: 'เซ็นเซอร์อุณหภูมิท่อจ่ายคอมเพรสเซอร์ 1 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'F6', desc: 'เซ็นเซอร์อุณหภูมิท่อจ่ายคอมเพรสเซอร์ 2 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'F7', desc: 'เซ็นเซอร์อุณหภูมิท่อจ่ายคอมเพรสเซอร์ 3 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'F8', desc: 'เซ็นเซอร์อุณหภูมิท่อจ่ายคอมเพรสเซอร์ 4 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'F9', desc: 'เซ็นเซอร์อุณหภูมิท่อจ่ายคอมเพรสเซอร์ 5 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'FA', desc: 'เซ็นเซอร์อุณหภูมิท่อจ่ายคอมเพรสเซอร์ 6 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'FC', desc: 'เซ็นเซอร์กระแสของคอมเพรสเซอร์ 2 ผิดปกติ', parts: '1. เซ็นเซอร์วัดกระแส, 2. แผงวงจรขับ' },
+    { code: 'FL', desc: 'เซ็นเซอร์กระแสของคอมเพรสเซอร์ 3 ผิดปกติ', parts: '1. เซ็นเซอร์วัดกระแส, 2. แผงวงจรขับ' },
+    { code: 'FE', desc: 'เซ็นเซอร์กระแสของคอมเพรสเซอร์ 4 ผิดปกติ', parts: '1. เซ็นเซอร์วัดกระแส, 2. แผงวงจรขับ' },
+    { code: 'FF', desc: 'เซ็นเซอร์กระแสของคอมเพรสเซอร์ 5 ผิดปกติ', parts: '1. เซ็นเซอร์วัดกระแส, 2. แผงวงจรขับ' },
+    { code: 'FJ', desc: 'เซ็นเซอร์กระแสของคอมเพรสเซอร์ 6 ผิดปกติ', parts: '1. เซ็นเซอร์วัดกระแส, 2. แผงวงจรขับ' },
+    { code: 'FP', desc: 'มอเตอร์ DC ผิดปกติ', parts: '1. มอเตอร์ DC, 2. แผงวงจรขับ' },
+    { code: 'FU', desc: 'เซ็นเซอร์อุณหภูมิฝาครอบบนคอมเพรสเซอร์ 1 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'Fb', desc: 'เซ็นเซอร์อุณหภูมิฝาครอบบนคอมเพรสเซอร์ 2 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'Fd', desc: 'เซ็นเซอร์อุณหภูมิท่อออกของตัวสลับโหมดผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'Fn', desc: 'เซ็นเซอร์อุณหภูมิท่อเข้าของตัวสลับโหมดผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'J0', desc: 'การป้องกันโมดูลอื่นๆ', parts: '1. แผงวงจรหลักเครื่องนอก, 2. โมดูลที่เกี่ยวข้อง' },
+    { code: 'J1', desc: 'การป้องกันกระแสเกินของคอมเพรสเซอร์ 1', parts: '1. บอร์ดไดรฟ์ IPM, 2. คอมเพรสเซอร์' },
+    { code: 'J2', desc: 'การป้องกันกระแสเกินของคอมเพรสเซอร์ 2', parts: '1. บอร์ดไดรฟ์ IPM, 2. คอมเพรสเซอร์' },
+    { code: 'J3', desc: 'การป้องกันกระแสเกินของคอมเพรสเซอร์ 3', parts: '1. บอร์ดไดรฟ์ IPM, 2. คอมเพรสเซอร์' },
+    { code: 'J4', desc: 'การป้องกันกระแสเกินของคอมเพรสเซอร์ 4', parts: '1. บอร์ดไดรฟ์ IPM, 2. คอมเพรสเซอร์' },
+    { code: 'J5', desc: 'การป้องกันกระแสเกินของคอมเพรสเซอร์ 5', parts: '1. บอร์ดไดรฟ์ IPM, 2. คอมเพรสเซอร์' },
+    { code: 'J6', desc: 'การป้องกันกระแสเกินของคอมเพรสเซอร์ 6', parts: '1. บอร์ดไดรฟ์ IPM, 2. คอมเพรสเซอร์' },
+    { code: 'J7', desc: 'การป้องกันการผสมแก๊สของวาล์ว 4 ทาง', parts: '1. วาล์ว 4 ทาง, 2. โซลินอยด์วาล์ว' },
+    { code: 'J8', desc: 'การป้องกันอัตราส่วนความดันสูงของระบบ', parts: '1. เซ็นเซอร์แรงดันสูง/ต่ำ, 2. วาล์วขยายตัว (EXV)' },
+    { code: 'J9', desc: 'การป้องกันอัตราส่วนความดันต่ำของระบบ', parts: '1. เซ็นเซอร์แรงดันสูง/ต่ำ, 2. วาล์วขยายตัว (EXV)' },
+    { code: 'JA', desc: 'การป้องกันเนื่องจากความดันผิดปกติ', parts: '1. เซ็นเซอร์แรงดัน, 2. สวิตช์แรงดัน' },
+    { code: 'JC', desc: 'การป้องกันสวิตช์การไหลของน้ำ', parts: '1. สวิตช์การไหลของน้ำ, 2. ปั๊มน้ำ' },
+    { code: 'JL', desc: 'การป้องกันเนื่องจากความดันสูงต่ำเกินไป', parts: '1. เซ็นเซอร์แรงดันสูง, 2. วาล์วขยายตัว' },
+    { code: 'JE', desc: 'ท่อน้ำมันกลับตัน', parts: '1. ท่อน้ำมันกลับ, 2. วาล์วน้ำมัน' },
+    { code: 'JF', desc: 'ท่อน้ำมันกลับรั่ว', parts: '1. ท่อน้ำมันกลับ, 2. ข้อต่อท่อ' },
+    { code: 'b1', desc: 'เซ็นเซอร์อุณหภูมิแวดล้อมภายนอกผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'b2', desc: 'เซ็นเซอร์อุณหภูมิละลายน้ำแข็ง 1 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'b3', desc: 'เซ็นเซอร์อุณหภูมิละลายน้ำแข็ง 2 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'b4', desc: 'เซ็นเซอร์อุณหภูมิทางออกของเหลวของตัวระบายความร้อนย่อยผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'b5', desc: 'เซ็นเซอร์อุณหภูมิทางออกแก๊สของตัวระบายความร้อนย่อยผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'b6', desc: 'เซ็นเซอร์อุณหภูมิท่อเข้าของตัวแยกไอ-ของเหลวผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'b7', desc: 'เซ็นเซอร์อุณหภูมิท่อออกของตัวแยกไอ-ของเหลวผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'b8', desc: 'เซ็นเซอร์ความชื้นภายนอกผิดปกติ', parts: '1. เซ็นเซอร์ความชื้น, 2. แผงวงจรหลักเครื่องนอก' },
+    { code: 'b9', desc: 'เซ็นเซอร์อุณหภูมิแก๊สของตัวแลกเปลี่ยนความร้อนผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'bA', desc: 'เซ็นเซอร์อุณหภูมิน้ำมันกลับ 1 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'bH', desc: 'นาฬิกาของระบบผิดปกติ', parts: '1. แผงวงจรหลักเครื่องนอก, 2. แบตเตอรี่นาฬิกา' },
+    { code: 'bE', desc: 'เซ็นเซอร์อุณหภูมิท่อเข้าคอนเดนเซอร์ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'bF', desc: 'เซ็นเซอร์อุณหภูมิท่อออกคอนเดนเซอร์ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'bJ', desc: 'เซ็นเซอร์แรงดันสูง/ต่ำต่อกลับด้าน', parts: '1. เซ็นเซอร์แรงดันสูง, 2. เซ็นเซอร์แรงดันต่ำ' },
+    { code: 'bP', desc: 'เซ็นเซอร์อุณหภูมิน้ำมันกลับ 2 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'bU', desc: 'เซ็นเซอร์อุณหภูมิน้ำมันกลับ 3 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'bb', desc: 'เซ็นเซอร์อุณหภูมิน้ำมันกลับ 4 ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'bd', desc: 'เซ็นเซอร์อุณหภูมิแก๊สขาเข้าของตัวระบายความร้อนย่อยผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'bn', desc: 'เซ็นเซอร์อุณหภูมิของเหลวขาเข้าของตัวระบายความร้อนย่อยผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. สายไฟเซ็นเซอร์' },
+    { code: 'P0', desc: 'บอร์ดขับของคอมเพรสเซอร์ผิดปกติ', parts: '1. บอร์ดขับ IPM, 2. สายไฟเชื่อมต่อ' },
+    { code: 'P1', desc: 'บอร์ดขับของคอมเพรสเซอร์ทำงานผิดปกติ', parts: '1. บอร์ดขับ IPM, 2. สายสัญญาณ' },
+    { code: 'P2', desc: 'การป้องกันแรงดันไฟเลี้ยงของบอร์ดขับคอมเพรสเซอร์', parts: '1. แหล่งจ่ายไฟ, 2. บอร์ดขับ IPM' },
+    { code: 'P3', desc: 'การป้องกันการรีเซ็ตของโมดูลขับคอมเพรสเซอร์', parts: '1. บอร์ดขับ IPM, 2. แหล่งจ่ายไฟ' },
+    { code: 'P4', desc: 'การป้องกัน PFC ของไดรฟ์คอมเพรสเซอร์', parts: '1. วงจร PFC, 2. บอร์ดขับ IPM' },
+    { code: 'P5', desc: 'การป้องกันกระแสเกินของคอมเพรสเซอร์อินเวอร์เตอร์', parts: '1. บอร์ดขับ IPM, 2. คอมเพรสเซอร์' },
+    { code: 'P6', desc: 'การป้องกันโมดูล IPM ไดรฟ์ของคอมเพรสเซอร์', parts: '1. โมดูล IPM, 2. บอร์ดขับ' },
+    { code: 'P7', desc: 'เซ็นเซอร์อุณหภูมิไดรฟ์ของคอมเพรสเซอร์ผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. บอร์ดขับ' },
+    { code: 'P8', desc: 'การป้องกันอุณหภูมิสูงของโมดูล IPM ไดรฟ์คอมเพรสเซอร์', parts: '1. พัดลมระบายความร้อน, 2. บอร์ดขับ IPM' },
+    { code: 'P9', desc: 'การป้องกันการหลุดซิงโครไนซ์ของคอมเพรสเซอร์อินเวอร์เตอร์', parts: '1. บอร์ดขับ IPM, 2. คอมเพรสเซอร์' },
+    { code: 'PA', desc: 'ชิปหน่วยความจำของไดรฟ์คอมเพรสเซอร์ผิดปกติ', parts: '1. บอร์ดขับ IPM, 2. ชิปหน่วยความจำ' },
+    { code: 'PH', desc: 'การป้องกันแรงดันสูงของบัสบาร์ DC ไดรฟ์คอมเพรสเซอร์', parts: '1. บอร์ดขับ IPM, 2. แหล่งจ่ายไฟ' },
+    { code: 'PC', desc: 'วงจรตรวจจับกระแสของไดรฟ์คอมเพรสเซอร์ผิดปกติ', parts: '1. บอร์ดขับ IPM, 2. เซ็นเซอร์วัดกระแส' },
+    { code: 'PL', desc: 'การป้องกันแรงดันต่ำของบัสบาร์ DC ไดรฟ์คอมเพรสเซอร์', parts: '1. บอร์ดขับ IPM, 2. แหล่งจ่ายไฟ' },
+    { code: 'PE', desc: 'คอมเพรสเซอร์อินเวอร์เตอร์ขาดเฟส', parts: '1. คอมเพรสเซอร์, 2. บอร์ดขับ IPM' },
+    { code: 'PF', desc: 'วงจรชาร์จของไดรฟ์คอมเพรสเซอร์ผิดปกติ', parts: '1. รีเลย์ชาร์จ, 2. ตัวต้านทานชาร์จ' },
+    { code: 'PJ', desc: 'สตาร์ทคอมเพรสเซอร์อินเวอร์เตอร์ไม่สำเร็จ', parts: '1. คอมเพรสเซอร์, 2. บอร์ดขับ IPM' },
+    { code: 'PP', desc: 'การป้องกันกระแส AC ของคอมเพรสเซอร์อินเวอร์เตอร์', parts: '1. บอร์ดขับ IPM, 2. คอมเพรสเซอร์' },
+    { code: 'PU', desc: 'แรงดันไฟฟ้า AC อินพุตของไดรฟ์คอมเพรสเซอร์อินเวอร์เตอร์ผิดปกติ', parts: '1. แหล่งจ่ายไฟ, 2. บอร์ดขับ IPM' },
+    { code: 'H0', desc: 'บอร์ดขับของพัดลมผิดปกติ', parts: '1. บอร์ดขับพัดลม, 2. สายไฟ' },
+    { code: 'H1', desc: 'บอร์ดขับพัดลมทำงานผิดปกติ', parts: '1. บอร์ดขับพัดลม, 2. มอเตอร์พัดลม' },
+    { code: 'H2', desc: 'การป้องกันแรงดันไฟเลี้ยงของบอร์ดขับพัดลม', parts: '1. แหล่งจ่ายไฟ, 2. บอร์ดขับพัดลม' },
+    { code: 'H3', desc: 'การป้องกันการรีเซ็ตของโมดูลขับพัดลม', parts: '1. บอร์ดขับพัดลม, 2. แหล่งจ่ายไฟ' },
+    { code: 'H4', desc: 'การป้องกัน PFC ของไดรฟ์พัดลม', parts: '1. วงจร PFC, 2. บอร์ดขับพัดลม' },
+    { code: 'H5', desc: 'การป้องกันกระแสเกินของพัดลมอินเวอร์เตอร์', parts: '1. บอร์ดขับพัดลม, 2. มอเตอร์พัดลม' },
+    { code: 'H6', desc: 'การป้องกันโมดูล IPM ไดรฟ์ของพัดลม', parts: '1. โมดูล IPM, 2. บอร์ดขับพัดลม' },
+    { code: 'H7', desc: 'เซ็นเซอร์อุณหภูมิไดรฟ์ของพัดลมผิดปกติ', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. บอร์ดขับพัดลม' },
+    { code: 'H8', desc: 'การป้องกันอุณหภูมิสูงของโมดูล IPM ไดรฟ์พัดลม', parts: '1. พัดลมระบายความร้อน, 2. บอร์ดขับ IPM' },
+    { code: 'H9', desc: 'การป้องกันการหลุดซิงโครไนซ์ของพัดลมอินเวอร์เตอร์', parts: '1. บอร์ดขับพัดลม, 2. มอเตอร์พัดลม' },
+    { code: 'HA', desc: 'ชิปหน่วยความจำของไดรฟ์พัดลมเครื่องนอกอินเวอร์เตอร์ผิดปกติ', parts: '1. บอร์ดขับพัดลม, 2. ชิปหน่วยความจำ' },
+    { code: 'HH', desc: 'การป้องกันแรงดันสูงของบัสบาร์ DC ไดรฟ์พัดลม', parts: '1. บอร์ดขับพัดลม, 2. แหล่งจ่ายไฟ' },
+    { code: 'HC', desc: 'วงจรตรวจจับกระแสของไดรฟ์พัดลมผิดปกติ', parts: '1. บอร์ดขับพัดลม, 2. เซ็นเซอร์วัดกระแส' },
+    { code: 'HL', desc: 'การป้องกันแรงดันต่ำของบัสบาร์ไดรฟ์พัดลม', parts: '1. บอร์ดขับพัดลม, 2. แหล่งจ่ายไฟ' },
+    { code: 'HE', desc: 'พัดลมอินเวอร์เตอร์ขาดเฟส', parts: '1. มอเตอร์พัดลม, 2. บอร์ดขับพัดลม' },
+    { code: 'HF', desc: 'วงจรชาร์จของไดรฟ์พัดลมผิดปกติ', parts: '1. รีเลย์ชาร์จ, 2. ตัวต้านทานชาร์จ' },
+    { code: 'HJ', desc: 'สตาร์ทพัดลมอินเวอร์เตอร์ไม่สำเร็จ', parts: '1. มอเตอร์พัดลม, 2. บอร์ดขับพัดลม' },
+    { code: 'HP', desc: 'การป้องกันกระแส AC ของพัดลมอินเวอร์เตอร์', parts: '1. บอร์ดขับพัดลม, 2. มอเตอร์พัดลม' },
+    { code: 'HU', desc: 'แรงดันไฟฟ้า AC อินพุตของไดรฟ์พัดลมอินเวอร์เตอร์ผิดปกติ', parts: '1. แหล่งจ่ายไฟ, 2. บอร์ดขับพัดลม' },
+    { code: 'G0', desc: 'การป้องกันการต่อสายไฟ PV กลับขั้ว', parts: '1. สายไฟ PV, 2. บอร์ด PV' },
+    { code: 'G1', desc: 'การป้องกันการแยกตัวของ PV (Anti-islanding)', parts: '1. บอร์ด PV, 2. อินเวอร์เตอร์' },
+    { code: 'G2', desc: 'การป้องกันกระแสเกิน DC ของ PV', parts: '1. บอร์ด PV, 2. ฟิวส์ DC' },
+    { code: 'G3', desc: 'การผลิตไฟฟ้าของ PV เกินพิกัด', parts: '1. บอร์ด PV, 2. แผงโซล่าเซลล์' },
+    { code: 'G4', desc: 'การป้องกันกระแสรั่วของ PV', parts: '1. บอร์ด PV, 2. สายไฟ PV' },
+    { code: 'G5', desc: 'การป้องกันการขาดเฟสฝั่งกริดไฟฟ้า', parts: '1. แหล่งจ่ายไฟกริด, 2. บอร์ดเชื่อมต่อกริด' },
+    { code: 'G6', desc: 'PV LVRT (การทำงานผ่านแรงดันต่ำของ PV)', parts: '1. บอร์ด PV, 2. ระบบกริด' },
+    { code: 'G7', desc: 'การป้องกันความถี่เกิน/ต่ำของกริด', parts: '1. บอร์ดเชื่อมต่อกริด, 2. ระบบกริด' },
+    { code: 'G8', desc: 'การป้องกันกระแสเกินฝั่งกริดไฟฟ้า', parts: '1. บอร์ดเชื่อมต่อกริด, 2. ฟิวส์' },
+    { code: 'G9', desc: 'การป้องกันโมดูล IPM ไดรฟ์ฝั่งกริดไฟฟ้า', parts: '1. โมดูล IPM, 2. บอร์ดเชื่อมต่อกริด' },
+    { code: 'GA', desc: 'การป้องกันแรงดันอินพุตต่ำ/สูงฝั่งกริดไฟฟ้า', parts: '1. บอร์ดเชื่อมต่อกริด, 2. ระบบกริด' },
+    { code: 'GH', desc: 'การป้องกัน DC/DC ของโฟโตวอลเทอิก', parts: '1. บอร์ด PV, 2. วงจร DC/DC' },
+    { code: 'GC', desc: 'การป้องกันกระแสเกินฮาร์ดแวร์ DC ของโฟโตวอลเทอิก', parts: '1. บอร์ด PV, 2. ฟิวส์ DC' },
+    { code: 'GL', desc: 'การป้องกันกระแสเกินฮาร์ดแวร์ฝั่งกริด', parts: '1. บอร์ดเชื่อมต่อกริด, 2. ฟิวส์' },
+    { code: 'GE', desc: 'การป้องกันแรงดันไฟ PV สูงหรือต่ำ', parts: '1. บอร์ด PV, 2. แผงโซล่าเซลล์' },
+    { code: 'GF', desc: 'การป้องกันความไม่สมดุลศักย์ที่จุดสะเทินของบัส DC', parts: '1. บอร์ดอินเวอร์เตอร์, 2. ตัวเก็บประจุบัส DC' },
+    { code: 'GJ', desc: 'การป้องกันอุณหภูมิสูงของโมดูลฝั่งกริด', parts: '1. พัดลมระบายความร้อน, 2. บอร์ดเชื่อมต่อกริด' },
+    { code: 'GP', desc: 'การป้องกันเซ็นเซอร์อุณหภูมิฝั่งกริด', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. บอร์ดเชื่อมต่อกริด' },
+    { code: 'GU', desc: 'การป้องกันวงจรชาร์จ', parts: '1. รีเลย์ชาร์จ, 2. ตัวต้านทานชาร์จ' },
+    { code: 'Gb', desc: 'การป้องกันรีเลย์ฝั่งกริด', parts: '1. รีเลย์, 2. บอร์ดเชื่อมต่อกริด' },
+    { code: 'Gd', desc: 'การป้องกันกระแสฝั่งกริด', parts: '1. เซ็นเซอร์วัดกระแส, 2. บอร์ดเชื่อมต่อกริด' },
+    { code: 'Gn', desc: 'การป้องกันความต้านทานฉนวน', parts: '1. สายไฟ, 2. บอร์ดอินเวอร์เตอร์' },
+    { code: 'Gy', desc: 'การป้องกันกำลังไฟ (PV)', parts: '1. บอร์ด PV, 2. แผงโซล่าเซลล์' }
+];
+
+/* ==========================================================================
+   ข้อมูล GMV — โหมดตรวจสอบ (Debugging)
+   ========================================================================== */
+const gmvDebugErrors = [
+    { code: 'U0', desc: 'เวลาอุ่นเครื่องของคอมเพรสเซอร์ไม่เพียงพอ', parts: '1. ฮีตเตอร์อุ่นคอมเพรสเซอร์, 2. แผงวงจรหลักเครื่องนอก' },
+    { code: 'U2', desc: 'การตั้งค่ารหัสความจุ/จัมเปอร์แคปของเครื่องนอกผิดพลาด', parts: '1. จัมเปอร์แคป, 2. แผงวงจรหลักเครื่องนอก' },
+    { code: 'U3', desc: 'การป้องกันลำดับเฟสของแหล่งจ่ายไฟ', parts: '1. แหล่งจ่ายไฟ 3 เฟส, 2. บอร์ดตรวจสอบเฟส' },
+    { code: 'U4', desc: 'การป้องกันการขาดสารทำความเย็น', parts: '1. สารทำความเย็น, 2. เซ็นเซอร์แรงดัน' },
+    { code: 'U5', desc: 'ที่อยู่ของบอร์ดขับคอมเพรสเซอร์ผิดพลาด', parts: '1. บอร์ดขับ IPM, 2. การตั้งค่าที่อยู่' },
+    { code: 'U6', desc: 'สัญญาณเตือนเนื่องจากวาล์วผิดปกติ', parts: '1. วาล์วขยายตัว (EXV), 2. มอเตอร์วาล์ว' },
+    { code: 'U8', desc: 'ท่อน้ำยาของเครื่องในผิดปกติ', parts: '1. ท่อน้ำยา, 2. วาล์ว' },
+    { code: 'U9', desc: 'ท่อน้ำยาของเครื่องนอกผิดปกติ', parts: '1. ท่อน้ำยา, 2. วาล์ว' },
+    { code: 'UC', desc: 'การตั้งค่าเครื่องในหลักสำเร็จ', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. รีโมท/แผงควบคุม' },
+    { code: 'UL', desc: 'รหัสสวิตช์ DIP การทำงานฉุกเฉินของคอมเพรสเซอร์ผิดพลาด', parts: '1. คู่มือการตั้งค่า DIP Switch, 2. แผงวงจรหลักเครื่องนอก' },
+    { code: 'UE', desc: 'การชาร์จสารทำความเย็นไม่ถูกต้อง', parts: '1. สารทำความเย็น, 2. เครื่องชาร์จ' },
+    { code: 'UF', desc: 'การระบุเครื่องในของตัวสลับโหมดผิดพลาด', parts: '1. แผงวงจรหลักเครื่องใน, 2. ตัวสลับโหมด' },
+    { code: 'Ud', desc: 'บอร์ดขับของการเชื่อมต่อกริดผิดปกติ', parts: '1. บอร์ดเชื่อมต่อกริด, 2. สายไฟ' },
+    { code: 'Un', desc: 'การสื่อสารระหว่างบอร์ดขับเชื่อมต่อกริดและบอร์ดหลักผิดปกติ', parts: '1. สายสื่อสาร, 2. บอร์ดเชื่อมต่อกริด' },
+    { code: 'Uy', desc: 'การป้องกันอุณหภูมิสูงเกินของโมดูล PV', parts: '1. พัดลมระบายความร้อน, 2. บอร์ด PV' },
+    { code: 'C0', desc: 'การสื่อสารระหว่างเครื่องใน เครื่องนอก และรีโมทแบบมีสายผิดปกติ', parts: '1. สายสื่อสาร, 2. รีโมทแบบมีสาย' },
+    { code: 'C1', desc: 'การสื่อสารระหว่างบอร์ดควบคุมหลักและตัวควบคุม DC-DC ผิดปกติ', parts: '1. สายสื่อสาร, 2. บอร์ด DC-DC' },
+    { code: 'C2', desc: 'การสื่อสารระหว่างบอร์ดควบคุมหลักและไดรฟ์คอมเพรสเซอร์อินเวอร์เตอร์ผิดปกติ', parts: '1. สายสื่อสาร, 2. บอร์ดขับ IPM' },
+    { code: 'C3', desc: 'การสื่อสารระหว่างบอร์ดควบคุมหลักและไดรฟ์พัดลมอินเวอร์เตอร์ผิดปกติ', parts: '1. สายสื่อสาร, 2. บอร์ดขับพัดลม' },
+    { code: 'C4', desc: 'เครื่องในขาดหายไป', parts: '1. สายสื่อสาร, 2. แผงวงจรหลักเครื่องใน' },
+    { code: 'C5', desc: 'สัญญาณเตือนเนื่องจากรหัสโครงการของเครื่องในไม่สอดคล้องกัน', parts: '1. การตั้งค่ารหัสโครงการ, 2. รีโมท/แผงควบคุม' },
+    { code: 'C6', desc: 'สัญญาณเตือนเนื่องจากจำนวนเครื่องนอกไม่สอดคล้องกัน', parts: '1. การตั้งค่าจำนวนเครื่องนอก, 2. สายสื่อสาร' },
+    { code: 'C7', desc: 'การสื่อสารของคอนเวอร์เตอร์ผิดปกติ', parts: '1. บอร์ดคอนเวอร์เตอร์, 2. สายสื่อสาร' },
+    { code: 'C8', desc: 'สถานะฉุกเฉินของคอมเพรสเซอร์', parts: '1. คอมเพรสเซอร์, 2. แผงวงจรหลักเครื่องนอก' },
+    { code: 'C9', desc: 'สถานะฉุกเฉินของพัดลม', parts: '1. มอเตอร์พัดลม, 2. แผงวงจรหลักเครื่องนอก' },
+    { code: 'CA', desc: 'สถานะฉุกเฉินของโมดูล', parts: '1. โมดูลที่เกี่ยวข้อง, 2. แผงวงจรหลัก' },
+    { code: 'CH', desc: 'พิกัดความจุสูงเกินไป', parts: '1. การตั้งค่าความจุ, 2. แผงวงจรหลักเครื่องนอก' },
+    { code: 'CC', desc: 'ไม่มีหน่วยหลัก', parts: '1. การตั้งค่าหน่วยหลัก, 2. สายสื่อสาร' },
+    { code: 'CL', desc: 'อัตราส่วนการจับคู่พิกัดความจุของเครื่องในและเครื่องนอกต่ำเกินไป', parts: '1. การออกแบบระบบ, 2. เครื่องใน/เครื่องนอกที่เข้าคู่กัน' },
+    { code: 'CE', desc: 'การสื่อสารระหว่างตัวสลับโหมดและเครื่องในผิดปกติ', parts: '1. สายสื่อสาร, 2. ตัวสลับโหมด' },
+    { code: 'CF', desc: 'หน่วยควบคุมหลักหลายตัวทำงานผิดปกติ', parts: '1. แผงวงจรหลักเครื่องนอก, 2. การตั้งค่า' },
+    { code: 'CJ', desc: 'รหัสสวิตช์ DIP ที่อยู่ของระบบผิดพลาด', parts: '1. คู่มือการตั้งค่า DIP Switch, 2. แผงวงจรหลัก' },
+    { code: 'CP', desc: 'รีโมทแบบมีสายหลายตัวทำงานผิดปกติ', parts: '1. รีโมทแบบมีสาย, 2. สายไฟ' },
+    { code: 'CU', desc: 'การสื่อสารระหว่างเครื่องในและหลอดรับสัญญาณผิดปกติ', parts: '1. บอร์ดรับสัญญาณ, 2. สายไฟ' },
+    { code: 'Cb', desc: 'การกระจายที่อยู่ IP เกินขอบเขต', parts: '1. การตั้งค่า IP, 2. แผงวงจรหลัก' },
+    { code: 'Cd', desc: 'การสื่อสารระหว่างตัวสลับโหมดและเครื่องนอกผิดปกติ', parts: '1. สายสื่อสาร, 2. ตัวสลับโหมด' },
+    { code: 'Cn', desc: 'เครือข่ายของเครื่องในและเครื่องนอกของตัวสลับโหมดผิดปกติ', parts: '1. สายสื่อสาร, 2. ตัวสลับโหมด' },
+    { code: 'Cy', desc: 'การสื่อสารของตัวสลับโหมดผิดปกติ', parts: '1. ตัวสลับโหมด, 2. สายสื่อสาร' },
+    { code: 'A0', desc: 'ยูนิตกำลังรอการตรวจสอบ', parts: '1. อุปกรณ์ตรวจสอบ, 2. ซอฟต์แวร์' },
+    { code: 'A2', desc: 'การดำเนินการกู้คืนสารทำความเย็นของฝ่ายบริการหลังการขาย', parts: '1. เครื่องกู้คืนสารทำความเย็น, 2. สารทำความเย็น' },
+    { code: 'A3', desc: 'กำลังละลายน้ำแข็ง', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. เซ็นเซอร์อุณหภูมิ' },
+    { code: 'A4', desc: 'การคืนน้ำมัน', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. วาล์วน้ำมัน' },
+    { code: 'A6', desc: 'การตั้งค่าฟังก์ชันปั๊มความร้อน', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'A7', desc: 'การตั้งค่าโหมดเงียบ', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'A8', desc: 'โหมดปั๊มสุญญากาศ', parts: '1. ปั๊มสุญญากาศ, 2. เกจวัด' },
+    { code: 'A9', desc: 'ฟังก์ชัน Set Back', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'AH', desc: 'กำลังทำความร้อน', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. วาล์ว 4 ทาง' },
+    { code: 'AC', desc: 'กำลังทำความเย็น', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. คอมเพรสเซอร์' },
+    { code: 'AL', desc: 'ชาร์จสารทำความเย็นอัตโนมัติ', parts: '1. สารทำความเย็น, 2. วาล์วชาร์จ' },
+    { code: 'AE', desc: 'ชาร์จสารทำความเย็นด้วยตนเอง', parts: '1. สารทำความเย็น, 2. เครื่องชาร์จ' },
+    { code: 'AF', desc: 'พัดลม', parts: '1. มอเตอร์พัดลม, 2. ใบพัด' },
+    { code: 'AJ', desc: 'การแจ้งเตือนการทำความสะอาดฟิลเตอร์', parts: '1. ฟิลเตอร์, 2. รีโมท/แผงควบคุม' },
+    { code: 'AP', desc: 'การยืนยันการตรวจสอบเมื่อสตาร์ทยูนิต', parts: '1. อุปกรณ์ตรวจสอบ, 2. ซอฟต์แวร์' },
+    { code: 'AU', desc: 'การหยุดฉุกเฉินระยะไกล', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'Ab', desc: 'การหยุดฉุกเฉินของการทำงาน', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'Ad', desc: 'การจำกัดการทำงาน', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'An', desc: 'สถานะล็อคเด็ก', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'Ay', desc: 'สถานะการปิดกั้น', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'n0', desc: 'การตั้งค่าการทำงาน SE ของระบบ', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'n1', desc: 'การตั้งค่ารอบการละลายน้ำแข็ง K1', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'n3', desc: 'การบังคับละลายน้ำแข็ง', parts: '1. รีโมท/แผงควบคุม, 2. เซ็นเซอร์อุณหภูมิ' },
+    { code: 'n4', desc: 'การตั้งค่าขีดจำกัดความจุสูงสุด/ความจุเอาต์พุต', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'n5', desc: 'การบังคับเปลี่ยนรหัสวิศวกรรมของเครื่องใน', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'n6', desc: 'การสอบถามข้อผิดพลาด', parts: '1. รีโมท/แผงควบคุม, 2. ซอฟต์แวร์' },
+    { code: 'n7', desc: 'การสอบถามพารามิเตอร์', parts: '1. รีโมท/แผงควบคุม, 2. ซอฟต์แวร์' },
+    { code: 'n8', desc: 'การสอบถามรหัสโครงการของเครื่องใน', parts: '1. รีโมท/แผงควบคุม, 2. ซอฟต์แวร์' },
+    { code: 'n9', desc: 'ตรวจสอบจำนวนเครื่องในบนสาย', parts: '1. รีโมท/แผงควบคุม, 2. สายสื่อสาร' },
+    { code: 'nA', desc: 'ยูนิตปั๊มความร้อน', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. วาล์ว 4 ทาง' },
+    { code: 'nH', desc: 'ยูนิตทำความร้อนเท่านั้น', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. ฮีตเตอร์' },
+    { code: 'nC', desc: 'ยูนิตทำความเย็นเท่านั้น', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. คอมเพรสเซอร์' },
+    { code: 'nE', desc: 'รหัสติดลบ', parts: '1. ซอฟต์แวร์, 2. แผงวงจรหลัก' },
+    { code: 'nF', desc: 'รุ่นพัดลม', parts: '1. มอเตอร์พัดลม, 2. แผงวงจรหลัก' },
+    { code: 'nJ', desc: 'การป้องกันอุณหภูมิสูงเมื่อทำความร้อน', parts: '1. เซ็นเซอร์อุณหภูมิ, 2. แผงวงจรหลัก' },
+    { code: 'nU', desc: 'ยกเลิกคำสั่งปิดกั้นระยะไกลของเครื่องใน', parts: '1. รีโมท/แผงควบคุม, 2. แผงวงจรหลัก' },
+    { code: 'nb', desc: 'การสอบถามบาร์โค้ด', parts: '1. รีโมท/แผงควบคุม, 2. ซอฟต์แวร์' },
+    { code: 'nn', desc: 'การแก้ไขความยาวของท่อเชื่อมต่อของเครื่องนอก', parts: '1. ท่อน้ำยา, 2. รีโมท/แผงควบคุม' },
+    { code: 'qA', desc: 'สถานะการกู้คืนความร้อน', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. ตัวสลับโหมด' },
+    { code: 'qH', desc: 'ทำความร้อนเป็นหลัก', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. วาล์ว 4 ทาง' },
+    { code: 'qC', desc: 'ทำความเย็นเป็นหลัก', parts: '1. ไม่ต้องเปลี่ยนอะไหล่, 2. คอมเพรสเซอร์' },
+    { code: 'qP', desc: 'การตั้งค่าภูมิภาคส่งออกสำหรับยูนิต PV VRF', parts: '1. รีโมท/แผงควบคุม, 2. ซอฟต์แวร์' },
+    { code: 'qU', desc: 'การกำหนดค่าแรงดันกริด', parts: '1. รีโมท/แผงควบคุม, 2. แหล่งจ่ายไฟ' }
+];
+/* ===== ตารางพารามิเตอร์ GMV (ข้อความเดิมจากไฟล์ต้นฉบับ) ===== */
+const GMV_PARAMS = [{"no": 1, "groupStart": true, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "อุณหภูมิแวดล้อมภายนอก", "unit": "°C", "ref": "—"}, {"no": 2, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "อุณหภูมิท่อจ่ายของคอมเพรสเซอร์อินเวอร์เตอร์ 1", "unit": "°C", "ref": "• เมื่อคอมเพรสเซอร์เริ่มทำงาน อุณหภูมิท่อจ่ายหรือฝาครอบต้องอยู่ระหว่าง 70~95°C และสูงกว่าอุณหภูมิความดันสูงของระบบอย่างน้อย 10°C\n• เมื่อคอมเพรสเซอร์ 2 หยุดทำงาน อุณหภูมิท่อจ่ายของคอมเพรสเซอร์ 2 จะใกล้เคียงกับอุณหภูมิแวดล้อม", "refSpan": 4}, {"no": 3, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "อุณหภูมิฝาครอบบนของคอมเพรสเซอร์อินเวอร์เตอร์ 1", "unit": "°C", "ref": null}, {"no": 4, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "อุณหภูมิท่อจ่ายของคอมเพรสเซอร์อินเวอร์เตอร์ 2", "unit": "°C", "ref": null}, {"no": 5, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "อุณหภูมิฝาครอบบนของคอมเพรสเซอร์อินเวอร์เตอร์ 2", "unit": "°C", "ref": null}, {"no": 6, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "อุณหภูมิละลายน้ำแข็ง 1", "unit": "°C", "ref": "ในโหมดทำความเย็น อุณหภูมิละลายน้ำแข็ง 1 จะต่ำกว่าความดันสูงของระบบ 5~11°C"}, {"no": 7, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "ความดันสูงของระบบ", "unit": "°C", "ref": "• ความดันสูงปกติอยู่ระหว่าง 20~55°C ขึ้นอยู่กับอุณหภูมิแวดล้อมและความสามารถในการทำความเย็น\n• ค่าความดันสูงมักสูงกว่าอุณหภูมิแวดล้อม 10~40°C\n• เมื่ออุณหภูมิแวดล้อม 25~35°C ความดันสูงในโหมดทำความเย็นจะอยู่ที่ 44~53°C"}, {"no": 8, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "ความดันต่ำของระบบ", "unit": "°C", "ref": "เมื่ออุณหภูมิแวดล้อม 25~35°C ความดันต่ำในโหมดทำความเย็นจะอยู่ที่ 0~8°C"}, {"no": 9, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "ความถี่การทำงานของคอมเพรสเซอร์อินเวอร์เตอร์", "unit": "Hz", "ref": "แปรผันตั้งแต่ 20Hz ถึง 100Hz (หากบังคับรัน 120Hz จะเกินค่าปกติ)"}, {"no": 10, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "อุณหภูมิโมดูล IPM ของคอมเพรสเซอร์อินเวอร์เตอร์", "unit": "°C", "ref": "เมื่ออุณหภูมิแวดล้อมต่ำกว่า 35°C อุณหภูมิ IPM จะต่ำกว่า 85°C (สูงสุดไม่เกิน 95°C)"}, {"no": 11, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "แรงดันบัสของคอมเพรสเซอร์อินเวอร์เตอร์", "unit": "V", "ref": "แรงดันบัสปกติ = 1.414 เท่าของแรงดันไฟเลี้ยง (เช่น 3 เฟส 390V จะได้ 390V×1.414=551V) หากคลาดเคลื่อน ±15V ถือว่าปกติ"}, {"no": 12, "group": "พารามิเตอร์ระบบ (เครื่องนอก)", "name": "ความถี่การทำงานของมอเตอร์พัดลม", "unit": "Hz", "ref": "ปรับตามความดันระบบ 0~65Hz"}, {"no": 13, "groupStart": true, "group": "พารามิเตอร์ระบบ (เครื่องใน)", "name": "อุณหภูมิแวดล้อมของเครื่องใน", "unit": "°C", "ref": "—"}, {"no": 14, "group": "พารามิเตอร์ระบบ (เครื่องใน)", "name": "อุณหภูมิท่อเข้าของคอยล์เย็น", "unit": "°C", "ref": "ในโหมดทำความเย็น อุณหภูมิท่อเข้าจะต่ำกว่าอุณหภูมิแวดล้อม 1~7°C"}, {"no": 15, "group": "พารามิเตอร์ระบบ (เครื่องใน)", "name": "อุณหภูมิท่อออกของคอยล์เย็น", "unit": "°C", "ref": "—"}, {"no": 16, "group": "พารามิเตอร์ระบบ (เครื่องใน)", "name": "มุมเปิดวาล์วขยายตัว (EXV) ของเครื่องใน", "unit": "PLS", "ref": "ปรับมุมเปิดอัตโนมัติ 200~2000PLS หรือ 70~480PLS"}, {"no": 17, "group": "พารามิเตอร์การสื่อสาร", "name": "ข้อมูลการสื่อสาร", "unit": "—", "ref": "จำนวนเครื่องในและเครื่องนอกที่ตรวจพบต้องตรงกับจำนวนจริง ไม่มีข้อผิดพลาดในการสื่อสาร"}, {"no": 18, "group": "ระบบระบายน้ำ", "name": "—", "unit": "—", "ref": "เครื่องในต้องระบายน้ำออกได้หมดและราบรื่น ท่อน้ำทิ้งต้องไม่ย้อนกลับ"}, {"no": 19, "group": "อื่นๆ", "name": "—", "unit": "°C", "ref": "คอมเพรสเซอร์และพัดลมเครื่องใน/เครื่องนอก ต้องไม่มีเสียงผิดปกติ ทำงานได้ตามปกติ"}];
+</script>
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const RM = matchMedia('(prefers-reduced-motion: reduce)');
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const I = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const IC = {
+  x: I('<path d="M6 6l12 12M18 6 6 18"/>'), copy: I('<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>'),
+  plus: I('<path d="M12 5v14M5 12h14"/>'), check: I('<path d="m5 12.5 4.5 4.5L19 7.5"/>'), chev: I('<path d="m9 6 6 6-6 6"/>'),
+  share: I('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>'),
+  sun: I('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+  moon: I('<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>'), trash: I('<path d="M4 7h16M10 11v6M14 11v6M5 7l1 13h12l1-13M9 7V4h6v3"/>')
+};
+
+/* ---------- systems & kinds ---------- */
+const SYS = {
+  rac:  { n: 'RAC',  sub: 'แอร์บ้านอินเวอร์เตอร์' },
+  lcac: { n: 'LCAC', sub: 'U-Match' },
+  gmvI: { n: 'GMV',  sub: 'รหัสเครื่องใน' },
+  gmvO: { n: 'GMV',  sub: 'รหัสเครื่องนอก' },
+  gmvD: { n: 'GMV',  sub: 'โหมดตรวจสอบ & สถานะ' }
+};
+const SYS_ORDER = ['rac', 'lcac', 'gmvI', 'gmvO', 'gmvD'];
+const KINDS = {
+  comm:   { n: 'การสื่อสาร', c: 'var(--k-comm)' },
+  sensor: { n: 'เซ็นเซอร์', c: 'var(--k-sensor)' },
+  prot:   { n: 'การป้องกัน', c: 'var(--k-prot)' },
+  fault:  { n: 'ขัดข้อง / ตั้งค่าผิด', c: 'var(--k-fault)' },
+  status: { n: 'สถานะ / โหมด', c: 'var(--k-status)' }
+};
+function classify(t, extra) {
+  if (/ไม่ใช่รหัสข้อผิดพลาด/.test(extra)) return 'status';
+  if (/สื่อสาร|เครือข่าย|ที่อยู่|IP(?!M)/.test(t)) return 'comm';
+  if (/เซ็นเซอร์/.test(t)) return 'sensor';
+  const neg = /ผิด|ขัดข้อง|ขัดแย้ง|ไม่สอดคล้อง|ไม่เพียงพอ|ไม่พบ|ไม่เข้าคู่|ไม่สำเร็จ|ไม่มี|ไม่ถูกต้อง|ไม่สัมพันธ์|ขาด|ตัน|รั่ว|เกิน|สัญญาณเตือน/.test(t);
+  if (/^การสอบถาม/.test(t)) return 'status';
+  if (!neg && /^(สถานะ|กำลัง|ยูนิต|ชาร์จสารทำความเย็น|พัดลม$|ทำความ(ร้อน|เย็น)เป็นหลัก|ฟังก์ชัน|การบังคับ|การแจ้งเตือน|การยืนยัน|การหยุดฉุกเฉิน|การจำกัด|รหัสติดลบ|รุ่นพัดลม|ยกเลิก|การแก้ไข|การคืนน้ำมัน|การดำเนินการ|ตรวจสอบจำนวน|การกำหนดค่า|การตั้งค่า|โหมด|การละลายน้ำแข็ง)/.test(t)) return 'status';
+  if (/ป้องกัน/.test(t)) return 'prot';
+  return 'fault';
+}
+const tokensOf = code => String(code).split('/').map(s => s.replace(/\(.*?\)/g, '').trim()).filter(s => /^[0-9A-Za-z]{1,3}$/.test(s));
+const stripNum = s => s.trim().replace(/^\d+\.\s*/, '').replace(/,\s*$/, '').trim();
+const splitGmvParts = str => String(str).split(/,\s*(?=\d+\.\s?)/).map(s => s.trim()).filter(Boolean);   // same rule as the original page
+function splitCause(s) {
+  if (/(^|\s)\d+\.\s/.test(s)) return s.split(/\s+(?=\d+\.\s)/).map(stripNum).filter(Boolean);
+  return s.split(',').map(x => x.trim()).filter(Boolean);
+}
+
+/* ---------- unified index (data is read-only) ---------- */
+const E = [];
+const add = (sys, i, code, title, causes, parts, extra) => {
+  const tk = tokensOf(code);
+  E.push({ id: `${sys}-${i}`, sys, code, tk, disp: tk[0] || '--', title, causes, parts, kind: classify(title, extra || ''),
+    hay: (code + ' ' + title + ' ' + (extra || '') + ' ' + parts.join(' ')).toLowerCase() });
+};
+racErrorCodes.forEach((o, i) => add('rac', i, o.code, o.name, o.causes.split(',').map(c => c.trim()).filter(Boolean), o.parts.slice(), o.causes));
+lcacErrorCodesData.forEach((o, i) => add('lcac', i, o.code, o.meaning, splitCause(o.cause), o.parts.slice(), o.cause));
+gmvIndoorErrors.forEach((o, i) => add('gmvI', i, o.code, o.desc, [], splitGmvParts(o.parts).map(stripNum), ''));
+gmvOutdoorErrors.forEach((o, i) => add('gmvO', i, o.code, o.desc, [], splitGmvParts(o.parts).map(stripNum), ''));
+gmvDebugErrors.forEach((o, i) => add('gmvD', i, o.code, o.desc, [], splitGmvParts(o.parts).map(stripNum), ''));
+const byId = Object.fromEntries(E.map(e => [e.id, e]));
+
+/* ---------- state ---------- */
+const S = { q: '', sys: 'all', gsub: 'all', kind: 'all', checks: {}, pick: store.get('gree-erc-pick', []), recent: store.get('gree-erc-recent', []) };
+
+/* ---------- 7-segment display ---------- */
+const SEGP = {
+  a: '10,3 50,3 55,8 50,13 10,13 5,8', b: '53,10 58,15 58,45 53,50 48,45 48,15', c: '53,50 58,55 58,85 53,90 48,85 48,55',
+  d: '10,87 50,87 55,92 50,97 10,97 5,92', e: '7,50 12,55 12,85 7,90 2,85 2,55', f: '7,10 12,15 12,45 7,50 2,45 2,15', g: '10,45 50,45 55,50 50,55 10,55 5,50'
+};
+const MAP = { '0': 'abcdef', '1': 'bc', '2': 'abdeg', '3': 'abcdg', '4': 'bcfg', '5': 'acdfg', '6': 'acdefg', '7': 'abc', '8': 'abcdefg', '9': 'abcdfg',
+  A: 'abcefg', b: 'cdefg', C: 'adef', c: 'deg', d: 'bcdeg', E: 'adefg', F: 'aefg', G: 'acdef', H: 'bcefg', h: 'cefg', J: 'bcde', L: 'def',
+  n: 'ceg', o: 'cdeg', O: 'abcdef', P: 'abefg', q: 'abcfg', r: 'eg', U: 'bcdef', u: 'cde', y: 'bcdfg', '-': 'g', '8.': 'abcdefg' };
+const segsFor = ch => MAP[ch] ?? MAP[ch.toLowerCase()] ?? MAP[ch.toUpperCase()] ?? '';
+const digitSVG = () => `<svg class="dg" viewBox="0 0 60 100">${Object.entries(SEGP).map(([k, p]) => `<polygon data-s="${k}" points="${p}"/>`).join('')}</svg>`;
+function setDisplay(str, root = $('#digits')) {
+  const chars = [...String(str)].slice(0, 3);
+  while (chars.length < 2) chars.unshift(' ');
+  if (root.children.length !== chars.length) root.innerHTML = chars.map(digitSVG).join('');
+  [...root.children].forEach((svg, di) => {
+    const on = segsFor(chars[di]);
+    [...svg.children].forEach((p, si) => {
+      p.style.transitionDelay = RM.matches ? '0ms' : `${(di * 7 + si) * 14}ms`;
+      p.classList.toggle('on', on.includes(p.dataset.s));
+    });
+  });
+}
+function mini7(str) {
+  const chars = [...String(str)].slice(0, 3);
+  return `<div class="big7" aria-hidden="true">${chars.map(ch => { const on = segsFor(ch); return `<svg class="dg" viewBox="0 0 60 100">${Object.entries(SEGP).map(([k, p]) => `<polygon points="${p}" class="${on.includes(k) ? 'on' : ''}"/>`).join('')}</svg>`; }).join('')}</div>`;
+}
+
+/* ---------- keypad ---------- */
+const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'A', 'b', 'C', 'd', 'E', 'F', 'G', 'H', 'J', 'L', 'n', 'o', 'P', 'q', 'r', 'U', 'y'];
+$('#pad').style.gridTemplateColumns = 'repeat(6,1fr)';
+$('#pad').innerHTML = KEYS.map(k => `<button type="button" class="key${/[a-z]/.test(k) ? ' lc' : ''}" data-k="${k}" aria-label="ปุ่ม ${k}">${k}</button>`).join('')
+  + `<button type="button" class="key fn" data-k="back" aria-label="ลบ">⌫</button><button type="button" class="key fn" data-k="clear" style="grid-column:span 2">ล้าง</button>`;
+$('#pad').addEventListener('click', e => {
+  const b = e.target.closest('[data-k]'); if (!b) return;
+  const k = b.dataset.k, q = $('#q');
+  const codeLike = /^[0-9A-Za-z]{0,3}$/.test(q.value);
+  if (k === 'back') q.value = q.value.slice(0, -1);
+  else if (k === 'clear') q.value = '';
+  else q.value = (codeLike ? q.value : '').slice(0, 2) + k;
+  if (navigator.vibrate) try { navigator.vibrate(8); } catch (er) {}
+  onQuery();
+});
+
+/* ---------- search ---------- */
+function matches(q) {
+  const raw = q.trim(); if (!raw) return E.map(e => ({ e, s: 3 }));
+  const Q = raw.toUpperCase().replace(/\s+/g, ''), low = raw.toLowerCase();
+  const out = [];
+  for (const e of E) {
+    let s = 99;
+    if (e.tk.some(t => t.toUpperCase() === Q)) s = 0;
+    else if (Q.length <= 2 && e.tk.some(t => t.toUpperCase().startsWith(Q))) s = 1;
+    else if (e.hay.includes(low)) s = 2;
+    if (s < 99) out.push({ e, s });
+  }
+  return out;
+}
+const inSys = e => S.sys === 'all' || (S.sys === 'gmv' ? e.sys.startsWith('gmv') && (S.gsub === 'all' || e.sys === S.gsub) : e.sys === S.sys);
+function hl(text, q) {
+  const t = esc(text); q = q.trim(); if (!q || q.length < 2) return t;
+  const i = text.toLowerCase().indexOf(q.toLowerCase()); if (i < 0) return t;
+  return esc(text.slice(0, i)) + '<mark>' + esc(text.slice(i, i + q.length)) + '</mark>' + esc(text.slice(i + q.length));
+}
+
+function render() {
+  const all = matches(S.q);
+  // counts for system segment (ignoring the system filter, honouring kind)
+  const kOk = r => S.kind === 'all' || r.e.kind === S.kind;
+  const cSys = { all: 0, rac: 0, lcac: 0, gmv: 0, gmvI: 0, gmvO: 0, gmvD: 0 };
+  all.filter(kOk).forEach(r => { cSys.all++; if (r.e.sys.startsWith('gmv')) { cSys.gmv++; cSys[r.e.sys]++; } else cSys[r.e.sys]++; });
+  segRender('#sysSeg', [['all', 'ทั้งหมด'], ['rac', 'RAC'], ['lcac', 'LCAC'], ['gmv', 'GMV']], S.sys, cSys, v => { S.sys = v; if (v !== 'gmv') S.gsub = 'all'; render(); });
+  $('#gmvSeg').hidden = S.sys !== 'gmv';
+  if (S.sys === 'gmv') segRender('#gmvSeg', [['all', 'ทุกหมวด'], ['gmvI', 'เครื่องใน'], ['gmvO', 'เครื่องนอก'], ['gmvD', 'ตรวจสอบ & สถานะ']], S.gsub, cSys, v => { S.gsub = v; render(); }, true);
+  // kind chips with counts (honour system filter)
+  const sysRows = all.filter(r => inSys(r.e));
+  const ck = { all: sysRows.length }; Object.keys(KINDS).forEach(k => ck[k] = sysRows.filter(r => r.e.kind === k).length);
+  $('#kinds').innerHTML = [['all', 'ทุกประเภท', 'var(--ink)'], ...Object.entries(KINDS).map(([k, v]) => [k, v.n, v.c])]
+    .map(([k, n, c]) => `<button type="button" class="kind" data-kind="${k}" style="--c:${c}" aria-pressed="${S.kind === k}">${k === 'all' ? '' : '<i></i>'}${n} <span style="color:var(--ink-3);font-family:var(--f-d)">${ck[k]}</span></button>`).join('');
+  // results
+  const rows = sysRows.filter(kOk).sort((a, b) => a.s - b.s || SYS_ORDER.indexOf(a.e.sys) - SYS_ORDER.indexOf(b.e.sys));
+  $('#meta').textContent = S.q.trim() ? `พบ ${rows.length} รายการสำหรับ "${S.q.trim()}"` : `แสดง ${rows.length} จาก ${E.length} รหัส`;
+  if (!rows.length) {
+    $('#results').innerHTML = `<div class="empty"><b>ไม่พบรหัส "${esc(S.q.trim())}"</b>ตรวจตัวอักษรบนจออีกครั้ง (เช่น 0 กับ o, b กับ 6) หรือเปลี่ยนตัวกรองระบบ/ประเภทเป็นทั้งหมด</div>`;
+  } else {
+    const exactFirst = S.q.trim() && rows[0].s <= 1;
+    let html = '';
+    if (exactFirst) {
+      html += `<div class="list">${rows.filter(r => r.s <= 1).map(r => rowHTML(r.e, true)).join('')}</div>`;
+      const rest = rows.filter(r => r.s > 1);
+      if (rest.length) html += `<div class="grp-h"><h2>ข้อความที่เกี่ยวข้อง</h2><span>${rest.length} รายการ</span></div><div class="list">${rest.map(r => rowHTML(r.e)).join('')}</div>`;
+    } else {
+      for (const sys of SYS_ORDER) {
+        const g = rows.filter(r => r.e.sys === sys); if (!g.length) continue;
+        html += `<div class="grp-h"><h2>${SYS[sys].n} ${sys.startsWith('gmv') ? SYS[sys].sub : ''}</h2><span>${SYS[sys].n === 'GMV' ? '' : SYS[sys].sub + ' · '}${g.length} รหัส</span></div><div class="list">${g.map(r => rowHTML(r.e)).join('')}</div>`;
+      }
+    }
+    $('#results').innerHTML = html;
+  }
+  updateLCD(all);
+}
+function rowHTML(e, showSys) {
+  const k = KINDS[e.kind];
+  return `<button type="button" class="row" data-open="${e.id}">
+    <span class="code${e.disp === '--' || e.code.length > 4 ? ' long' : ''}">${esc(e.tk.length ? e.tk.join(' / ') : e.code)}</span>
+    <span class="row-t"><b>${hl(e.title, S.q)}</b><span class="row-m">${showSys || S.sys === 'all' ? `<span>${SYS[e.sys].n}${e.sys.startsWith('gmv') ? ' ' + SYS[e.sys].sub : ''}</span>` : ''}<span class="kd" style="--c:${k.c}"><i></i>${k.n}</span>${e.causes.length ? `<span>${e.causes.length} สาเหตุ</span>` : ''}<span>อะไหล่ ${e.parts.length} รายการ</span></span></span>
+    ${IC.chev.replace('<svg', '<svg class="chev"')}</button>`;
+}
+function segRender(sel, items, cur, counts, onPick, sub) {
+  const el = $(sel);
+  el.innerHTML = `<span class="ind"></span>` + items.map(([v, n]) => `<button type="button" data-v="${v}" aria-pressed="${v === cur}">${n}<span class="n">${sub && v === 'all' ? counts.gmv : counts[v]}</span></button>`).join('');
+  el.onclick = e => { const b = e.target.closest('[data-v]'); if (b && b.dataset.v !== cur) onPick(b.dataset.v); };
+  moveInd(el);
+}
+function moveInd(el) {
+  const sel = el.querySelector('[aria-pressed="true"]'), ind = el.querySelector('.ind'); if (!sel || !ind) return;
+  const prev = el._x; ind.style.transition = prev == null ? 'none' : '';
+  if (prev != null) { ind.style.width = el._w + 'px'; ind.style.transform = `translateX(${prev}px)`; ind.getBoundingClientRect(); ind.style.transition = ''; }
+  ind.style.width = sel.offsetWidth + 'px'; ind.style.transform = `translateX(${sel.offsetLeft}px)`;
+  el._x = sel.offsetLeft; el._w = sel.offsetWidth;
+}
+$('#kinds').addEventListener('click', e => { const b = e.target.closest('[data-kind]'); if (b) { S.kind = b.dataset.kind; render(); } });
+
+/* LCD readout */
+function updateLCD(all) {
+  const raw = S.q.trim(), msg = $('#lcdMsg');
+  const codeLike = /^[0-9A-Za-z]{1,3}$/.test(raw);
+  const exact = codeLike ? all.filter(r => r.s === 0).map(r => r.e) : [];
+  $('#ledRun').classList.add('on');
+  $('#ledErr').classList.toggle('on', exact.length > 0 && exact.some(e => e.kind !== 'status'));
+  if (!raw) { setDisplay('--'); msg.innerHTML = 'กดรหัสที่เห็นบนหน้าจอแอร์'; return; }
+  if (codeLike) {
+    setDisplay(raw);
+    if (exact.length) {
+      msg.innerHTML = exact.slice(0, 3).map(e => `<button type="button" data-open="${e.id}">${SYS[e.sys].n}${e.sys.startsWith('gmv') ? ' ' + SYS[e.sys].sub.replace('รหัส', '') : ''}</button> <b>${esc(e.title)}</b>`).join('<br>') + (exact.length > 3 ? `<br>และอีก ${exact.length - 3} ระบบ` : '');
+    } else {
+      const pre = all.filter(r => r.s === 1).length;
+      msg.innerHTML = pre ? `ขึ้นต้นด้วย <b>${esc(raw)}</b> มี ${pre} รหัส กดตัวถัดไป` : `ไม่พบรหัส <b>${esc(raw)}</b>`;
+    }
+  } else { setDisplay('--'); msg.innerHTML = `ค้นจากข้อความ พบ <b>${all.length}</b> รายการ`; }
+}
+
+let qT;
+function onQuery() {
+  S.q = $('#q').value;
+  $('#qClr').hidden = !S.q;
+  clearTimeout(qT); qT = setTimeout(render, /^[0-9A-Za-z]{0,3}$/.test(S.q.trim()) ? 0 : 90);
+}
+$('#q').addEventListener('input', onQuery);
+$('#qClr').addEventListener('click', () => { $('#q').value = ''; onQuery(); $('#q').focus(); });
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement !== $('#q') && !e.target.closest('input,textarea') && !document.querySelector('dialog[open]')) { e.preventDefault(); $('#q').focus(); }
+});
+// physical-key feedback on the virtual keypad
+document.addEventListener('keydown', e => {
+  if (document.activeElement !== $('#q')) return;
+  const key = $$('#pad [data-k]').find(b => b.dataset.k.toUpperCase() === e.key.toUpperCase()) || (e.key === 'Backspace' ? $('#pad [data-k="back"]') : null);
+  if (key) { key.classList.add('hit'); setTimeout(() => key.classList.remove('hit'), 110); }
+});
+
+/* ---------- detail ---------- */
+function openDlg(d) { d.classList.remove('closing'); if (!d.open) d.showModal(); }
+function closeDlg(d) {
+  if (!d.open) return;
+  if (RM.matches) { d.close(); return; }
+  d.classList.add('closing'); setTimeout(() => { d.close(); d.classList.remove('closing'); }, 210);
+}
+$$('dialog').forEach(d => {
+  d.addEventListener('click', e => { if (e.target === d) closeDlg(d); });
+  d.addEventListener('cancel', e => { e.preventDefault(); closeDlg(d); });
+  d.addEventListener('close', () => { if (d.id === 'dlg' && location.hash) history.replaceState(null, '', location.pathname + location.search); });
+});
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-close]'); if (c) { closeDlg(c.closest('dialog')); return; }
+  const o = e.target.closest('[data-open]'); if (o) openDetail(o.dataset.open);
+});
+function sysLabel(e) { return `${SYS[e.sys].n} ${SYS[e.sys].sub}`; }
+function openDetail(id) {
+  const e = byId[id]; if (!e) return;
+  S.recent = [id, ...S.recent.filter(x => x !== id)].slice(0, 8); store.set('gree-erc-recent', S.recent); renderRecent();
+  const k = KINDS[e.kind];
+  const xref = e.tk.length ? E.filter(x => x !== e && x.tk.some(t => e.tk.some(u => u.toUpperCase() === t.toUpperCase()))) : [];
+  const ch = S.checks[id] || (S.checks[id] = e.causes.map(() => false));
+  const done = ch.filter(Boolean).length;
+  $('#dlgBody').innerHTML = `
+    <div class="sh">${e.tk.length ? mini7(e.disp) : ''}<div class="grow"><h3>${esc(e.title)}</h3>
+      <div class="meta"><span class="tag">${esc(sysLabel(e))}</span><span class="tag k" style="--c:${k.c}">${k.n}</span><span class="tag">รหัส ${esc(e.code)}</span></div></div>
+      <button class="ib" data-close aria-label="ปิด">${IC.x}</button></div>
+    <div class="sb">
+      ${xref.length ? `<div class="xref"><b>รหัส ${esc(e.disp)} มีในระบบอื่นด้วย ความหมายอาจต่างกัน</b> ตรวจรุ่นเครื่องก่อนเปลี่ยนอะไหล่${xref.map(x => `<button type="button" data-open="${x.id}"><span>${esc(sysLabel(x))}</span> ${esc(x.title)}</button>`).join('')}</div>` : ''}
+      ${e.causes.length ? `<div class="h4">สาเหตุที่เป็นไปได้ <small id="chkTxt">ตรวจแล้ว ${done}/${e.causes.length}</small></div>
+        <div class="prog"><i id="chkBar" style="transform:scaleX(${(done / e.causes.length).toFixed(3)})"></i></div>
+        <ul class="checks">${e.causes.map((c, i) => `<li><label><input type="checkbox" data-chk="${i}" ${ch[i] ? 'checked' : ''}><span>${esc(c)}</span></label></li>`).join('')}</ul>` : ''}
+      <div class="h4">อะไหล่ที่แนะนำให้เตรียม <small>${e.sys.startsWith('gmv') ? 'เรียงตามลำดับที่ควรตรวจ' : e.parts.length + ' รายการ'}</small></div>
+      <div class="parts">${e.parts.map((p, i) => `<div class="part">${e.sys.startsWith('gmv') ? `<b style="font-family:var(--f-d);color:var(--ink-3)">${i + 1}.</b>` : ''}<span>${esc(p)}</span><button type="button" data-pick="${i}" aria-pressed="${inPick(p)}">${inPick(p) ? IC.check + 'ในใบเบิก' : IC.plus + 'เบิก'}</button></div>`).join('')}</div>
+      <div class="acts"><button class="btn btn-p" type="button" id="pickAll">${IC.plus}เบิกอะไหล่ทั้งหมด</button><button class="btn btn-l" type="button" id="copyOne">${IC.copy}คัดลอกส่ง LINE</button>${navigator.share ? `<button class="btn btn-l" type="button" id="shareOne">${IC.share}แชร์</button>` : ''}</div>
+    </div>`;
+  const body = $('#dlgBody');
+  body.onchange = ev => {
+    const c = ev.target.closest('[data-chk]'); if (!c) return;
+    ch[+c.dataset.chk] = c.checked; const d = ch.filter(Boolean).length;
+    $('#chkTxt').textContent = `ตรวจแล้ว ${d}/${e.causes.length}`; $('#chkBar').style.transform = `scaleX(${(d / e.causes.length).toFixed(3)})`;
+    if (d === e.causes.length) toast('ตรวจครบทุกสาเหตุแล้ว');
+  };
+  body.onclick = ev => {
+    const pb = ev.target.closest('[data-pick]');
+    if (pb) { const p = e.parts[+pb.dataset.pick]; togglePick(p, e); const on = inPick(p); pb.setAttribute('aria-pressed', on); pb.innerHTML = on ? IC.check + 'ในใบเบิก' : IC.plus + 'เบิก'; return; }
+    if (ev.target.closest('#pickAll')) { let n = 0; e.parts.forEach(p => { if (!inPick(p)) { togglePick(p, e, true); n++; } }); $$('[data-pick]', body).forEach(b => { b.setAttribute('aria-pressed', 'true'); b.innerHTML = IC.check + 'ในใบเบิก'; }); toast(n ? `เพิ่ม ${n} รายการลงใบเบิก` : 'อะไหล่ทั้งหมดอยู่ในใบเบิกแล้ว'); return; }
+    if (ev.target.closest('#copyOne')) { copyText(summary(e)).then(ok => toast(ok ? 'คัดลอกแล้ว วางใน LINE ได้เลย' : 'คัดลอกไม่สำเร็จ')); return; }
+    if (ev.target.closest('#shareOne')) { navigator.share({ title: `${SYS[e.sys].n} ${e.code}`, text: summary(e) }).catch(() => {}); }
+  };
+  history.replaceState(null, '', '#' + id);
+  openDlg($('#dlg'));
+}
+function summary(e) {
+  const lines = [`[${sysLabel(e)}] รหัส ${e.code}`, e.title];
+  if (e.causes.length) { lines.push('', 'สาเหตุที่เป็นไปได้:'); e.causes.forEach((c, i) => lines.push(`${i + 1}. ${c}`)); }
+  lines.push('', 'อะไหล่ที่แนะนำ:'); e.parts.forEach((p, i) => lines.push(`${i + 1}. ${p}`));
+  return lines.join('\n');
+}
+
+/* ---------- pick list (ใบเบิก) ---------- */
+const inPick = p => S.pick.some(x => x.name === p);
+function togglePick(p, e, forceAdd) {
+  const ref = `${SYS[e.sys].n} ${e.disp !== '--' ? e.disp : e.code}`;
+  const i = S.pick.findIndex(x => x.name === p);
+  if (i >= 0 && !forceAdd) S.pick.splice(i, 1);
+  else if (i >= 0) { if (!S.pick[i].refs.includes(ref)) S.pick[i].refs.push(ref); }
+  else S.pick.push({ name: p, qty: 1, refs: [ref] });
+  savePick();
+}
+function savePick() {
+  store.set('gree-erc-pick', S.pick);
+  const n = S.pick.length; $('#pickCnt').textContent = n; $('#pickCnt').dataset.n = n;
+  $('#pickList').innerHTML = n ? S.pick.map((x, i) => `<div class="pi"><b>${esc(x.name)}</b><small>จาก ${esc(x.refs.join(', '))}</small><div class="qty"><button type="button" data-q="${i}" data-d="-1" aria-label="ลดจำนวน">−</button><span>${x.qty}</span><button type="button" data-q="${i}" data-d="1" aria-label="เพิ่มจำนวน">+</button></div></div>`).join('')
+    : `<div class="empty"><b>ยังไม่มีอะไหล่ในใบเบิก</b>เปิดรหัสข้อผิดพลาด แล้วกด "เบิก" ที่อะไหล่ที่ต้องการ</div>`;
+}
+$('#pickList').addEventListener('click', e => {
+  const b = e.target.closest('[data-q]'); if (!b) return;
+  const x = S.pick[+b.dataset.q]; x.qty += +b.dataset.d;
+  if (x.qty <= 0) S.pick.splice(+b.dataset.q, 1);
+  savePick();
+});
+$('#pickBtn').addEventListener('click', () => { savePick(); openDlg($('#pickDlg')); });
+$('#pickClear').addEventListener('click', () => { if (!S.pick.length) return; S.pick = []; savePick(); toast('ล้างใบเบิกแล้ว'); });
+$('#pickCopy').addEventListener('click', async () => {
+  if (!S.pick.length) { toast('ยังไม่มีอะไหล่ในใบเบิก'); return; }
+  const d = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+  const t = [`ใบเบิกอะไหล่ (${d})`, ...S.pick.map((x, i) => `${i + 1}. ${x.name} × ${x.qty}  (${x.refs.join(', ')})`)].join('\n');
+  toast(await copyText(t) ? 'คัดลอกใบเบิกแล้ว' : 'คัดลอกไม่สำเร็จ');
+});
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch (e) { const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (er) {} ta.remove(); return ok; }
+}
+let toastT;
+function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
+
+/* ---------- recent ---------- */
+function renderRecent() {
+  const r = S.recent.map(id => byId[id]).filter(Boolean);
+  $('#recent').hidden = !r.length;
+  $('#recent').innerHTML = r.length ? 'ดูล่าสุด ' + r.map(e => `<button type="button" data-open="${e.id}" title="${esc(sysLabel(e))}">${esc(SYS[e.sys].n)} ${esc(e.disp !== '--' ? e.disp : e.code)}</button>`).join('') : '';
+}
+
+/* ---------- GMV parameters ---------- */
+function renderParams() {
+  const groups = [];
+  GMV_PARAMS.forEach(p => { let g = groups.find(x => x.name === p.group); if (!g) groups.push(g = { name: p.group, rows: [] }); g.rows.push(p); });
+  $('#pgroups').innerHTML = groups.map(g => {
+    const out = []; let i = 0;
+    while (i < g.rows.length) {
+      const r = g.rows[i], span = r.refSpan || 1, set = g.rows.slice(i, i + span);
+      out.push(`<div class="prow"><span class="no">${set.length > 1 ? `${set[0].no}–${set[set.length - 1].no}` : r.no}</span><div class="names">${set.map(x => `<div>${esc(x.name)}</div>`).join('')}</div><span class="u">${esc(r.unit)}</span><div class="ref">${esc(r.ref)}</div></div>`);
+      i += span;
+    }
+    return `<div class="pgroup"><h3>${esc(g.name)}</h3>${out.join('')}</div>`;
+  }).join('');
+  const T = [
+    { id: 'bus', h: 'แรงดันบัสคอมเพรสเซอร์', p: 'ปกติ = แรงดันไฟเลี้ยง × 1.414 คลาดเคลื่อนได้ ±15V', f: [['vin', 'แรงดันไฟเลี้ยง (V)', 390], ['vbus', 'แรงดันบัสที่วัดได้ (V)', 551]] },
+    { id: 'dis', h: 'อุณหภูมิท่อจ่าย / ฝาครอบ', p: 'ต้องอยู่ 70~95°C และสูงกว่าอุณหภูมิความดันสูงอย่างน้อย 10°C', f: [['td', 'อุณหภูมิท่อจ่ายหรือฝาครอบ (°C)', 82], ['hp', 'ความดันสูงของระบบ (°C)', 48]] },
+    { id: 'prs', h: 'ความดันสูง / ต่ำ โหมดทำความเย็น', p: 'ที่อุณหภูมิแวดล้อม 25~35°C ความดันสูง 44~53°C ความดันต่ำ 0~8°C', f: [['amb', 'อุณหภูมิแวดล้อมภายนอก (°C)', 32], ['hp2', 'ความดันสูง (°C)', 48], ['lp', 'ความดันต่ำ (°C)', 4]] },
+    { id: 'ipm', h: 'อุณหภูมิโมดูล IPM', p: 'อุณหภูมิแวดล้อมต่ำกว่า 35°C ต้องต่ำกว่า 85°C และสูงสุดไม่เกิน 95°C', f: [['amb2', 'อุณหภูมิแวดล้อมภายนอก (°C)', 32], ['ipmT', 'อุณหภูมิ IPM (°C)', 70]] }
+  ];
+  $('#tools').innerHTML = T.map(t => `<div class="tool" data-tool="${t.id}"><h3>${t.h}</h3><p>${t.p}</p>${t.f.map(([k, l, v]) => `<label class="tin">${l}<input type="number" inputmode="decimal" step="any" data-f="${k}" value="${v}"></label>`).join('')}<div class="verdict" id="v-${t.id}"></div></div>`).join('');
+  $('#tools').addEventListener('input', evalTools);
+  evalTools();
+}
+function evalTools() {
+  const v = k => { const n = parseFloat($(`[data-f="${k}"]`).value); return Number.isFinite(n) ? n : null; };
+  const set = (id, cls, html) => { const el = $('#v-' + id); el.className = 'verdict' + (cls ? ' ' + cls : ''); el.innerHTML = html; };
+  // bus
+  { const vin = v('vin'), vb = v('vbus');
+    if (vin == null) set('bus', '', 'กรอกแรงดันไฟเลี้ยง');
+    else { const exp = vin * 1.414; if (vb == null) set('bus', '', `ค่าที่ควรได้ <b>${exp.toFixed(0)}V</b> (${(exp - 15).toFixed(0)}–${(exp + 15).toFixed(0)}V)`);
+      else { const d = Math.round(vb - exp) || 0; set('bus', Math.abs(d) <= 15 ? 'ok' : 'bad', `ควรได้ <b>${exp.toFixed(0)}V</b> วัดได้ ${vb}V ต่าง ${d > 0 ? '+' : ''}${d}V ${Math.abs(d) <= 15 ? 'อยู่ในเกณฑ์ ±15V' : 'เกินเกณฑ์ ±15V'}`); } } }
+  // discharge
+  { const td = v('td'), hp = v('hp');
+    if (td == null || hp == null) set('dis', '', 'กรอกค่าทั้งสองช่อง');
+    else { const a = td >= 70 && td <= 95, b = td - hp >= 10;
+      set('dis', a && b ? 'ok' : 'bad', `${a ? 'อยู่ในช่วง 70~95°C' : '<b>นอกช่วง 70~95°C</b>'} และ${b ? 'สูงกว่าความดันสูง' : '<b>สูงกว่าความดันสูงไม่ถึง 10°C</b> (ต่าง'} ${(td - hp).toFixed(1)}°C${b ? '' : ')'}`); } }
+  // pressures
+  { const amb = v('amb'), hp = v('hp2'), lp = v('lp');
+    if (amb == null || hp == null || lp == null) set('prs', '', 'กรอกค่าทั้งสามช่อง');
+    else if (amb >= 25 && amb <= 35) { const a = hp >= 44 && hp <= 53, b = lp >= 0 && lp <= 8;
+      set('prs', a && b ? 'ok' : 'bad', `ความดันสูง ${hp}°C ${a ? 'ปกติ' : '<b>นอกช่วง 44~53°C</b>'} / ความดันต่ำ ${lp}°C ${b ? 'ปกติ' : '<b>นอกช่วง 0~8°C</b>'}`); }
+    else { const a = hp >= 20 && hp <= 55, d = hp - amb, b = d >= 10 && d <= 40;
+      set('prs', a && b ? 'ok' : 'bad', `อุณหภูมิแวดล้อมอยู่นอก 25~35°C จึงใช้เกณฑ์ทั่วไป ความดันสูง ${a ? 'อยู่ใน 20~55°C' : '<b>นอกช่วง 20~55°C</b>'} และ${b ? 'สูงกว่าแวดล้อม' : '<b>ต่างจากแวดล้อม</b>'} ${d.toFixed(1)}°C ${b ? '' : '(ควร 10~40°C)'} ความดันต่ำไม่มีเกณฑ์สำหรับช่วงนี้`); } }
+  // ipm
+  { const amb = v('amb2'), t = v('ipmT');
+    if (amb == null || t == null) set('ipm', '', 'กรอกค่าทั้งสองช่อง');
+    else if (t > 95) set('ipm', 'bad', `<b>${t}°C เกินค่าสูงสุด 95°C</b>`);
+    else if (amb < 35) set('ipm', t < 85 ? 'ok' : 'bad', t < 85 ? `${t}°C ต่ำกว่า 85°C อยู่ในเกณฑ์` : `<b>${t}°C ไม่ต่ำกว่า 85°C</b> ขณะแวดล้อมต่ำกว่า 35°C`);
+    else set('ipm', 'ok', `${t}°C ไม่เกินค่าสูงสุด 95°C (เกณฑ์ต่ำกว่า 85°C ใช้เมื่อแวดล้อมต่ำกว่า 35°C)`); }
+}
+
+/* ---------- theme & refresh rate ---------- */
+const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+function applyTheme(t) { if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; $('#themeBtn').innerHTML = isDark() ? IC.sun : IC.moon; }
+$('#themeBtn').addEventListener('click', () => { const t = isDark() ? 'light' : 'dark'; store.set('gree-erc-theme', t); applyTheme(t); });
+applyTheme(store.get('gree-erc-theme', null));
+function measureHz() {
+  const el = $('#hz'); el.textContent = 'วัด…'; let last = 0, n = 0; const ds = [];
+  const f = t => { if (last) ds.push(t - last); last = t;
+    if (++n < 100) requestAnimationFrame(f);
+    else { ds.sort((a, b) => a - b); const hz = 1000 / ds[ds.length >> 1];
+      const best = [30, 48, 50, 60, 72, 75, 90, 100, 120, 144, 165, 180, 240].reduce((a, b) => Math.abs(b - hz) < Math.abs(a - hz) ? b : a);
+      el.textContent = `${best} Hz`; $('#hzBtn').title = `จอแสดงผล ${hz.toFixed(1)} Hz แอนิเมชันทั้งหมดผูกกับ requestAnimationFrame และ CSS transition จึงลื่นตามรีเฟรชเรตจริงของจอ กดเพื่อวัดใหม่`; } };
+  requestAnimationFrame(f);
+}
+$('#hzBtn').addEventListener('click', measureHz);
+addEventListener('resize', () => $$('.seg').forEach(s => { s._x = null; moveInd(s); }), { passive: true });
+
+/* ---------- boot ---------- */
+$('#stats').innerHTML = [['RAC', racErrorCodes.length], ['LCAC', lcacErrorCodesData.length], ['GMV', gmvIndoorErrors.length + gmvOutdoorErrors.length + gmvDebugErrors.length]]
+  .map(([n, c]) => `<div class="stat"><b>${c}</b><span>รหัส ${n}</span></div>`).join('');
+setDisplay('88');
+$('#ledRun').classList.add('on'); $('#ledErr').classList.add('on');
+savePick(); renderRecent(); renderParams();
+render();
+$('#ledErr').classList.add('on'); setDisplay('88');
+setTimeout(() => { updateLCD(matches(S.q)); }, RM.matches ? 0 : 750);   // power-on self test "88" like a real unit
+measureHz();
+if (location.hash && byId[location.hash.slice(1)]) setTimeout(() => openDetail(location.hash.slice(1)), 300);
+addEventListener('hashchange', () => { const id = location.hash.slice(1); if (byId[id] && !$('#dlg').open) openDetail(id); });
+window.GreeERC = { E, classify };
+})();
+
+</script>
+</body>
+</html>

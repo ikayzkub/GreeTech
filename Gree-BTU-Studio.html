@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gree BTU Studio</title>
+<meta name="description" content="โปรแกรมคำนวณขนาดแอร์ (BTU / HP / RT) สำหรับสภาพอากาศเมืองร้อน พร้อมแนะนำรุ่นแอร์ Gree จาก Product Catalog 2026">
+<meta name="theme-color" content="#0C2350">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600&family=Bai+Jamjuree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF3FA; --bg-2:#E2EBF6; --surface:#FFFFFF; --surface-2:#F4F8FD;
+  --ink:#0C2350; --ink-2:#465B83; --ink-3:#7C8CA9; --line:#D3DFEE; --line-2:#E5ECF5;
+  --gree:#1D55C4; --gree-2:#1747A6; --on-gree:#FFFFFF;
+  --ice:#2A9FD6; --ice-soft:#DCF0FA; --heat:#E8651F; --heat-soft:#FCE8DB;
+  --ok:#14855A; --ok-soft:#DCF2E8; --warn:#A86E00; --warn-soft:#FAEFD3; --bad:#C2372B; --bad-soft:#FBE3E0;
+  --inst:#0C2350; --inst-2:#133375; --inst-ink:#EAF3FF; --inst-ink-2:#9FB8E2; --inst-line:rgba(160,195,255,.18);
+  --floor:#DCE8F7; --wallA:#C9DAF0; --wallB:#B7CBE6;
+  --shadow:0 1px 0 rgba(12,35,80,.04),0 18px 40px -26px rgba(12,35,80,.35);
+  --r-sm:10px; --r-md:14px; --r-lg:24px;
+  --f-display:'Bai Jamjuree','Anuphan',system-ui,sans-serif;
+  --f-body:'Anuphan','Bai Jamjuree',system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#061230; --bg-2:#0A1B3E; --surface:#0D1F46; --surface-2:#112753;
+    --ink:#E6EEFB; --ink-2:#A6B8D8; --ink-3:#7487AC; --line:#1E3767; --line-2:#182E5A;
+    --gree:#5D8DFF; --gree-2:#7AA2FF; --on-gree:#061230;
+    --ice:#5CCBF5; --ice-soft:rgba(92,203,245,.13); --heat:#FF8C4A; --heat-soft:rgba(255,140,74,.14);
+    --ok:#46D39F; --ok-soft:rgba(70,211,159,.13); --warn:#F2C14E; --warn-soft:rgba(242,193,78,.13); --bad:#FF7A6E; --bad-soft:rgba(255,122,110,.13);
+    --inst:#0A1838; --inst-2:#11285A; --inst-ink:#EAF3FF; --inst-ink-2:#9FB8E2; --inst-line:rgba(160,195,255,.14);
+    --shadow:0 1px 0 rgba(0,0,0,.2),0 18px 40px -26px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#061230; --bg-2:#0A1B3E; --surface:#0D1F46; --surface-2:#112753;
+  --ink:#E6EEFB; --ink-2:#A6B8D8; --ink-3:#7487AC; --line:#1E3767; --line-2:#182E5A;
+  --gree:#5D8DFF; --gree-2:#7AA2FF; --on-gree:#061230;
+  --ice:#5CCBF5; --ice-soft:rgba(92,203,245,.13); --heat:#FF8C4A; --heat-soft:rgba(255,140,74,.14);
+  --ok:#46D39F; --ok-soft:rgba(70,211,159,.13); --warn:#F2C14E; --warn-soft:rgba(242,193,78,.13); --bad:#FF7A6E; --bad-soft:rgba(255,122,110,.13);
+  --inst:#0A1838; --inst-2:#11285A; --inst-ink:#EAF3FF; --inst-ink-2:#9FB8E2; --inst-line:rgba(160,195,255,.14);
+  --shadow:0 1px 0 rgba(0,0,0,.2),0 18px 40px -26px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;
+  transition:background-color .35s var(--ease),color .35s var(--ease)}
+h1,h2,h3{font-family:var(--f-display);line-height:1.2;margin:0;letter-spacing:-.005em}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2.5px solid var(--gree);outline-offset:2px;border-radius:6px}
+.num{font-family:var(--f-display);font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- top bar ---------- */
+.bar{position:sticky;top:0;z-index:40;background:color-mix(in oklab,var(--bg) 82%,transparent);
+  backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line-2)}
+.bar-in{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 20px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;text-decoration:none;color:inherit}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:var(--gree);display:grid;place-items:center;color:var(--on-gree);flex:none}
+.brand-txt{display:flex;flex-direction:column;min-width:0}
+.brand-txt b{font-family:var(--f-display);font-size:17px;line-height:1.1;white-space:nowrap}
+.brand-txt span{font-size:12px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-sp{flex:1}
+.chip-btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface);font-size:14px;transition:transform .18s var(--ease),border-color .2s,background-color .2s}
+.chip-btn:hover{border-color:var(--gree)}
+.chip-btn:active{transform:scale(.96)}
+.chip-btn svg{width:17px;height:17px}
+.hz{font-family:var(--f-display);font-variant-numeric:tabular-nums;font-weight:600}
+.hz i{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;box-shadow:0 0 0 3px var(--ok-soft)}
+.count{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--gree);color:var(--on-gree);font-size:12px;font-weight:600;display:inline-grid;place-items:center}
+.count[data-n="0"]{display:none}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px}
+.intro{padding:34px 0 22px;display:grid;gap:8px;max-width:760px}
+.intro h1{font-size:clamp(28px,4.2vw,44px);font-weight:700}
+.intro p{margin:0;color:var(--ink-2);font-size:17px;max-width:62ch}
+.work{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+@media (min-width:1040px){.work{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:28px}.inst{position:sticky;top:76px}}
+
+/* ---------- form panel ---------- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.form{padding:8px 24px 24px}
+.grp{padding:20px 0;border-bottom:1px solid var(--line-2)}
+.grp:last-child{border-bottom:0;padding-bottom:4px}
+.grp h2{font-size:18px;font-weight:600;margin-bottom:4px}
+.grp>p.lead{margin:0 0 14px;color:var(--ink-3);font-size:14px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;padding:2px 0 4px}
+.presets::-webkit-scrollbar{display:none}
+.preset{flex:none;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:7px 14px;font-size:14px;white-space:nowrap;
+  transition:transform .18s var(--ease),background-color .2s,border-color .2s,color .2s}
+.preset:hover{border-color:var(--gree)}
+.preset:active{transform:scale(.95)}
+.preset[aria-pressed="true"]{background:var(--gree);color:var(--on-gree);border-color:var(--gree)}
+
+.seg{display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);position:relative;margin-bottom:16px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{position:relative;z-index:1;text-align:center;padding:8px 10px;border-radius:9px;font-size:14px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:color .25s}
+.seg-thumb{position:absolute;z-index:0;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:9px;background:var(--surface);
+  box-shadow:0 1px 2px rgba(12,35,80,.12),0 4px 12px -6px rgba(12,35,80,.3);transition:transform .38s var(--ease);will-change:transform}
+.seg input:nth-of-type(2):checked ~ .seg-thumb{transform:translateX(100%)}
+.seg input:checked + label{color:var(--ink)}
+
+.field{display:grid;gap:6px;margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.field-top label{font-size:14px;font-weight:500;color:var(--ink-2)}
+.numbox{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface-2);padding:2px 10px 2px 4px;transition:border-color .2s,box-shadow .2s}
+.numbox:focus-within{border-color:var(--gree);box-shadow:0 0 0 3px color-mix(in oklab,var(--gree) 22%,transparent)}
+.numbox input{width:78px;border:0;background:transparent;padding:6px 6px;text-align:right;font-family:var(--f-display);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;outline:none;-moz-appearance:textfield}
+.numbox input::-webkit-outer-spin-button,.numbox input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.numbox span{font-size:13px;color:var(--ink-3);white-space:nowrap}
+.hint{font-size:12.5px;color:var(--ink-3);margin:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:520px){.two{grid-template-columns:1fr;gap:0}}
+
+input[type=range]{--p:50%;-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;margin:0;cursor:pointer;touch-action:pan-y}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(90deg,var(--gree) var(--p),var(--line) var(--p))}
+input[type=range]::-moz-range-track{height:6px;border-radius:999px;background:var(--line)}
+input[type=range]::-moz-range-progress{height:6px;border-radius:999px;background:var(--gree)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;background:var(--surface);border:2px solid var(--gree);
+  box-shadow:0 2px 6px rgba(12,35,80,.25);transition:transform .15s var(--ease)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--surface);border:2px solid var(--gree);box-shadow:0 2px 6px rgba(12,35,80,.25)}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.18)}
+input[type=range]:focus-visible{outline:none}
+input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px color-mix(in oklab,var(--gree) 30%,transparent)}
+
+.areabox{display:flex;justify-content:space-between;align-items:center;background:var(--ice-soft);border-radius:var(--r-md);padding:10px 14px;margin:2px 0 16px}
+.areabox span{font-size:14px;color:var(--ink-2)}
+.areabox b{font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
+
+.rtypes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.rtypes{grid-template-columns:1fr}}
+.rtype{position:relative}
+.rtype input{position:absolute;opacity:0;pointer-events:none}
+.rtype label{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;padding:12px 14px;border:1.5px solid var(--line);border-radius:var(--r-md);cursor:pointer;
+  background:var(--surface);transition:border-color .2s,background-color .25s,transform .18s var(--ease);height:100%}
+.rtype label:active{transform:scale(.98)}
+.rtype svg{grid-row:span 2;width:28px;height:28px;color:var(--ink-3);transition:color .2s}
+.rtype b{font-weight:600;font-size:14.5px;line-height:1.35}
+.rtype small{font-size:12.5px;color:var(--ink-3);line-height:1.4}
+.rtype small em{font-style:normal;font-family:var(--f-display);font-weight:600;color:var(--heat)}
+.rtype input:checked + label{border-color:var(--gree);background:color-mix(in oklab,var(--gree) 7%,var(--surface))}
+.rtype input:checked + label svg{color:var(--gree)}
+.rtype input:focus-visible + label{outline:2.5px solid var(--gree);outline-offset:2px}
+
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:16px;cursor:pointer;transition:border-color .2s,background-color .25s}
+.toggle:has(input:checked){border-color:color-mix(in oklab,var(--heat) 60%,var(--line));background:var(--heat-soft)}
+.toggle-txt b{display:block;font-weight:600;font-size:14.5px}
+.toggle-txt small{color:var(--ink-3);font-size:12.5px}
+.switch{position:relative;width:48px;height:28px;flex:none}
+.switch input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.switch i{position:absolute;inset:0;border-radius:999px;background:var(--line);transition:background-color .25s}
+.switch i::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .35s var(--ease)}
+.switch input:checked + i{background:var(--heat)}
+.switch input:checked + i::after{transform:translateX(20px)}
+.switch input:focus-visible + i{outline:2.5px solid var(--gree);outline-offset:2px}
+
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface-2);overflow:hidden}
+.stepper button{width:40px;height:38px;border:0;background:transparent;font-size:20px;line-height:1;color:var(--ink-2);transition:background-color .15s}
+.stepper button:hover{background:var(--line-2)}
+.stepper button:active{background:var(--line)}
+.stepper input{width:56px;text-align:center;border:0;background:transparent;font-family:var(--f-display);font-weight:600;font-size:17px;outline:none;-moz-appearance:textfield}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+/* ---------- instrument (result) ---------- */
+.inst{background:radial-gradient(120% 90% at 85% 0%,var(--inst-2) 0%,var(--inst) 60%);color:var(--inst-ink);border-radius:var(--r-lg);overflow:hidden;
+  box-shadow:0 30px 60px -36px rgba(6,18,48,.75);isolation:isolate;border:1px solid var(--inst-line)}
+.viz-wrap{position:relative;padding:14px 14px 0}
+#viz{display:block;width:100%;height:auto;aspect-ratio:460/330;overflow:visible}
+.viz-note{position:absolute;left:22px;top:16px;font-size:12px;color:var(--inst-ink-2);display:flex;gap:14px;flex-wrap:wrap}
+.viz-note span{display:inline-flex;align-items:center;gap:6px}
+.viz-note i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.v-floor{fill:#1C3B78;stroke:rgba(170,205,255,.35);stroke-width:1}
+.v-wallA{fill:#183469;stroke:rgba(170,205,255,.25);stroke-width:1}
+.v-wallB{fill:#142D5D;stroke:rgba(170,205,255,.25);stroke-width:1}
+.v-grid{stroke:rgba(170,205,255,.13);stroke-width:1}
+.v-ceil{fill:none;stroke:rgba(170,205,255,.35);stroke-width:1;stroke-dasharray:4 4}
+.v-dim{fill:var(--inst-ink-2);font-family:var(--f-display);font-size:12px;font-weight:500}
+.v-win{fill:#FFD9A8;opacity:.9}
+.v-sunbeam{fill:#FFB46B;opacity:.14}
+.v-sunpatch{fill:#FFB46B;opacity:.32}
+.v-heat{opacity:.0;transition:opacity .4s}
+.v-ac-top{fill:#F4F8FF}.v-ac-front{fill:#DCE6F5}.v-ac-side{fill:#B8C8E0}
+.v-person-b{stroke:#FF9D5C;stroke-linecap:round}
+.v-person-h{fill:#FFB27D}
+.v-air{fill:none;stroke:#7FDBFF;stroke-width:2.2;stroke-linecap:round;stroke-dasharray:3 11;opacity:.85;animation:air 1.1s linear infinite}
+.v-air.b{animation-duration:1.35s;opacity:.6}
+@keyframes air{to{stroke-dashoffset:-28}}
+
+.read{padding:6px 24px 24px}
+.read-label{font-size:14px;color:var(--inst-ink-2);margin:0}
+.read-big{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 0 4px}
+.read-big .num{font-size:clamp(52px,7vw,80px);font-weight:700;line-height:1;letter-spacing:-.02em}
+.read-big .u{font-family:var(--f-display);font-size:18px;color:var(--inst-ink-2);font-weight:500}
+.read-sub{margin:0 0 18px;font-size:14.5px;color:var(--inst-ink-2);max-width:56ch}
+.read-sub b{color:var(--inst-ink);font-weight:600}
+.over .read-big .num{font-size:clamp(40px,5.4vw,60px)}
+
+.ladder{position:relative;margin:4px 0 22px;padding-top:30px}
+.ladder-track{position:relative;height:10px;border-radius:999px;background:rgba(160,195,255,.14)}
+.ladder-fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,#3BB8F2,#8FE3FF);transform-origin:left;width:100%;will-change:transform;transition:transform .7s var(--ease)}
+.ladder-ticks{position:relative;height:30px}
+.tick{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-family:var(--f-display);font-size:11.5px;color:var(--inst-ink-2);transition:color .25s}
+.tick::before{content:"";width:1px;height:6px;background:rgba(160,195,255,.35);margin-bottom:3px}
+.tick.on{color:#fff;font-weight:600}
+.tick.on::after{content:"";position:absolute;top:-25px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 0 0 5px rgba(143,227,255,.35)}
+.need-pin{position:absolute;top:0;left:0;transition:transform .7s var(--ease),opacity .3s;will-change:transform;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.need-pin span{font-family:var(--f-display);font-size:11.5px;font-weight:600;background:var(--heat);color:#fff;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.need-pin i{width:2px;height:12px;background:var(--heat)}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--inst-line);border-bottom:1px solid var(--inst-line);margin:0}
+.stats>div{padding:12px 4px 12px 0}
+.stats>div+div{padding-left:14px;border-left:1px solid var(--inst-line)}
+.stats dt{font-size:12px;color:var(--inst-ink-2);line-height:1.35}
+.stats dd{margin:2px 0 0;font-family:var(--f-display);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stats dd small{font-size:12px;font-weight:500;color:var(--inst-ink-2);margin-left:3px}
+@media (max-width:560px){.stats{grid-template-columns:1fr 1fr}.stats>div:nth-child(3){border-left:0;padding-left:0;border-top:1px solid var(--inst-line)}.stats>div:nth-child(4){border-top:1px solid var(--inst-line)}}
+
+.formula{margin-top:14px;font-size:14px}
+.formula summary{cursor:pointer;color:var(--inst-ink-2);list-style:none;display:inline-flex;align-items:center;gap:6px;padding:4px 0}
+.formula summary::-webkit-details-marker{display:none}
+.formula summary svg{width:14px;height:14px;transition:transform .3s var(--ease)}
+.formula[open] summary svg{transform:rotate(90deg)}
+.fx{margin-top:8px;padding:14px;border-radius:var(--r-md);background:rgba(160,195,255,.08);font-family:var(--f-display);font-variant-numeric:tabular-nums}
+.fx-row{display:flex;justify-content:space-between;gap:12px;padding:3px 0;color:var(--inst-ink-2)}
+.fx-row b{color:var(--inst-ink);font-weight:600}
+.fx-eq{margin-top:8px;padding-top:8px;border-top:1px dashed var(--inst-line);color:var(--inst-ink);line-height:1.7;word-break:break-word}
+.inst-act{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:12px;border:1px solid transparent;font-weight:600;font-size:15px;
+  text-decoration:none;transition:transform .18s var(--ease),background-color .2s,border-color .2s,box-shadow .2s}
+.btn:active{transform:scale(.97)}
+.btn svg{width:18px;height:18px}
+.btn-ice{background:#8FE3FF;color:#06204A}
+.btn-ice:hover{background:#B3EDFF}
+.btn-ghost-inv{border-color:rgba(160,195,255,.35);color:var(--inst-ink);background:transparent}
+.btn-ghost-inv:hover{background:rgba(160,195,255,.1)}
+.btn-pri{background:var(--gree);color:var(--on-gree)}
+.btn-pri:hover{background:var(--gree-2)}
+.btn-line{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.btn-line:hover{border-color:var(--gree)}
+.btn-sm{height:36px;padding:0 12px;font-size:14px;border-radius:10px}
+.btn[aria-pressed="true"]{background:var(--gree);color:var(--on-gree);border-color:var(--gree)}
+
+/* ---------- products ---------- */
+.sec{padding:56px 0 0}
+.sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 24px;margin-bottom:20px}
+.sec-head h2{font-size:clamp(24px,3vw,32px);font-weight:700}
+.sec-head p{margin:6px 0 0;color:var(--ink-2);max-width:68ch}
+
+.pick{display:grid;grid-template-columns:minmax(0,1fr);gap:0;overflow:hidden;margin-bottom:28px}
+@media (min-width:860px){.pick{grid-template-columns:300px minmax(0,1fr)}}
+.pick-vis{position:relative;padding:28px;background:linear-gradient(160deg,var(--ice-soft),transparent 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border-right:1px solid var(--line-2)}
+@media (max-width:859px){.pick-vis{border-right:0;border-bottom:1px solid var(--line-2);flex-direction:row;justify-content:flex-start;gap:20px;padding:20px 22px}}
+.pick-tag{position:absolute;left:16px;top:14px;font-size:12.5px;font-weight:600;color:var(--ok);background:var(--ok-soft);padding:3px 10px;border-radius:999px}
+@media (max-width:859px){.pick-tag{position:static;order:3;margin-left:auto;align-self:flex-start}}
+.ring{position:relative;width:148px;height:148px;flex:none}
+@media (max-width:859px){.ring{width:104px;height:104px}}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .bg{fill:none;stroke:var(--line);stroke-width:9}
+.ring .fg{fill:none;stroke:var(--ice);stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .9s var(--ease),stroke .3s}
+.ring .over{stroke:var(--warn)}
+.ring-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring-c b{font-family:var(--f-display);font-size:30px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+@media (max-width:859px){.ring-c b{font-size:22px}}
+.ring-c>span{font-size:11.5px;color:var(--ink-3);line-height:1.3;margin-top:4px}
+.unit-ill{width:120px;height:72px;color:var(--gree)}
+@media (max-width:859px){.unit-ill{display:none}}
+.pick-body{padding:24px 26px 26px;min-width:0}
+.pick-series{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px}
+.pick-series h3{font-size:clamp(26px,3.4vw,36px);font-weight:700}
+.code{font-family:var(--f-display);font-size:14px;color:var(--ink-3);font-weight:500;letter-spacing:.01em}
+.pick-line{margin:6px 0 16px;color:var(--ink-2)}
+.why{list-style:none;padding:0;margin:0 0 18px;display:grid;gap:8px}
+.why li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:15px;align-items:start}
+.why svg{width:20px;height:20px;color:var(--ok);margin-top:2px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--line-2);border:1px solid var(--line-2);border-radius:var(--r-md);overflow:hidden;margin:0 0 18px}
+.kv>div{background:var(--surface);padding:10px 14px}
+.kv dt{font-size:12.5px;color:var(--ink-3)}
+.kv dd{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:17px;font-variant-numeric:tabular-nums}
+.kv dd small{font-weight:500;font-size:12.5px;color:var(--ink-3)}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.tabs{position:relative;display:flex;gap:2px;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.tabs::-webkit-scrollbar{display:none}
+.tab{position:relative;z-index:1;flex:none;border:0;background:transparent;padding:8px 14px;border-radius:10px;font-size:14px;font-weight:500;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px;transition:color .25s}
+.tab[aria-selected="true"]{color:var(--on-gree)}
+.tab[disabled]{opacity:.45;cursor:default}
+.tab .n{font-family:var(--f-display);font-size:12px;font-weight:600;min-width:18px;padding:0 5px;border-radius:999px;background:var(--line-2);color:var(--ink-2);transition:background-color .25s,color .25s}
+.tab[aria-selected="true"] .n{background:rgba(255,255,255,.22);color:inherit}
+.tab-ind{position:absolute;z-index:0;top:4px;bottom:4px;left:0;border-radius:10px;background:var(--gree);transition:transform .42s var(--ease),width .42s var(--ease);will-change:transform,width}
+.sort{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-2)}
+.sort select{height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 32px 0 12px;font-size:14px;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237C8CA9' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+
+.list{display:grid;gap:10px}
+.row{display:grid;grid-template-columns:56px minmax(0,1.4fr) minmax(0,1.6fr) auto;gap:16px;align-items:center;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
+  transition:border-color .2s,transform .25s var(--ease),box-shadow .25s;animation:rowIn .5s var(--ease) both;animation-delay:calc(var(--i,0)*35ms)}
+.row:hover{border-color:color-mix(in oklab,var(--gree) 45%,var(--line))}
+.row.top{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok) inset}
+@keyframes rowIn{from{opacity:0;transform:translateY(8px)}}
+.row-ico{width:56px;height:56px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;color:var(--gree)}
+.row-ico svg{width:40px;height:40px}
+.row-name{min-width:0}
+.row-name b{font-family:var(--f-display);font-size:17px;font-weight:600;display:block;line-height:1.25}
+.row-name .code{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.bdg{font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--line-2);color:var(--ink-2);white-space:nowrap}
+.bdg.ok{background:var(--ok-soft);color:var(--ok)}
+.bdg.warn{background:var(--warn-soft);color:var(--warn)}
+.bdg.ice{background:var(--ice-soft);color:var(--ice)}
+.bdg.heat{background:var(--heat-soft);color:var(--heat)}
+.row-data{display:grid;gap:8px;min-width:0}
+.cap{display:grid;gap:4px}
+.cap-top{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--ink-2)}
+.cap-top b{font-family:var(--f-display);font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums}
+.cap-bar{position:relative;height:8px;border-radius:999px;background:var(--line-2);overflow:visible}
+.cap-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--ice);transform-origin:left;animation:grow .8s var(--ease) both}
+.cap-bar u{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--heat);border-radius:2px;text-decoration:none}
+@keyframes grow{from{transform:scaleX(0)}}
+.mini{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-3)}
+.mini span b{font-family:var(--f-display);font-weight:600;color:var(--ink);font-size:14px;font-variant-numeric:tabular-nums}
+.row-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.icon-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink-2);transition:transform .18s var(--ease),border-color .2s,background-color .2s,color .2s}
+.icon-btn:hover{border-color:var(--gree);color:var(--gree)}
+.icon-btn:active{transform:scale(.92)}
+.icon-btn[aria-pressed="true"]{background:var(--gree);border-color:var(--gree);color:var(--on-gree)}
+.icon-btn svg{width:18px;height:18px}
+@media (max-width:860px){
+  .row{grid-template-columns:48px minmax(0,1fr) auto;grid-template-areas:"ico name act" "data data data";gap:12px}
+  .row-ico{grid-area:ico;width:48px;height:48px}.row-ico svg{width:34px;height:34px}
+  .row-name{grid-area:name}.row-data{grid-area:data}.row-act{grid-area:act;flex-direction:column}
+}
+
+.empty{padding:28px;border:1.5px dashed var(--line);border-radius:var(--r-md);text-align:center;color:var(--ink-2)}
+.empty b{display:block;font-family:var(--f-display);font-size:18px;color:var(--ink);margin-bottom:4px}
+
+.sub-h{font-size:19px;font-weight:600;margin:30px 0 4px}
+.sub-p{margin:0 0 14px;color:var(--ink-3);font-size:14px}
+.splits{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.split{padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);display:grid;gap:6px;text-align:left;transition:border-color .2s}
+.split:hover{border-color:var(--gree)}
+.split b{font-family:var(--f-display);font-size:18px}
+.split .code{font-size:13px}
+.split p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.fams{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.fam{padding:14px 16px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--surface)}
+.fam.hit{border-color:var(--ok);background:color-mix(in oklab,var(--ok) 6%,var(--surface))}
+.fam small{font-size:12px;color:var(--ink-3)}
+.fam b{display:block;font-family:var(--f-display);font-size:16px;margin:2px 0}
+.fam p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.fam .bdg{margin-top:8px;display:inline-block}
+
+/* ---------- tips ---------- */
+.tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.tip{display:grid;grid-template-columns:40px 1fr;gap:14px;padding:18px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line)}
+.tip-i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--ice-soft);color:var(--ice)}
+.tip-i svg{width:22px;height:22px}
+.tip.heat .tip-i{background:var(--heat-soft);color:var(--heat)}
+.tip.ok .tip-i{background:var(--ok-soft);color:var(--ok)}
+.tip.warn .tip-i{background:var(--warn-soft);color:var(--warn)}
+.tip b{display:block;font-weight:600;margin-bottom:2px;line-height:1.4}
+.tip p{margin:0;font-size:14px;color:var(--ink-2)}
+
+/* ---------- catalog table ---------- */
+.cat-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.search{flex:1 1 260px;display:flex;align-items:center;gap:8px;height:42px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:0 12px;transition:border-color .2s,box-shadow .2s}
+.search:focus-within{border-color:var(--gree);box-shadow:0 0 0 3px color-mix(in oklab,var(--gree) 22%,transparent)}
+.search svg{width:18px;height:18px;color:var(--ink-3);flex:none}
+.search input{border:0;background:transparent;outline:none;width:100%;font-size:15px}
+.fchips{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13.5px;transition:background-color .2s,color .2s,border-color .2s}
+.fchip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:820px}
+th{position:sticky;top:0;text-align:left;font-weight:600;font-size:13px;color:var(--ink-3);padding:12px 14px;background:var(--surface-2);border-bottom:1px solid var(--line);white-space:nowrap}
+th.r,td.r{text-align:right}
+td{padding:11px 14px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+#catBody tr{cursor:pointer;transition:background-color .15s}
+#catBody tr:hover,#catBody tr:focus-visible{background:var(--surface-2)}
+tbody tr:last-child td{border-bottom:0}
+td .num{font-weight:600}
+td.fit{white-space:nowrap}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:middle}
+.dot.big{background:var(--warn)}
+.stars{color:#E9A100;letter-spacing:1px;font-size:12px}
+.lbl5{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.lbl5 i{font-style:normal;font-family:var(--f-display);font-weight:700;font-size:11px;width:18px;height:18px;border-radius:50%;background:#1E9E4A;color:#fff;display:inline-grid;place-items:center}
+
+/* ---------- footer ---------- */
+.foot{margin-top:72px;border-top:1px solid var(--line);padding:32px 0 120px;color:var(--ink-2);font-size:14px}
+.foot-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.foot b{display:block;color:var(--ink);font-family:var(--f-display);font-size:15px;margin-bottom:4px}
+.foot p{margin:0 0 4px}
+.foot a{color:var(--gree)}
+
+/* ---------- dialogs ---------- */
+dialog{border:0;padding:0;background:transparent;color:var(--ink);max-width:none;max-height:none}
+dialog::backdrop{background:rgba(4,12,32,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+dialog[open]::backdrop{animation:fade .3s var(--ease)}
+@keyframes fade{from{opacity:0}}
+.sheet{width:min(760px,calc(100vw - 24px));max-height:min(88vh,900px);overflow:auto;background:var(--surface);border-radius:var(--r-lg);border:1px solid var(--line);box-shadow:0 40px 80px -30px rgba(0,0,0,.55);overscroll-behavior:contain}
+dialog[open] .sheet{animation:pop .45s var(--ease)}
+dialog.closing .sheet{animation:popOut .22s ease-in forwards}
+dialog.closing::backdrop{animation:fade .22s ease-in reverse forwards}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.97)}}
+@keyframes popOut{to{opacity:0;transform:translateY(12px) scale(.98)}}
+@media (max-width:640px){
+  dialog.modal{margin:auto 0 0;width:100%}
+  .modal .sheet{width:100%;max-height:90vh;border-radius:22px 22px 0 0;border-bottom:0}
+  dialog.modal[open] .sheet{animation:up .45s var(--ease)}
+  dialog.modal.closing .sheet{animation:down .25s ease-in forwards}
+  @keyframes up{from{transform:translateY(100%)}}
+  @keyframes down{to{transform:translateY(100%)}}
+}
+.sheet-h{position:sticky;top:0;z-index:2;display:flex;align-items:flex-start;gap:14px;padding:18px 20px;background:color-mix(in oklab,var(--surface) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line-2)}
+.sheet-h h3{font-size:22px;font-weight:700}
+.sheet-h .grow{flex:1;min-width:0}
+.sheet-h p{margin:2px 0 0;color:var(--ink-2);font-size:14px}
+.sheet-b{padding:20px}
+.spec{width:100%;border-collapse:collapse;min-width:0;font-size:14.5px}
+.spec th,.spec td{position:static;padding:9px 0;border-bottom:1px solid var(--line-2);background:transparent;vertical-align:top}
+.spec th{width:42%;font-weight:500;color:var(--ink-3);font-size:14px;white-space:normal}
+.spec td{font-weight:500}
+.feat{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.feat span{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line-2)}
+.cmp{width:100%;border-collapse:collapse;min-width:560px}
+.cmp th,.cmp td{position:static;padding:10px 12px;border-bottom:1px solid var(--line-2);background:transparent;text-align:left;vertical-align:top}
+.cmp thead th{font-family:var(--f-display);font-size:16px;color:var(--ink);font-weight:700}
+.cmp thead th small{display:block;font-weight:500;font-size:12.5px;color:var(--ink-3)}
+.cmp tbody th{font-weight:500;color:var(--ink-3);font-size:13.5px;width:150px}
+.cmp td.best{color:var(--ok);font-weight:600}
+.cmp td.best::after{content:" ✓"}
+
+.drawer{margin:0 0 0 auto;height:100%;max-height:100vh}
+.drawer .sheet{height:100vh;max-height:100vh;width:min(480px,100vw);border-radius:0;border-width:0 0 0 1px;display:flex;flex-direction:column}
+dialog.drawer[open] .sheet{animation:inR .45s var(--ease)}
+dialog.drawer.closing .sheet{animation:outR .25s ease-in forwards}
+@keyframes inR{from{transform:translateX(100%)}}
+@keyframes outR{to{transform:translateX(100%)}}
+.rooms{flex:1;overflow:auto;padding:16px 20px;display:grid;gap:10px;align-content:start}
+.room{border:1px solid var(--line);border-radius:var(--r-md);padding:12px 14px;display:grid;gap:4px}
+.room-top{display:flex;align-items:center;gap:8px}
+.room-top input{flex:1;min-width:0;border:0;background:transparent;font-weight:600;font-size:15.5px;padding:2px 0;border-bottom:1px dashed transparent;outline:none}
+.room-top input:focus{border-bottom-color:var(--gree)}
+.room p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.room p b{font-family:var(--f-display);color:var(--ink)}
+.rooms-foot{border-top:1px solid var(--line);padding:16px 20px;display:grid;gap:12px;background:var(--surface-2)}
+.tot{display:flex;justify-content:space-between;align-items:baseline}
+.tot b{font-family:var(--f-display);font-size:24px;font-variant-numeric:tabular-nums}
+
+/* compare dock + mobile bar + toast */
+.dock{position:fixed;left:50%;bottom:16px;z-index:45;transform:translate(-50%,calc(100% + 40px));visibility:hidden;transition:transform .45s var(--ease);display:flex;align-items:center;gap:10px;padding:8px 8px 8px 16px;border-radius:999px;background:var(--ink);color:var(--bg);box-shadow:0 20px 40px -16px rgba(0,0,0,.5);max-width:calc(100vw - 24px)}
+.dock.show{transform:translate(-50%,0);visibility:visible}
+.dock span{font-size:14px;white-space:nowrap}
+.dock .btn{height:38px;background:var(--bg);color:var(--ink);border-radius:999px}
+.dock .x{background:transparent;border:0;color:var(--bg);opacity:.7;width:32px;height:32px;border-radius:50%}
+.mbar{position:fixed;left:12px;right:12px;bottom:12px;z-index:44;display:none;align-items:center;gap:12px;padding:10px 10px 10px 16px;border-radius:16px;background:var(--inst);color:var(--inst-ink);
+  box-shadow:0 18px 40px -14px rgba(6,18,48,.7);transform:translateY(150%);transition:transform .45s var(--ease)}
+.mbar.show{transform:none}
+.mbar div{flex:1;min-width:0}
+.mbar small{display:block;font-size:12px;color:var(--inst-ink-2)}
+.mbar b{font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
+@media (max-width:1039px){.mbar{display:flex}}
+body.dock-on .mbar{transform:translateY(150%)}
+.toast{position:fixed;left:50%;top:18px;z-index:60;transform:translate(-50%,calc(-100% - 40px));visibility:hidden;transition:transform .4s var(--ease);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;box-shadow:0 14px 30px -12px rgba(0,0,0,.5)}
+.toast.show{transform:translate(-50%,0);visibility:visible}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .v-air{animation:none;stroke-dasharray:none;opacity:.5}
+}
+
+/* ---------- print: room summary ---------- */
+.print{display:none}
+@media print{
+  body{background:#fff;color:#000}
+  body>*:not(.print){display:none!important}
+  .print{display:block;font-family:var(--f-body);padding:10mm}
+  .print h1{font-size:22px;margin-bottom:4px}
+  .print table{min-width:0;font-size:12px}
+  .print th{position:static;background:#eef3fa;color:#000}
+  .print td,.print th{border:1px solid #ccd;padding:6px 8px}
+}
+
+.hide-s{display:inline}
+@media (max-width:560px){.hide-s{display:none}.brand-txt span{display:none}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <a class="brand" href="#top" aria-label="Gree BTU Studio กลับด้านบน">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/><path d="m9 4 3 2 3-2M9 20l3-2 3 2"/></svg></span>
+      <span class="brand-txt"><b>BTU Studio</b><span>คำนวณขนาดแอร์และเลือกรุ่น Gree</span></span>
+    </a>
+    <div class="bar-sp"></div>
+    <button class="chip-btn" id="hzBtn" type="button" title="วัดอัตรารีเฟรชของจอ"><i class="hz-dot" style="width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--ok-soft)"></i><span class="hz" id="hz">— Hz</span></button>
+    <button class="chip-btn" id="themeBtn" type="button" aria-label="สลับโหมดสว่าง/มืด"></button>
+    <button class="chip-btn" id="roomsBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span class="hide-s">รายการห้อง</span><span class="count" id="roomCount" data-n="0">0</span></button>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+  <div class="intro">
+    <h1>ห้องนี้ต้องใช้แอร์กี่ BTU และรุ่นไหนดี</h1>
+    <p>กรอกขนาดห้องกับลักษณะการใช้งาน ระบบคำนวณภาระความร้อนตามสภาพอากาศเมืองร้อน แปลงเป็น BTU / HP / RT แล้วจับคู่กับรุ่นจริงใน Gree Product Catalog 2026 ให้ทันที</p>
+  </div>
+
+  <div class="work">
+    <form class="panel form" id="form" autocomplete="off" onsubmit="return false">
+      <div class="grp">
+        <h2>เริ่มจากห้องตัวอย่าง</h2>
+        <p class="lead">แตะเพื่อเติมค่าให้อัตโนมัติ แล้วปรับต่อได้</p>
+        <div class="presets" id="presets"></div>
+      </div>
+
+      <div class="grp">
+        <h2>ขนาดห้อง</h2>
+        <p class="lead">ถ้าไม่ทราบความกว้างและความยาว แต่ทราบพื้นที่รวม ให้เลือก "ทราบเฉพาะ ตร.ม."</p>
+        <div class="seg" role="radiogroup" aria-label="รูปแบบการกรอกขนาดห้อง">
+          <input type="radio" name="areaMode" id="mWL" value="wl" checked><label for="mWL">กว้าง × ยาว</label>
+          <input type="radio" name="areaMode" id="mArea" value="area"><label for="mArea">ทราบเฉพาะ ตร.ม.</label>
+          <span class="seg-thumb" aria-hidden="true"></span>
+        </div>
+
+        <div id="wlFields" class="two">
+          <div class="field">
+            <div class="field-top"><label for="w">ความกว้าง</label><div class="numbox"><input id="w" type="number" inputmode="decimal" step="0.1" min="0" value="3.9"><span>ม.</span></div></div>
+            <input type="range" min="1" max="20" step="0.1" value="3.9" data-for="w" aria-label="ปรับความกว้างห้อง">
+          </div>
+          <div class="field">
+            <div class="field-top"><label for="l">ความยาว</label><div class="numbox"><input id="l" type="number" inputmode="decimal" step="0.1" min="0" value="3.6"><span>ม.</span></div></div>
+            <input type="range" min="1" max="25" step="0.1" value="3.6" data-for="l" aria-label="ปรับความยาวห้อง">
+          </div>
+        </div>
+        <div id="areaField" class="field" hidden>
+          <div class="field-top"><label for="area">พื้นที่ห้องรวม</label><div class="numbox"><input id="area" type="number" inputmode="decimal" step="0.5" min="0" value="14.04"><span>ตร.ม.</span></div></div>
+          <input type="range" min="1" max="400" step="0.5" value="14.04" data-for="area" aria-label="ปรับพื้นที่ห้อง">
+        </div>
+        <div class="areabox"><span id="areaLbl">พื้นที่ห้องรวม (คำนวณให้อัตโนมัติ)</span><b><span id="stArea2">14.04</span> ตร.ม.</b></div>
+
+        <div class="field">
+          <div class="field-top"><label for="h">ความสูงเพดาน</label><div class="numbox"><input id="h" type="number" inputmode="decimal" step="0.05" min="0" value="2.65"><span>ม.</span></div></div>
+          <input type="range" min="2.2" max="6" step="0.05" value="2.65" data-for="h" aria-label="ปรับความสูงเพดาน">
+          <p class="hint">มาตรฐาน 2.6 ม. ระบบคูณภาระตามสัดส่วนความสูง ÷ 2.6 ให้อัตโนมัติ</p>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h2>ประเภทการใช้งานห้อง</h2>
+        <p class="lead">กำหนดค่าความร้อนพื้นฐานต่อตารางเมตร</p>
+        <div class="rtypes" role="radiogroup" aria-label="ประเภทการใช้งานห้อง">
+          <div class="rtype"><input type="radio" name="roomType" id="rt800" value="800"><label for="rt800"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.6"/></svg><b>ห้องนอน</b><small>ไม่โดนแดด ใช้งานกลางคืน <em>800</em> BTU/ตร.ม.</small></label></div>
+          <div class="rtype"><input type="radio" name="roomType" id="rt900" value="900"><label for="rt900"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/><path d="M3 13a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v4H3z"/><path d="M5 17v2M19 17v2"/></svg><b>ห้องนั่งเล่น / ห้องทำงาน</b><small>แดดปานกลาง <em>900</em> BTU/ตร.ม.</small></label></div>
+          <div class="rtype"><input type="radio" name="roomType" id="rt1000" value="1000"><label for="rt1000"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h11V11L8.5 7 3 11z"/><circle cx="18" cy="6" r="2.4"/><path d="M18 1.5v1M18 9.5v1M22.5 6h-1M14.5 6h-1"/></svg><b>ห้องทิศตะวันตก / ใต้</b><small>โดนแดดจัด หรือใต้หลังคา <em>1,000</em> BTU/ตร.ม.</small></label></div>
+          <div class="rtype"><input type="radio" name="roomType" id="rt1100" value="1100" checked><label for="rt1100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v10h16V10"/><path d="M3 10 5 4h14l2 6a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0"/><path d="M10 20v-5h4v5"/></svg><b>ร้านค้า / ร้านอาหาร / ออฟฟิศ</b><small>คนเข้าออกเยอะ <em>1,100</em> BTU/ตร.ม.</small></label></div>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h2>ความร้อนเพิ่มเติม</h2>
+        <p class="lead">แดดบ่ายและจำนวนคนเพิ่มภาระให้แอร์</p>
+        <label class="toggle" for="sun">
+          <span class="toggle-txt"><b>โดนแดดบ่ายจัดโดยตรง</b><small>เพิ่ม 100 BTU ต่อ ตร.ม.</small></span>
+          <span class="switch"><input type="checkbox" id="sun" role="switch"><i></i></span>
+        </label>
+        <div class="field">
+          <div class="field-top"><label for="people">จำนวนคนที่ใช้งานประจำ</label>
+            <div class="stepper"><button type="button" id="pMinus" aria-label="ลดจำนวนคน">−</button><input id="people" type="number" inputmode="numeric" min="0" step="1" value="2"><button type="button" id="pPlus" aria-label="เพิ่มจำนวนคน">+</button></div></div>
+          <p class="hint">ส่วนที่เกิน 2 คน คิดเพิ่มคนละ 400 BTU/hr</p>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h2>ประมาณค่าไฟ</h2>
+        <p class="lead">ใช้เทียบความประหยัดระหว่างรุ่น</p>
+        <div class="field">
+          <div class="field-top"><label for="hours">เปิดใช้งานต่อวัน</label><div class="numbox"><input id="hours" type="number" inputmode="numeric" min="1" max="24" step="1" value="8"><span>ชม.</span></div></div>
+          <input type="range" min="1" max="24" step="1" value="8" data-for="hours" aria-label="ปรับชั่วโมงใช้งานต่อวัน">
+        </div>
+        <div class="field">
+          <div class="field-top"><label for="rate">ค่าไฟเฉลี่ย</label><div class="numbox"><input id="rate" type="number" inputmode="decimal" min="0" step="0.01" value="4.23"><span>บาท/หน่วย</span></div></div>
+          <p class="hint">ค่าเริ่มต้น 4.23 บาท = ค่าไฟเฉลี่ยงวด ก.ย.–ธ.ค. 2569 ของ กกพ. 3.95 บาท รวม VAT 7% ปรับตามบิลจริงได้</p>
+        </div>
+        <button type="button" class="btn btn-line btn-sm" id="resetBtn" style="margin-top:4px">ล้างค่ากลับเป็นค่าเริ่มต้น</button>
+      </div>
+    </form>
+
+    <section class="inst" id="inst" aria-labelledby="recLabel">
+      <div class="viz-wrap">
+        <svg id="viz" viewBox="0 0 460 330" role="img" aria-label="ภาพจำลองห้องตามขนาดที่กรอก พร้อมตำแหน่งแอร์ คน และแดด">
+          <g id="vzS"></g>
+          <g id="vzAir"><path class="v-air"/><path class="v-air b"/><path class="v-air"/><path class="v-air b"/></g>
+          <g id="vzTop"></g>
+        </svg>
+        <div class="viz-note" aria-hidden="true"><span>ตารางพื้น 1 ช่อง = 1–5 ม.</span><span><i style="background:#FF9D5C"></i>คนใช้งาน</span><span><i style="background:#7FDBFF"></i>ลมเย็น</span></div>
+      </div>
+      <div class="read" aria-live="polite">
+        <p class="read-label" id="recLabel">ขนาดแอร์มาตรฐานที่แนะนำให้เลือกซื้อ</p>
+        <div class="read-big"><span class="num" id="recNum">—</span><span class="u">BTU/hr</span></div>
+        <p class="read-sub" id="recSub"></p>
+        <div class="ladder" aria-hidden="true">
+          <div class="need-pin" id="needPin" style="position:absolute;left:0;top:0;width:100%;align-items:flex-start"><div style="display:flex;flex-direction:column;align-items:center;transform:translateX(-50%)"><span id="needTxt"></span><i></i></div></div>
+          <div class="ladder-track"><div class="ladder-fill" id="ladderFill" style="transform:scaleX(0)"></div></div>
+          <div class="ladder-ticks" id="ladderTicks"></div>
+        </div>
+        <dl class="stats">
+          <div><dt>ภาระความร้อนจริง</dt><dd><span id="stExact">0</span><small>BTU/hr</small></dd></div>
+          <div><dt>ตันความเย็น</dt><dd><span id="stRT">0</span><small>RT</small></dd></div>
+          <div><dt>แรงม้าคอมฯ</dt><dd><span id="stHP">0</span><small>HP</small></dd></div>
+          <div><dt>พื้นที่ห้อง</dt><dd><span id="stArea">0</span><small>ตร.ม.</small></dd></div>
+        </dl>
+        <details class="formula">
+          <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>ที่มาของตัวเลข</summary>
+          <div class="fx" id="fx"></div>
+        </details>
+        <div class="inst-act">
+          <a class="btn btn-ice" href="#products">ดูรุ่นที่แนะนำ</a>
+          <button class="btn btn-ghost-inv" type="button" id="addRoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>บันทึกห้องนี้</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="sec" id="products" aria-labelledby="prodH">
+    <div class="sec-head"><div><h2 id="prodH">รุ่น Gree ที่รองรับห้องนี้</h2><p id="prodSub"></p></div></div>
+    <article class="panel pick" id="pick" hidden></article>
+    <div class="toolbar">
+      <div class="tabs" id="tabs" role="tablist" aria-label="ประเภทแอร์"></div>
+      <label class="sort">เรียงตาม
+        <select id="sort">
+          <option value="best">เหมาะสมที่สุด</option>
+          <option value="eff">ประหยัดไฟที่สุด</option>
+          <option value="cost">ค่าไฟต่อเดือนต่ำสุด</option>
+          <option value="quiet">เสียงเบาที่สุด</option>
+          <option value="fit">ขนาดพอดีที่สุด</option>
+        </select>
+      </label>
+    </div>
+    <div class="list" id="list"></div>
+    <div id="split"></div>
+    <div id="families"></div>
+  </section>
+
+  <section class="sec" id="tips" aria-labelledby="tipsH">
+    <div class="sec-head"><div><h2 id="tipsH">คำแนะนำสำหรับห้องนี้</h2><p>ปรับตามข้อมูลห้องและรุ่นที่แนะนำ</p></div></div>
+    <div class="tips" id="tipsList"></div>
+  </section>
+
+  <section class="sec" id="catalog" aria-labelledby="catH">
+    <div class="sec-head"><div><h2 id="catH">แคตตาล็อกทั้งหมด</h2><p>ทุกรุ่นที่มีสเปกใน Gree Product Catalog 2026 แตะแถวเพื่อดูสเปกเต็ม คอลัมน์ขวาสุดบอกว่ารองรับห้องที่คำนวณอยู่กี่เปอร์เซ็นต์</p></div><span class="code" id="catCount"></span></div>
+    <div class="cat-tools">
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="sr">ค้นหารุ่น</span><input id="catQ" type="search" placeholder="ค้นหา เช่น AIRY, GKC-36, 18000"></label>
+      <div class="fchips" id="catChips"></div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>ซีรีส์ / รุ่น</th><th>ประเภท</th><th class="r">BTU/hr</th><th>ประสิทธิภาพ</th><th>ฉลาก</th><th>ระบบ</th><th>ไฟ</th><th>ห้องนี้</th></tr></thead>
+        <tbody id="catBody"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div><b>แหล่งข้อมูล</b><p>สเปกทุกรุ่นจาก Gree Product Catalog 2026 (ฉบับ 14-9-26) ค่าไฟเป็นค่าประมาณจาก SEER/EER และชั่วโมงใช้งาน ไม่ใช่ค่าที่วัดจริง</p></div>
+    <div><b>การรับประกัน</b><p>แอร์บ้านและแอร์พาณิชย์ขนาดเล็ก: 5 ปี บริการ + อะไหล่ และคอมเพรสเซอร์ 10 ปี</p><p>GMV: อะไหล่ + บริการ 2 ปี คอมเพรสเซอร์ 5 ปี</p></div>
+    <div><b>Gree Contact Center</b><p>โทร 02-124-3283</p><p><a href="https://www.gree.co.th" target="_blank" rel="noopener">www.gree.co.th</a></p></div>
+  </div>
+</footer>
+
+<dialog class="modal" id="specDlg" aria-label="สเปกรุ่น"><div class="sheet" id="specBody"></div></dialog>
+<dialog class="modal" id="cmpDlg" aria-label="เปรียบเทียบรุ่น"><div class="sheet" id="cmpBody"></div></dialog>
+<dialog class="drawer" id="roomsDlg" aria-label="รายการห้อง">
+  <div class="sheet">
+    <div class="sheet-h"><div class="grow"><h3>รายการห้อง</h3><p>รวมหลายห้องเป็นใบสรุปเดียว แตะชื่อห้องเพื่อแก้ไข</p></div><button class="icon-btn" data-close aria-label="ปิด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="rooms" id="roomsList"></div>
+    <div class="rooms-foot">
+      <div class="tot"><span>ความเย็นรวม</span><b><span id="roomsTot">0</span> <small style="font-size:14px">BTU/hr</small></b></div>
+      <div class="tot"><span>ค่าไฟรวมโดยประมาณ</span><b id="roomsCost">฿0</b></div>
+      <div class="acts">
+        <button class="btn btn-pri btn-sm" id="copyRooms" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>คัดลอกสรุป</button>
+        <button class="btn btn-line btn-sm" id="printRooms" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>พิมพ์ / PDF</button>
+        <button class="btn btn-line btn-sm" id="clearRooms" type="button">ล้างทั้งหมด</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<div class="dock" id="dock" role="region" aria-label="เปรียบเทียบรุ่น"><span id="dockTxt"></span><button class="btn btn-sm" id="dockOpen" type="button">เปรียบเทียบ</button><button class="x" id="dockClear" type="button" aria-label="ล้างการเปรียบเทียบ">✕</button></div>
+<div class="mbar" id="mbar"><div><small id="mbSub"></small><b id="mbNum">—</b></div><button class="btn btn-ice btn-sm" id="mbGo" type="button">ดูรุ่น</button></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="print" id="printArea"></div>
+
+<script>
+/* ===== Gree Product Catalog 2026 (ฉบับ 14-9-26) — ข้อมูลที่ถอดจากแคตตาล็อก ===== */
+const pipe = (l, g) => `ของเหลว ${l}" / แก๊ส ${g}"`;
+const WARRANTY = {
+  rac: 'รับประกัน 5 ปี (บริการ + อะไหล่) และคอมเพรสเซอร์ 10 ปี',
+  gmv: 'รับประกันอะไหล่ + บริการ 2 ปี และคอมเพรสเซอร์ 5 ปี'
+};
+const TYPES = {
+  wall:     { name: 'ติดผนัง',            hint: 'ห้องนอน ห้องนั่งเล่น ห้องทำงาน' },
+  floor:    { name: 'ตู้ตั้งพื้น',          hint: 'ร้านค้า โชว์รูม ห้องโถงเพดานสูง' },
+  cassette: { name: 'ฝังฝ้า 4 ทิศทาง',     hint: 'ออฟฟิศ ร้านอาหาร กระจายลมรอบทิศ' },
+  ceiling:  { name: 'แขวนใต้ฝ้า',          hint: 'ห้องประชุม ร้านค้า ไม่ต้องเจาะฝ้า' },
+  duct:     { name: 'ต่อท่อลม (Duct)',     hint: 'ซ่อนในฝ้า ส่งลมได้หลายจุด' },
+  oneway:   { name: 'ฝังฝ้า 1 ทิศทาง',     hint: 'ห้องยาวแคบ ทางเดิน ห้องประชุมเล็ก' },
+  big:      { name: 'ระบบใหญ่',            hint: 'โรงงาน ห้องจัดเลี้ยง อาคาร' }
+};
+
+const SERIES = [
+  {
+    id: 'airy', name: 'AIRY', type: 'wall', page: 6, inverter: true, ref: 'R32', wifi: true, ai: true,
+    tagline: 'AI Inverter ตัวท็อป SEER สูงสุด 25.00 เสียงเบาสุด 22 dB(A)',
+    fin: 'Black Fin ทั้งคอยล์ร้อนและคอยล์เย็น', power: '1 เฟส 220–240V 50/60Hz', warranty: 'rac',
+    features: ['AI ปรับการทำงานอัตโนมัติ', 'Wi-Fi สั่งงานผ่านมือถือ', 'I-Feel', 'ทำความสะอาดอัจฉริยะ', 'Turbo Mode', 'X-Fan ไล่ความชื้น', 'ป้องกันเด็ก', 'ตรวจจับความบกพร่องอัตโนมัติ', 'รองรับไฟไม่เสถียร', 'ฟิลเตอร์กันเชื้อรา', 'โหมดลดเสียง', 'แสดงการใช้ไฟ', 'ฟิลเตอร์ถอดล้างได้', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GWC-09AIRY', btu: 9212,  range: [3241, 14672], w: 520,  seer: 25.00, stars: 5, nIn: [43, 22], nOut: 52, id: '970×347×257',  od: '802×555×350', pipe: pipe('1/4', '3/8') },
+      { code: 'GWC-12AIRY', btu: 12000, range: [1706, 13989], w: 730,  seer: 25.00, stars: 4, nIn: [44, 22], nOut: 52, id: '970×347×257',  od: '802×555×350', pipe: pipe('1/4', '3/8') },
+      { code: 'GWC-18AIRY', btu: 18000, range: [4435, 19789], w: 1200, seer: 25.00, stars: 5, nIn: [48, 34], nOut: 57, id: '1110×347×257', od: '958×660×402', pipe: pipe('1/4', '1/2') },
+      { code: 'GWC-24AIRY', btu: 25250, range: [5390, 29850], w: 1870, seer: 22.80, stars: 3, nIn: [52, 35], nOut: 60, id: '1110×347×257', od: '958×660×402', pipe: pipe('1/4', '5/8') }
+    ]
+  },
+  {
+    id: 'pular', name: 'PULAR', type: 'wall', page: 4, inverter: true, ref: 'R32', wifi: true,
+    tagline: 'Inverter ฉลากเบอร์ 5 ★★★ ทุกขนาด พร้อม Wi-Fi',
+    fin: 'Black Fin (คอยล์ร้อน) + Blue Fin (คอยล์เย็น)', power: '1 เฟส 220–240V 50Hz', warranty: 'rac',
+    features: ['Wi-Fi สั่งงานผ่านมือถือ', 'I-Feel', 'ประหยัดพลังงาน', 'ทำความสะอาดอัจฉริยะ', 'Turbo Mode', 'LED Display', 'เย็นเร็ว', 'X-Fan ไล่ความชื้น', 'รองรับไฟไม่เสถียร', 'ลดรอบการทำงานคอมเพรสเซอร์', 'เทคโนโลยีพลาสมาเย็น', 'ฟิลเตอร์สุขภาพ', 'ป้องกัน 4 ระดับ', 'ฟิลเตอร์ถอดล้างได้', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GWC-09PULAR', btu: 9300,  range: [1800, 11600], w: 540,  seer: 21.80, stars: 3, nIn: [40, 25], nOut: 50, id: '825×293×196', od: '732×555×330', pipe: pipe('1/4', '3/8') },
+      { code: 'GWC-12PULAR', btu: 12400, range: [3070, 14671], w: 840,  seer: 22.66, stars: 3, nIn: [41, 25], nOut: 52, id: '825×293×196', od: '802×555×350', pipe: pipe('1/4', '3/8') },
+      { code: 'GWC-18PULAR', btu: 18500, range: [4094, 19790], w: 1300, seer: 22.76, stars: 3, nIn: [46, 29], nOut: 57, id: '982×311×221', od: '873×555×376', pipe: pipe('1/4', '1/2') }
+    ]
+  },
+  {
+    id: 'charmo', name: 'CHARMO', type: 'wall', page: 3, inverter: true, ref: 'R32', wifi: false,
+    tagline: 'Inverter คุ้มค่า คอยล์ร้อน Golden Fin ทนการกัดกร่อน',
+    fin: 'Golden Fin (คอยล์ร้อน) + Blue Fin (คอยล์เย็น)', power: '1 เฟส 220–240V 50Hz', warranty: 'rac',
+    features: ['I-Feel', 'ทำความสะอาดอัจฉริยะ', 'ประหยัดพลังงาน', 'LED Display', 'ฟิลเตอร์สุขภาพ', 'Turbo Mode', 'เย็นเร็ว', 'X-Fan ไล่ความชื้น', 'ลดรอบการทำงานคอมเพรสเซอร์', 'รองรับไฟไม่เสถียร', 'ตั้งเวลา', 'เทคโนโลยีพลาสมาเย็น', 'ป้องกัน 4 ระดับ', 'ฟิลเตอร์ถอดล้างได้', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GWC-09CHARMO', btu: 9300,  range: [2730, 11260], w: 710,  seer: 18.73, stars: 1, nIn: [40, 24], nOut: 49, id: '783×260×185',  od: '732×555×330', pipe: pipe('1/4', '3/8') },
+      { code: 'GWC-12CHARMO', btu: 12300, range: [2047, 12966], w: 1000, seer: 18.02, stars: 0, nIn: [42, 28], nOut: 51, id: '835×275×200',  od: '732×555×330', pipe: pipe('1/4', '3/8') },
+      { code: 'GWC-15CHARMO', btu: 16000, range: [4435, 17998], w: 1300, seer: 18.29, stars: 0, nIn: [50, 31], nOut: 52, id: '943×333×246',  od: '732×555×330', pipe: pipe('1/4', '3/8') },
+      { code: 'GWC-18CHARMO', btu: 18500, range: [5520, 19200], w: 1600, seer: 17.64, stars: 0, nIn: [43, 33], nOut: 57, id: '943×333×246',  od: '802×555×350', pipe: pipe('1/4', '1/2') },
+      { code: 'GWC-24CHARMO', btu: 24500, range: [6150, 25250], w: 2000, seer: 18.42, stars: 0, nIn: [53, 34], nOut: 58, id: '1078×333×246', od: '873×555×376', pipe: pipe('1/4', '5/8') }
+    ]
+  },
+  {
+    id: 'k1', name: 'K1', type: 'wall', page: 7, inverter: true, ref: 'R32', wifi: false,
+    tagline: 'Inverter รุ่นเริ่มต้น Blue Fin ทั้งชุด พัดลม 7 ระดับ',
+    fin: 'Blue Fin ทั้งคอยล์ร้อนและคอยล์เย็น', power: '1 เฟส 220–240V', warranty: 'rac',
+    features: ['I-Feel', 'ประหยัดพลังงาน', 'เย็นเร็ว', 'ทำความสะอาดอัตโนมัติ', 'Turbo Mode', 'LED Display', 'รองรับไฟไม่เสถียร', 'พัดลม 7 ระดับ', 'X-Fan ไล่ความชื้น', 'ตั้งเวลา', 'ป้องกัน 4 ระดับ', 'ฟิลเตอร์ถอดล้างได้', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GWC09AGB2-K6DNA1G', btu: 9066,  range: [2388, 10918], w: 804,  seer: 15.42, stars: null, nIn: [40, 24], nOut: 49, id: '779×260×185',  od: '710×450×293', pipe: pipe('1/4', '3/8') },
+      { code: 'GWC12AGB2-K6DNA1E', btu: 12502, range: [1200, 13989], w: 1140, seer: 16.62, stars: null, nIn: [41, 25], nOut: 49, id: '779×260×185',  od: '732×550×330', pipe: pipe('1/4', '3/8') },
+      { code: 'GWC15AGD2-K6DNA1D', btu: 15040, range: [1320, 17998], w: 1390, seer: 17.64, stars: null, nIn: [43, 28], nOut: 52, id: '982×311×221',  od: '732×550×330', pipe: pipe('1/4', '3/8') },
+      { code: 'GWC18AGD2-K6DNA1I', btu: 18098, range: [1520, 19790], w: 1650, seer: 18.12, stars: null, nIn: [43, 29], nOut: 54, id: '982×311×221',  od: '802×555×350', pipe: pipe('1/4', '1/2') },
+      { code: 'GWC24AGE2-K6DNA1B', btu: 24239, range: [1770, 25590], w: 2198, seer: 16.51, stars: null, nIn: [50, 33], nOut: 57, id: '1075×333×246', od: '958×660×402', pipe: pipe('1/4', '1/2') }
+    ]
+  },
+  {
+    id: 'boralomo', name: 'BORA & LOMO', type: 'wall', page: 5, inverter: true, ref: 'R32', wifi: true,
+    tagline: 'แอร์ติดผนังขนาดใหญ่ 30,000–37,500 BTU ลมกระจายกว้าง',
+    fin: 'Golden Fin (คอยล์ร้อน) + Blue Fin (คอยล์เย็น)', power: '1 เฟส 220–240V 50/60Hz', warranty: 'rac',
+    features: ['Wi-Fi สั่งงานผ่านมือถือ', 'ทำความสะอาดอัจฉริยะ', 'ประหยัดพลังงาน', 'เย็นเร็ว', 'ลมกระจายแบบกว้าง', 'LED Display', 'แผ่นกรองป้องกันเชื้อรา', 'ป้องกันสนิม 6 ชั้น', 'ป้องกัน 4 ระดับ'],
+    models: [
+      { code: 'GWC-30BORA', btu: 31000, range: [11270, 32880], w: 2700, seer: 17.71, stars: 1, nIn: [54, 36], nOut: 59, id: '1080×325×245', od: '958×660×402',  pipe: pipe('1/4', '5/8') },
+      { code: 'GWC-36LOMO', btu: 37500, range: [6500, 41000],  w: 3300, seer: 19.41, stars: 3, nIn: [57, 37], nOut: 62, id: '1350×326×253', od: '1000×746×427', pipe: pipe('3/8', '5/8') }
+    ]
+  },
+  {
+    id: 'joywind', name: 'Joy Wind', type: 'floor', page: 9, inverter: true, ref: 'R32', wifi: true,
+    tagline: 'ตู้ตั้งพื้น Inverter ช่องลมคู่ เหมาะพื้นที่ 55–85 ตร.ม.',
+    fin: '—', power: '1 เฟส 220/240V 50/60Hz', warranty: 'rac',
+    features: ['Inverter', 'ช่องลมคู่ขนาดใหญ่', 'ทำความสะอาดคอยล์อัตโนมัติ', 'ป้องกันเด็ก', 'ตั้งเวลา 24 ชม.', 'ส่งลมไกล', 'Wi-Fi', 'พื้นที่ใช้งาน 55–85 ตร.ม.'],
+    models: [
+      { code: 'GVC-48JoyWind', btu: 44000, range: [11942, 47768], w: 3900, seer: 17.54, stars: 2, nIn: [54, 44], nOut: 62, id: '583×1880×367', od: '1020×820×427', pipe: pipe('3/8', '5/8') }
+    ]
+  },
+  {
+    id: 'ts', name: 'TS Floor Standing', type: 'floor', page: 8, inverter: false, ref: 'R32', wifi: true,
+    tagline: 'ตู้ตั้งพื้นลมแรง ลม 3 มิติ มีขนาดไฟ 3 เฟสสำหรับงานใหญ่',
+    fin: '—', power: '18–36: 1 เฟส 220–240V / 48–55: 3 เฟส 380V', warranty: 'rac',
+    features: ['ลม 3 มิติ', 'ลมแรง', 'Wi-Fi', 'Turbo Mode', 'ตั้งเวลา', 'ระบบเริ่มทำงานอัตโนมัติ', 'ตรวจจับความบกพร่องอัตโนมัติ', 'ป้องกันเด็ก', 'X-Fan ไล่ความชื้น', 'ระบบป้องกันอัคคีภัย', 'ป้องกันการกัดกร่อนขั้นสูง', 'ระบบลดแรงสั่นสะเทือน', 'แผ่นกรองประสิทธิภาพสูง', 'ป้องกัน 4 ระดับ', 'ลดเสียง'],
+    models: [
+      { code: 'GVC-18TS', btu: 17000, w: 1400, eer: 12.68, stars: null, nIn: [44, 37], nOut: 54, id: '485×1720×321', od: '802×555×350',  ph: 1, pipe: pipe('1/4', '1/2') },
+      { code: 'GVC-24TS', btu: 22000, w: 2060, eer: 11.59, stars: null, nIn: [45, 37], nOut: 54, id: '507×1770×320', od: '873×555×376',  ph: 1, pipe: pipe('1/4', '1/2') },
+      { code: 'GVC-36TS', btu: 29000, w: 2320, eer: 13.23, stars: null, nIn: [53, 45], nOut: 60, id: '587×1882×394', od: '1000×746×427', ph: 1, pipe: pipe('1/4', '5/8') },
+      { code: 'GVC-48TS', btu: 40000, w: 3600, eer: 11.67, stars: null, nIn: [53, 45], nOut: 61, id: '587×1882×394', od: '1000×746×427', ph: 3, pipe: pipe('1/4', '5/8') },
+      { code: 'GVC-55TS', btu: 48000, w: 5300, eer: 9.73,  stars: null, nIn: [53, 45], nOut: 60, id: '587×1882×394', od: '978×1260×412', ph: 3, ref: 'R410A', pipe: pipe('3/8', '5/8') }
+    ]
+  },
+  {
+    id: 'umc', name: 'U-Match Cassette', type: 'cassette', page: 11, inverter: true, ref: 'R32', wifi: false,
+    tagline: 'ฝังฝ้า 4 ทิศทาง กระจายลม 360° มีปั๊มน้ำทิ้งในตัว',
+    fin: 'Golden Fin (คอยล์ร้อน)', power: '1 เฟส 220–240V 50/60Hz', warranty: 'rac',
+    features: ['Inverter', 'กระจายลมรอบทิศ 360°', 'ปั๊มน้ำทิ้งในตัว ส่งน้ำสูงสุด 1.1 ม.', 'บำรุงรักษาง่าย', 'ท่อทองแดงร่องใน', 'รองรับไฟไม่เสถียร', 'ตรวจจับความบกพร่องอัตโนมัติ', 'มอเตอร์คุณภาพสูง', 'ชุดภายนอกแข็งแรง', 'ทำงานได้ในอุณหภูมิสูง/ต่ำ', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GKC-18T-AK', btu: 19300, range: [4094, 19448],  w: 1698, seer: 18.80, stars: 1, nIn: [43, 35], nOut: 53, id: '570×570×265', od: '802×555×350',  pipe: pipe('1/4', '1/2') },
+      { code: 'GKC-24T-AK', btu: 27000, range: [7680, 27050],  w: 2009, seer: 18.77, stars: 1, nIn: [42, 36], nOut: 56, id: '840×840×200', od: '958×660×402',  pipe: pipe('1/4', '5/8') },
+      { code: 'GKC-30T-AK', btu: 31000, range: [8700, 31200],  w: 2700, seer: 17.40, stars: 1, nIn: [46, 40], nOut: 56, id: '840×840×200', od: '958×660×402',  pipe: pipe('1/4', '5/8') },
+      { code: 'GKC-36T-AK', btu: 37000, range: [7900, 37191],  w: 3403, seer: 18.19, stars: 1, nIn: [52, 40], nOut: 57, id: '840×840×200', od: '958×660×402',  pipe: pipe('1/4', '5/8') },
+      { code: 'GKC-42T-AK', btu: 44500, range: [12283, 46915], w: 4030, seer: 17.78, stars: 2, nIn: [52, 42], nOut: 57, id: '840×840×290', od: '1000×746×427', pipe: pipe('3/8', '5/8') },
+      { code: 'GKC-48T-AK', btu: 50000, range: [13648, 51525], w: 5127, seer: 17.23, stars: 2, nIn: [51, 45], nOut: 60, id: '840×840×290', od: '900×820×370',  pipe: pipe('3/8', '5/8') },
+      { code: 'GKC-60T-AK', btu: 54000, range: [15354, 58004], w: 5330, seer: 18.22, stars: 2, nIn: [52, 46], nOut: 58, id: '840×840×290', od: '978×1260×412', pipe: pipe('3/8', '5/8') }
+    ]
+  },
+  {
+    id: 'umc3', name: 'U-Match Cassette 3 เฟส', type: 'cassette', page: 12, inverter: false, ref: 'R32', wifi: false,
+    tagline: 'ฝังฝ้า 4 ทิศทาง ระบบ Fixed Speed ไฟ 3 เฟส',
+    fin: 'Golden Fin (คอยล์ร้อน)', power: '3 เฟส 380–415V 50Hz', warranty: 'rac',
+    features: ['Fixed Speed', 'กระจายลมรอบทิศ 360°', 'บำรุงรักษาง่าย', 'รองรับไฟไม่เสถียร', 'ตรวจจับความบกพร่องอัตโนมัติ', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GKC-48TM', btu: 47770, w: 4080, eer: 11.70, stars: null, nIn: [54, 46], nOut: 59, id: '840×840×290', od: '1020×826×427', ph: 3, pipe: pipe('3/8', '5/8') },
+      { code: 'GKC-60TM', btu: 52886, w: 4840, eer: 10.92, stars: null, nIn: [53, 46], nOut: 59, id: '840×840×290', od: '1020×826×427', ph: 3, pipe: pipe('3/8', '5/8') }
+    ]
+  },
+  {
+    id: 'umd', name: 'U-Match Duct', type: 'duct', page: 13, inverter: true, ref: 'R32', wifi: false,
+    tagline: 'ซ่อนในฝ้า เงียบ ส่งลมผ่านท่อได้หลายหัวจ่าย ESP สูงสุด 50 Pa',
+    fin: 'Golden Fin (คอยล์ร้อน)', power: '1 เฟส 220–240V 50/60Hz', warranty: 'rac',
+    features: ['Inverter', 'High ESP สูงสุด 50 Pa', 'บำรุงรักษาง่าย', 'ท่อทองแดงร่องใน', 'รองรับไฟไม่เสถียร', 'ตรวจจับความบกพร่องอัตโนมัติ', 'มอเตอร์คุณภาพสูง', 'ทำงานได้ในอุณหภูมิสูง/ต่ำ', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GFC-12PH-AK', btu: 12500, range: [3241, 13989],  w: 1173, seer: 16.17, stars: null, nIn: [34, 26], nOut: 50, id: '700×198×450',  od: '732×555×330',  esp: 24, pipe: pipe('1/4', '3/8') },
+      { code: 'GFC-18PH-AK', btu: 19300, range: [4265, 20472],  w: 1580, seer: 18.66, stars: 1, nIn: [38, 31], nOut: 53, id: '900×198×450',  od: '802×555×350',  esp: 25, pipe: pipe('1/4', '1/2') },
+      { code: 'GFC-24PH-AK', btu: 27000, range: [7680, 27530],  w: 2230, seer: 19.31, stars: 1, nIn: [43, 37], nOut: 55, id: '900×260×655',  od: '958×660×402',  esp: 25, pipe: pipe('1/4', '5/8') },
+      { code: 'GFC-30PH-AK', btu: 31000, range: [8700, 31900],  w: 2750, seer: 16.34, stars: 0, nIn: [45, 37], nOut: 56, id: '900×260×655',  od: '958×660×402',  esp: 37, pipe: pipe('1/4', '5/8') },
+      { code: 'GFC-36PH-AK', btu: 35000, range: [7900, 35525],  w: 3561, seer: 17.40, stars: 1, nIn: [44, 39], nOut: 57, id: '900×260×655',  od: '958×660×402',  esp: 37, pipe: pipe('1/4', '5/8') },
+      { code: 'GFC-42PH-AK', btu: 44500, range: [12283, 46915], w: 4180, seer: 16.58, stars: 1, nIn: [44, 38], nOut: 58, id: '1340×260×655', od: '1000×746×427', esp: 50, pipe: pipe('3/8', '5/8') },
+      { code: 'GFC-48PH-AK', btu: 48500, range: [13648, 54251], w: 4406, seer: 15.93, stars: 1, nIn: [47, 40], nOut: 60, id: '1400×300×700', od: '900×820×370',  esp: 50, pipe: pipe('3/8', '5/8') },
+      { code: 'GFH-60PH-AK', btu: 57000, range: [15354, 58004], w: 5000, seer: 17.71, stars: 2, nIn: [45, 39], nOut: 58, id: '1400×300×700', od: '978×1260×412', esp: 50, pipe: pipe('3/8', '5/8') }
+    ]
+  },
+  {
+    id: 'umd3', name: 'U-Match Duct 3 เฟส', type: 'duct', page: 14, inverter: false, ref: 'R32', wifi: false,
+    tagline: 'ต่อท่อลม Fixed Speed ไฟ 3 เฟส ESP 50 Pa',
+    fin: 'Golden Fin (คอยล์ร้อน)', power: '3 เฟส 380–415V 50Hz', warranty: 'rac',
+    features: ['Fixed Speed', 'High ESP 50 Pa', 'บำรุงรักษาง่าย', 'รองรับไฟไม่เสถียร', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GFC-48PHM', btu: 48450, w: 4140, eer: 11.70, stars: null, nIn: [43, 39], nOut: 59, id: '1340×260×655', od: '1020×826×427', ph: 3, esp: 50, pipe: pipe('3/8', '5/8') },
+      { code: 'GFC-60PHM', btu: 54592, w: 5000, eer: 10.92, stars: null, nIn: [45, 40], nOut: 59, id: '1400×300×700', od: '1020×826×427', ph: 3, esp: 50, pipe: pipe('3/8', '5/8') }
+    ]
+  },
+  {
+    id: 'umfc', name: 'U-Match Floor Ceiling', type: 'ceiling', page: 15, inverter: true, ref: 'R32', wifi: false,
+    tagline: 'แขวนใต้ฝ้าหรือตั้งพื้นได้ ติดตั้งง่ายไม่ต้องรื้อฝ้า',
+    fin: 'Golden Fin (คอยล์ร้อน)', power: '1 เฟส 220–240V 50/60Hz', warranty: 'rac',
+    features: ['Inverter', 'ติดใต้ฝ้าหรือตั้งพื้น', 'บำรุงรักษาง่าย', 'ท่อทองแดงร่องใน', 'รองรับไฟไม่เสถียร', 'ตรวจจับความบกพร่องอัตโนมัติ', 'มอเตอร์คุณภาพสูง', 'ทำงานได้ในอุณหภูมิสูง/ต่ำ', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GTC-18ZD-AK', btu: 19300, range: [4094, 20130],  w: 1680, seer: 18.94, stars: 1, nIn: [48, 38], nOut: 53, id: '870×235×665',  od: '802×555×350',  pipe: pipe('1/4', '1/2') },
+      { code: 'GTC-24ZD-AK', btu: 25500, range: [7260, 26000],  w: 2100, seer: 17.16, stars: 0, nIn: [49, 39], nOut: 55, id: '870×235×665',  od: '958×660×402',  pipe: pipe('1/4', '5/8') },
+      { code: 'GTC-30ZD-AK', btu: 31000, range: [8700, 31900],  w: 2400, seer: 19.41, stars: 3, nIn: [47, 43], nOut: 56, id: '1200×235×665', od: '958×660×402',  pipe: pipe('1/4', '5/8') },
+      { code: 'GTC-36ZD-AK', btu: 36000, range: [7900, 37191],  w: 3403, seer: 17.64, stars: 1, nIn: [54, 45], nOut: 57, id: '1200×235×665', od: '958×660×402',  pipe: pipe('1/4', '5/8') },
+      { code: 'GTC-42ZD-AK', btu: 44500, range: [12283, 46915], w: 3900, seer: 18.19, stars: 2, nIn: [50, 42], nOut: 57, id: '1570×235×665', od: '1000×746×427', pipe: pipe('3/8', '5/8') },
+      { code: 'GTC-48ZD-AK', btu: 50000, range: [13648, 50839], w: 5036, seer: 17.03, stars: 2, nIn: [52, 44], nOut: 60, id: '1570×235×665', od: '900×820×370',  pipe: pipe('3/8', '5/8') },
+      { code: 'GTC-60ZD-AK', btu: 55000, range: [15354, 58004], w: 5000, seer: 18.08, stars: 2, nIn: [51, 43], nOut: 58, id: '1570×235×665', od: '978×1260×412', pipe: pipe('3/8', '5/8') }
+    ]
+  },
+  {
+    id: 'umfc3', name: 'U-Match Floor Ceiling 3 เฟส', type: 'ceiling', page: 16, inverter: false, ref: 'R32', wifi: false,
+    tagline: 'แขวนใต้ฝ้า Fixed Speed ไฟ 3 เฟส',
+    fin: 'Golden Fin (คอยล์ร้อน)', power: '3 เฟส 380–415V 50Hz', warranty: 'rac',
+    features: ['Fixed Speed', 'ติดใต้ฝ้าหรือตั้งพื้น', 'บำรุงรักษาง่าย', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GTC-48ZDM', btu: 47770, w: 4110, eer: 11.70, stars: null, nIn: [55, 46], nOut: 59, id: '1570×235×665', od: '1020×826×427', ph: 3, pipe: pipe('3/8', '5/8') },
+      { code: 'GTC-60ZDM', btu: 52886, w: 4840, eer: 10.92, stars: null, nIn: [54, 45], nOut: 59, id: '1570×235×665', od: '1020×826×427', ph: 3, pipe: pipe('3/8', '5/8') }
+    ]
+  },
+  {
+    id: 'um1w', name: 'U-Match 1-Way Cassette', type: 'oneway', page: 17, inverter: true, ref: 'R32', wifi: false,
+    tagline: 'ฝังฝ้าทิศทางเดียว ตัวบาง หน้ากากเพียง 55 มม.',
+    fin: 'Golden Fin (คอยล์ร้อน)', power: '1 เฟส 220–240V 50/60Hz', warranty: 'rac',
+    features: ['Inverter', 'หน้ากากบาง 1210×470×55 มม.', 'บำรุงรักษาง่าย', 'รองรับไฟไม่เสถียร', 'ตรวจจับความบกพร่องอัตโนมัติ', 'มอเตอร์คุณภาพสูง', 'ทำงานได้ในอุณหภูมิสูง/ต่ำ', 'เคลือบกันกัดกร่อน'],
+    models: [
+      { code: 'GKC-12UT-AK', btu: 13000, range: [3582, 13136], w: 1083, seer: 18.94, stars: 1, nIn: [40, 29], nOut: 49, id: '987×385×178',  od: '732×555×330', pipe: pipe('1/4', '3/8') },
+      { code: 'GKC-18UT-AK', btu: 18200, range: [5450, 19780], w: 1083, seer: 18.02, stars: 1, nIn: [41, 31], nOut: 52, id: '987×385×178',  od: '802×555×350', pipe: pipe('1/4', '1/2') },
+      { code: 'GKC-24UT-AK', btu: 25500, range: [7680, 26600], w: 1083, seer: 19.38, stars: 1, nIn: [46, 35], nOut: 55, id: '1200×470×200', od: '958×660×402', pipe: pipe('1/4', '5/8') },
+      { code: 'GKC-30UT-AK', btu: 31000, range: [9050, 31400], w: 1083, seer: 17.23, stars: 1, nIn: [50, 38], nOut: 56, id: '1200×470×200', od: '958×660×402', pipe: pipe('1/4', '5/8') }
+    ]
+  },
+  {
+    id: 'bigduct', name: 'Big Duct', type: 'big', page: 19, inverter: true, ref: 'R410A', wifi: false,
+    tagline: 'ระบบ 1:1 ต่อท่อลมขนาดใหญ่ 20–60 kW ESP สูงสุด 250 Pa',
+    fin: 'Golden Fin', power: '3 เฟส 380V 50Hz', warranty: 'rac',
+    features: ['ระบบ 1:1 ติดตั้งสะดวก', 'Big Duct Inverter ประหยัดพื้นที่', 'ประสิทธิภาพสูงกว่ามาตรฐาน 30% (รุ่น Inverter)', 'ESP สูงสุด 250 Pa', 'Golden Fin ทนการกัดกร่อน', 'คอนโทรลเลอร์ใช้งานง่าย'],
+    models: [
+      { code: 'FGR20Pd/DNa-X', btu: 68240,  w: 7800,  eerWW: 2.56, stars: null, id: '1460×365×790', od: '940×1430×320', ph: 3, esp: 120, air: 3700,  pipe: pipe('3/8', '3/4') },
+      { code: 'FGR25Pd/DNa-X', btu: 85300,  w: 9400,  eerWW: 2.66, stars: null, id: '1690×440×870', od: '940×1615×460', ph: 3, esp: 120, air: 4200,  pipe: pipe('3/8', '7/8') },
+      { code: 'FGR30Pd/DNa-X', btu: 102360, w: 11300, eerWW: 2.65, stars: null, id: '1690×440×870', od: '940×1615×460', ph: 3, esp: 120, air: 5200,  pipe: pipe('1/2', '1') },
+      { code: 'FGR40Pd/DNa-X', btu: 130000, w: 18000, eerWW: 2.11, stars: null, id: '1550×550×850', od: '940×1615×460', ph: 3, esp: 120, air: 7000,  pipe: pipe('1/2', '1') },
+      { code: 'FGR50/BNa-M',   btu: 162752, w: 22250, eerWW: 2.14, stars: null, id: '1900×706×850', od: '1340×1740×765', ph: 3, esp: 230, air: 9000,  inverter: false, pipe: pipe('5/8', '1-3/8') },
+      { code: 'FGR60/BNa-M',   btu: 192778, w: 28000, eerWW: 2.01, stars: null, id: '1900×706×850', od: '1340×1740×765', ph: 3, esp: 200, air: 10800, inverter: false, pipe: pipe('5/8', '1-3/8') }
+    ]
+  },
+  {
+    id: 'gmvduo', name: 'GMV S Duo', type: 'big', page: 25, inverter: true, ref: 'R410A', wifi: false,
+    tagline: 'คอยล์ร้อน 1 ตัว ต่อคอยล์เย็น 2 ตัว (Cassette / Duct) ประหยัดขึ้น 30%',
+    fin: 'Gold Fin', power: '3 เฟส 380V 50Hz', warranty: 'gmv',
+    features: ['Full DC Inverter', '1 ต่อ 2 เลือก Cassette หรือ Duct ได้ 3 แบบ', 'ใช้พลังงานต่ำ ประสิทธิภาพสูง', 'ท่อน้ำยายาวสูงสุด 50 ม.', 'ต่างระดับสูงสุด 30 ม.', 'ประหยัดพื้นที่ติดตั้ง'],
+    models: [
+      { code: 'GMV-250WL/LA-M + 2×ND120', btu: 85300, w: 7950, eerWW: 3.14, stars: null, nIn: [42, 37], nOut: 58, id: '2 × 840×840 (Cassette) หรือ 1340×260×655 (Duct)', od: '940×1430×320', ph: 3, pipe: 'ภายนอก แก๊ส Φ19.05 / ของเหลว Φ9.52 มม.' }
+    ]
+  },
+  {
+    id: 'fs10', name: '10HP Floor Standing', type: 'big', page: 21, inverter: true, ref: 'R410A', wifi: false,
+    tagline: 'ตู้ตั้งพื้น 96,000 BTU Inverter ประหยัดกว่ารุ่นมาตรฐาน 30%',
+    fin: 'Golden Fin', power: '3 เฟส 380V 50Hz', warranty: 'rac',
+    features: ['Inverter ประหยัดพลังงาน 30%', 'ไฟ 3 เฟส ติดตั้งง่าย', 'ท่อยาวรวม 50 ม. ต่างระดับ 30 ม.', 'Golden Fin ทนการกัดกร่อน', 'กระจายลมไกลสูงสุด 8 ม.', 'ปริมาณลม 3,700 ม³/ชม.'],
+    models: [
+      { code: 'RF28WPd/NaA-M', btu: 96000, w: 11850, eerWW: 2.55, stars: null, id: '1200×1850×400', od: '940×1430×320', ph: 3, air: 3700, pipe: pipe('3/8', '7/8') }
+    ]
+  },
+  {
+    id: 'fs20', name: '20HP Floor Standing', type: 'big', page: 23, inverter: true, ref: 'R410A', wifi: false,
+    tagline: 'เป่าลมตรงหรือต่อท่อได้ 177,400 BTU สำหรับโรงงานและห้องโถง',
+    fin: '—', power: '3 เฟส 380V 50Hz', warranty: 'rac',
+    features: ['Free Blow หรือ Ducted Airflow', 'ESP 0–400 Pa', 'ท่อยาวสูงสุด 70 ม. ต่างระดับ 30 ม.', 'Inverter', 'ทำงานได้ถึง 52°C', 'ปริมาณลม 10,000 ม³/ชม.'],
+    models: [
+      { code: 'UMLD500LH/B-X(P)', btu: 177400, w: 20000, eerWW: 2.6, stars: null, id: '1600×1800×610', od: '1250×1750×460', ph: 3, esp: 400, air: 10000, pipe: pipe('5/8', '1-1/8') }
+    ]
+  }
+];
+
+/* ระบบใหญ่ที่แคตตาล็อกระบุเป็นช่วงขนาด (ต้องออกแบบโดยวิศวกร) */
+const FAMILIES = [
+  { group: 'VRF (GMV)', name: 'GMV5 Mini', range: '3–6.5 HP ไฟ 1 เฟส', hp: [3, 6.5] },
+  { group: 'VRF (GMV)', name: 'GMV5 Slim', range: '8–12 HP ไฟ 3 เฟส', hp: [8, 12] },
+  { group: 'VRF (GMV)', name: 'GMV PV', range: '8–16 HP รวมชุดได้ 18–44 HP', hp: [8, 44] },
+  { group: 'VRF (GMV)', name: 'GMV Flex', range: '14–22 HP รวมชุดได้ 28–88 HP', hp: [14, 88] },
+  { group: 'VRF (GMV)', name: 'GMV X', range: '8–36 HP รวมชุดได้ 26–128 HP ต่อคอยล์เย็นได้ 80 เครื่อง', hp: [8, 128] },
+  { group: 'Chiller', name: 'Scroll Chiller A Series', range: '9–37 RT มีปั๊มในตัว', rt: [9, 37] },
+  { group: 'Chiller', name: 'Scroll Chiller E Series', range: '18.5–81 RT', rt: [18.5, 81] },
+  { group: 'Chiller', name: 'Screw Chiller B Series', range: '111–383 RT ระบายความร้อนด้วยอากาศ', rt: [111, 383] },
+  { group: 'Chiller', name: 'Screw Chiller LHE / LHVE', range: '113–613 RT ระบายความร้อนด้วยน้ำ', rt: [113, 613] },
+  { group: 'Chiller', name: 'Centrifugal CVE / CCE', range: '130–1,800 RT Inverter / Magnetic Bearing', rt: [130, 1800] },
+  { group: 'Packaged', name: 'Rooftop Package Unit', range: '6–128 RT', rt: [6, 128] },
+  { group: 'Packaged', name: 'Water Cooled Package Unit', range: '9–56 RT', rt: [9, 56] },
+  { group: 'Specialized', name: 'Close Control AC', range: '17,000–330,000 BTU/hr สำหรับห้องเซิร์ฟเวอร์', btu: [17000, 330000] }
+];
+
+</script>
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const fmt = (n, d = 0) => Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const RM = matchMedia('(prefers-reduced-motion: reduce)');
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+/* ขนาด BTU แอร์มาตรฐานในไทย (จากโปรแกรมเดิม) */
+const STANDARD = [9000, 12000, 15000, 18000, 24000, 30000, 36000, 48000, 60000];
+
+/* ---------- icons ---------- */
+const I = (d, extra = '') => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${d}</svg>`;
+const IC = {
+  info: I('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'),
+  plus: I('<path d="M12 5v14M5 12h14"/>'),
+  check: I('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),
+  cmp: I('<rect x="3" y="4" width="7" height="16" rx="2"/><rect x="14" y="4" width="7" height="16" rx="2"/>'),
+  x: I('<path d="M6 6l12 12M18 6 6 18"/>'),
+  gauge: I('<path d="M4 16a8 8 0 1 1 16 0"/><path d="m12 16 4-5"/>'),
+  sun: I('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+  moon: I('<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>'),
+  bed: I('<path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.6"/>'),
+  sofa: I('<path d="M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/><path d="M3 13a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v4H3z"/><path d="M5 17v2M19 17v2"/>'),
+  sunhouse: I('<path d="M3 21h11V11L8.5 7 3 11z"/><circle cx="18" cy="6" r="2.4"/><path d="M18 1.5v1M18 9.5v1M22.5 6h-1M14.5 6h-1M21 3l-.7.7M15.7 8.3 15 9M21 9l-.7-.7"/>'),
+  store: I('<path d="M4 10v10h16V10"/><path d="M3 10 5 4h14l2 6a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0"/><path d="M10 20v-5h4v5"/>'),
+  users: I('<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5a3 3 0 0 1 0 6M21 20a6 6 0 0 0-3.5-5.4"/>'),
+  bolt: I('<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'),
+  leaf: I('<path d="M5 19c9 0 14-6 14-15-9 0-14 5-14 13z"/><path d="M5 19 13 11"/>'),
+  wrench: I('<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-2.5z"/>'),
+  shield: I('<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>'),
+  ruler: I('<path d="M3 17 17 3l4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/>'),
+  wind: I('<path d="M3 8h11a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h7"/>'),
+  volume: I('<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 9.5a3.5 3.5 0 0 1 0 5"/>'),
+  list: I('<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>'),
+  copy: I('<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>'),
+  print: I('<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/>'),
+  trash: I('<path d="M4 7h16M10 11v6M14 11v6M5 7l1 13h12l1-13M9 7V4h6v3"/>'),
+  chev: I('<path d="m9 6 6 6-6 6"/>'),
+  plug: I('<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0z"/><path d="M12 17v5"/>'),
+  fan: I('<circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 1-7 4-7s2 5-2 7M14 12c4 0 7 1 7 4s-5 2-7-2M12 14c0 4-1 7-4 7s-2-5 2-7M10 12c-4 0-7-1-7-4s5-2 7 2"/>'),
+  snow: I('<path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/><path d="m9 4 3 2 3-2M9 20l3-2 3 2"/>')
+};
+const U = (d) => `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const UNIT = {
+  wall: U('<rect x="5" y="16" width="54" height="20" rx="7"/><path d="M11 30h42"/><circle cx="50" cy="23" r="1.3" fill="currentColor"/><path d="M20 42c0 4-3 6-3 10M32 42v10M44 42c0 4 3 6 3 10" opacity=".45"/>'),
+  floor: U('<rect x="20" y="4" width="24" height="56" rx="4"/><path d="M25 11h14M25 16h14M25 21h14M25 26h14"/><path d="M25 52h14" opacity=".45"/>'),
+  cassette: U('<rect x="6" y="6" width="52" height="52" rx="7"/><rect x="22" y="22" width="20" height="20" rx="3"/><path d="M27 27h10M27 32h10M27 37h10" opacity=".5"/><path d="M18 13h28M18 51h28M13 18v28M51 18v28"/>'),
+  ceiling: U('<rect x="5" y="12" width="54" height="20" rx="5"/><path d="M10 26h44"/><path d="M18 38l-3 10M32 38v10M46 38l3 10" opacity=".45"/>'),
+  duct: U('<path d="M8 24l12-8h36v22l-12 8H8z"/><path d="M8 24h36v22M44 24l12-8"/><path d="M14 30v10M20 30v10M26 30v10M32 30v10M38 30v10" opacity=".5"/>'),
+  oneway: U('<rect x="4" y="22" width="56" height="12" rx="4"/><path d="M12 29h40"/><path d="M22 40l-2 8M32 40v8M42 40l2 8" opacity=".45"/>'),
+  big: U('<rect x="8" y="8" width="48" height="48" rx="5"/><circle cx="32" cy="32" r="15"/><path d="M32 32c0-8 5-11 8-9M32 32c8 0 11 5 9 8M32 32c0 8-5 11-8 9M32 32c-8 0-11-5-9-8"/>')
+};
+
+/* ---------- enrich catalog ---------- */
+const MODELS = [];
+SERIES.forEach(s => s.models.forEach(m => {
+  m.s = s;
+  m.inv = m.inverter ?? s.inverter;
+  m.refr = m.ref || s.ref;
+  m.phase = m.ph || (/^3/.test(s.power) ? 3 : 1);
+  m.eff = m.seer || m.eer || +(m.eerWW * 3.412).toFixed(2);
+  MODELS.push(m);
+}));
+const byCode = Object.fromEntries(MODELS.map(m => [m.code, m]));
+const effText = m => m.seer ? `SEER ${m.seer.toFixed(2)}` : m.eer ? `EER ${m.eer.toFixed(2)}` : `EER ${m.eerWW} W/W`;
+const powerText = m => m.phase === 3 ? '3 เฟส 380V' : (m.s.id === 'ts' ? '1 เฟส 220–240V 50Hz' : m.s.power);
+const labelHTML = st => st == null ? '<span style="color:var(--ink-3)">ไม่ระบุ</span>'
+  : `<span class="lbl5" title="ฉลากประหยัดไฟเบอร์ 5${st ? ' ' + st + ' ดาว' : ''}"><i>5</i>${st ? `<span class="stars">${'★'.repeat(st)}</span>` : ''}</span>`;
+const labelText = st => st == null ? 'ไม่ระบุ' : `เบอร์ 5${st ? ' ' + '★'.repeat(st) : ''}`;
+
+/* ---------- presets ---------- */
+const PRESETS = [
+  { n: 'ห้องนอนคอนโด', w: 3, l: 3.5, h: 2.6, base: 800, sun: 0, p: 2, hrs: 8 },
+  { n: 'ห้องนอนใหญ่', w: 4, l: 5, h: 2.7, base: 800, sun: 0, p: 2, hrs: 8 },
+  { n: 'ห้องนอนโดนแดดบ่าย', w: 3.5, l: 4, h: 2.6, base: 1000, sun: 1, p: 2, hrs: 8 },
+  { n: 'ห้องนั่งเล่น', w: 4.5, l: 6, h: 2.8, base: 900, sun: 0, p: 4, hrs: 6 },
+  { n: 'ห้องทำงานที่บ้าน', w: 3, l: 4, h: 2.6, base: 900, sun: 1, p: 1, hrs: 9 },
+  { n: 'ร้านกาแฟ', w: 6, l: 8, h: 3, base: 1100, sun: 1, p: 15, hrs: 11 },
+  { n: 'ออฟฟิศ 20 คน', w: 8, l: 10, h: 2.8, base: 1100, sun: 0, p: 20, hrs: 10 },
+  { n: 'ห้องจัดเลี้ยง / โชว์รูม', w: 15, l: 20, h: 4, base: 1100, sun: 1, p: 60, hrs: 10 }
+];
+
+/* ---------- state ---------- */
+const S = { mode: 'wl', w: 3.9, l: 3.6, area: 14.04, h: 2.65, base: 1100, sun: 0, people: 2, hours: 8, rate: 4.23, tab: 'auto', sort: 'best', compare: [], rooms: [], catQ: '', catT: 'all' };
+const num = (id, d = 0) => { const v = parseFloat($('#' + id).value); return Number.isFinite(v) ? v : d; };
+function readState() {
+  S.mode = $('input[name="areaMode"]:checked').value;
+  S.w = Math.max(0, num('w')); S.l = Math.max(0, num('l')); S.area = Math.max(0, num('area'));
+  S.h = Math.max(0, num('h'));
+  S.base = +$('input[name="roomType"]:checked').value;
+  S.sun = $('#sun').checked ? 100 : 0;
+  S.people = Math.max(0, Math.floor(num('people')));
+  S.hours = Math.min(24, Math.max(0, num('hours')));
+  S.rate = Math.max(0, num('rate'));
+}
+
+/* ---------- core calculation (สูตรเดียวกับโปรแกรมเดิม) ---------- */
+function calc() {
+  const area = S.mode === 'area' ? S.area : S.w * S.l;
+  const hf = S.h > 0 ? S.h / 2.6 : 1;                 // ตัวคูณความสูงเพดาน อ้างอิง 2.6 ม.
+  const extra = Math.max(0, S.people - 2);            // คนเกิน 2 คน คิดคนละ 400 BTU
+  const peopleHeat = extra * 400;
+  const raw = (S.base + S.sun) * area * hf + peopleHeat;
+  const exact = Math.round(raw / 100) * 100;          // ปัดหลักร้อย
+  const rec = exact > 0 ? (STANDARD.find(x => x >= exact) ?? null) : null;
+  return { area, hf, extra, peopleHeat, raw, exact, rec, over: exact > 0 && !rec, rt: exact / 12000, hp: exact / 9000 };
+}
+
+/* ---------- matching ---------- */
+function candidates(R) {
+  const need = R.exact; if (need <= 0) return [];
+  const thr = R.rec ? Math.max(need, R.rec * 0.94) : need;
+  const out = [];
+  const mk = (m, alt) => { const kwh = need / m.eff / 1000 * S.hours * 30; return { m, s: m.s, cov: m.btu / need, alt, kwh, cost: kwh * S.rate }; };
+  for (const s of SERIES) {
+    const ms = [...s.models].sort((a, b) => a.btu - b.btu);
+    const prim = ms.find(m => m.btu >= thr);
+    if (prim && prim.btu / need <= 2.0) out.push(mk(prim, false));
+    const alt = ms.find(m => m.btu >= need * 1.05 && (!prim || m.btu < prim.btu));
+    if (alt && alt.btu / need <= 2.0) out.push(mk(alt, true));
+  }
+  out.forEach(c => c.score = score(c));
+  return out;
+}
+function score(c) {
+  const bed = S.base === 800;
+  const eff = Math.min(1, c.m.eff / 25);
+  const fit = 1 - Math.min(1, Math.abs(c.cov - 1.12) / 0.7);
+  const quiet = c.m.nIn ? Math.max(0, Math.min(1, (45 - c.m.nIn[1]) / 23)) : 0.3;
+  const st = (c.m.stars ?? 0) / 5, inv = c.m.inv ? 1 : 0;
+  return (bed ? eff * .32 + quiet * .28 + fit * .2 + st * .1 + inv * .1
+              : eff * .4 + fit * .3 + st * .1 + quiet * .08 + inv * .12) - (c.alt ? 0.03 : 0);
+}
+function recTypes(R) {
+  if (!R.rec) return ['big'];
+  let t = ({ 800: ['wall'], 900: ['wall', 'ceiling', 'oneway'], 1000: ['wall', 'cassette', 'ceiling'], 1100: ['cassette', 'ceiling', 'floor', 'duct', 'wall'] })[S.base] || ['wall'];
+  t = [...t];
+  if (R.rec >= 36000) t.push('cassette', 'ceiling', 'floor');
+  if (S.h >= 3.2) { t = t.filter(x => x !== 'wall'); t.push('cassette', 'floor', 'ceiling'); }
+  return [...new Set(t)];
+}
+const SORTS = {
+  best: (a, b) => b.score - a.score,
+  eff: (a, b) => b.m.eff - a.m.eff,
+  quiet: (a, b) => (a.m.nIn ? a.m.nIn[1] : 99) - (b.m.nIn ? b.m.nIn[1] : 99),
+  fit: (a, b) => Math.abs(a.cov - 1.1) - Math.abs(b.cov - 1.1),
+  cost: (a, b) => a.cost - b.cost
+};
+function splitOptions(types, need) {
+  const res = [];
+  for (const s of SERIES) {
+    if (!types.includes(s.type)) continue;
+    const ms = [...s.models].sort((a, b) => a.btu - b.btu);
+    for (let n = 2; n <= 12; n++) {
+      const m = ms.find(x => x.btu * n >= need);
+      if (m) { res.push({ s, m, n, total: m.btu * n }); break; }
+    }
+  }
+  return res.sort((a, b) => a.n - b.n || b.m.eff - a.m.eff).slice(0, 6);
+}
+
+/* ---------- rAF animation engine (ผูกกับอัตรารีเฟรชจอ 60/90/120/144Hz) ---------- */
+const anims = new Set(); let rafOn = false;
+function loop(t) { for (const a of anims) if (a(t) === false) anims.delete(a); if (anims.size) requestAnimationFrame(loop); else rafOn = false; }
+function animate(fn) { anims.add(fn); if (!rafOn) { rafOn = true; requestAnimationFrame(loop); } }
+function tweenNum(el, to, dec = 0, dur = 650) {
+  if (!el) return;
+  const from = el._cur ?? to;
+  if (RM.matches || Math.abs(from - to) < 1e-9) { el._cur = to; el.textContent = fmt(to, dec); el._tok = null; return; }
+  const t0 = performance.now(), tok = el._tok = {};
+  animate(t => {
+    if (el._tok !== tok) return false;
+    let k = Math.min(1, (t - t0) / dur); k = 1 - Math.pow(1 - k, 4);
+    el._cur = from + (to - from) * k; el.textContent = fmt(el._cur, dec);
+    return k < 1;
+  });
+}
+
+/* ---------- isometric room ---------- */
+const VW = 460, VH = 330, PAD = 34;
+const V = { cur: { w: 3.9, l: 3.6, h: 2.65 }, vel: { w: 0, l: 0, h: 0 }, tgt: { w: 3.9, l: 3.6, h: 2.65 }, p: { people: 2, sun: 0, base: 1100, type: 'wall' }, running: false };
+function setViz(t, p) {
+  Object.assign(V.tgt, t); Object.assign(V.p, p);
+  if (RM.matches) { Object.assign(V.cur, V.tgt); drawViz(); return; }
+  if (V.running) return;
+  V.running = true; let last = performance.now();
+  animate(now => {
+    const dt = Math.min(0.034, (now - last) / 1000); last = now; let moving = false;
+    for (const k of ['w', 'l', 'h']) {
+      const a = 220 * (V.tgt[k] - V.cur[k]) - 27 * V.vel[k];
+      V.vel[k] += a * dt; V.cur[k] += V.vel[k] * dt;
+      if (Math.abs(V.tgt[k] - V.cur[k]) > 0.0015 || Math.abs(V.vel[k]) > 0.0015) moving = true;
+      else { V.cur[k] = V.tgt[k]; V.vel[k] = 0; }
+    }
+    drawViz();
+    if (!moving) { V.running = false; return false; }
+    return true;
+  });
+  drawViz();
+}
+function drawViz() {
+  const w = Math.max(.5, V.cur.w), l = Math.max(.5, V.cur.l), h = Math.max(1.8, V.cur.h);
+  const C = 0.866, Sn = 0.5;
+  const spanX = (w + l) * C, spanY = (w + l) * Sn + h;
+  const s = Math.min((VW - 2 * PAD) / spanX, (VH - 2 * PAD - 8) / spanY);
+  const ox = (VW - spanX * s) / 2 + l * C * s, oy = (VH - spanY * s) / 2 + h * s + 4;
+  const P = (x, y, z) => [ox + (x - y) * C * s, oy + (x + y) * Sn * s - z * s];
+  const pt = (x, y, z) => P(x, y, z).map(v => v.toFixed(1)).join(',');
+  const poly = (a, cls, ex = '') => `<polygon class="${cls}" points="${a.map(p => pt(...p)).join(' ')}" ${ex}/>`;
+  const line = (a, b, cls, ex = '') => { const [x1, y1] = P(...a), [x2, y2] = P(...b); return `<line class="${cls}" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" ${ex}/>`; };
+  let g = '';
+  g += poly([[0, 0, 0], [w, 0, 0], [w, 0, h], [0, 0, h]], 'v-wallA');
+  g += poly([[0, 0, 0], [0, l, 0], [0, l, h], [0, 0, h]], 'v-wallB');
+  const sun = V.p.sun;
+  const y0 = l * .3, y1 = l * .64, z0 = Math.min(.9, h * .34), z1 = Math.min(2.1, h * .8);
+  if (sun) g += poly([[0, y0, z0], [0, y1, z0], [0, y1, z1], [0, y0, z1]], 'v-win');
+  const floor = [[0, 0, 0], [w, 0, 0], [w, l, 0], [0, l, 0]];
+  g += poly(floor, 'v-floor');
+  const heat = Math.max(0, Math.min(1, (V.p.base + V.p.sun - 800) / 400));
+  g += poly(floor, '', `fill="#FF8C4A" opacity="${(0.04 + heat * 0.2).toFixed(3)}"`);
+  const step = (w + l) > 60 ? 5 : (w + l) > 24 ? 2 : 1;
+  for (let x = step; x < w - 0.01; x += step) g += line([x, 0, 0], [x, l, 0], 'v-grid');
+  for (let y = step; y < l - 0.01; y += step) g += line([0, y, 0], [w, y, 0], 'v-grid');
+  if (sun) {
+    const k = .9, f = (y, z) => [Math.min(w, z * k), Math.min(l, y + z * .22), 0];
+    g += poly([f(y0, z0), f(y1, z0), f(y1, z1), f(y0, z1)], 'v-sunpatch');
+    g += poly([[0, y0, z1], [0, y1, z1], f(y1, z1), f(y0, z1)], 'v-sunbeam');
+    g += poly([[0, y1, z0], [0, y1, z1], f(y1, z1), f(y1, z0)], 'v-sunbeam');
+  }
+  // unit
+  const u = acGeom(V.p.type, w, l, h);
+  const [bx0, bx1, by0, by1, bz0, bz1] = u.box;
+  g += poly([[bx1, by0, bz0], [bx1, by1, bz0], [bx1, by1, bz1], [bx1, by0, bz1]], 'v-ac-side');
+  g += poly([[bx0, by1, bz0], [bx1, by1, bz0], [bx1, by1, bz1], [bx0, by1, bz1]], 'v-ac-front');
+  g += poly([[bx0, by0, bz1], [bx1, by0, bz1], [bx1, by1, bz1], [bx0, by1, bz1]], 'v-ac-top');
+  if (V.p.type === 'wall' || !V.p.type) g += line([bx0 + .08, by1, bz0 + .07], [bx1 - .08, by1, bz0 + .07], '', 'stroke="#8BA3C7" stroke-width="1.4"');
+  $('#vzS').innerHTML = g;
+
+  // airflow (persistent paths so the CSS dash animation never restarts)
+  const paths = $$('#vzAir path');
+  paths.forEach((p, i) => {
+    const a = u.air[i];
+    if (!a) { p.setAttribute('d', ''); return; }
+    const [sx, sy] = P(...a[0]), [cx, cy] = P(...a[1]), [ex, ey] = P(...a[2]);
+    p.setAttribute('d', `M${sx.toFixed(1)} ${sy.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`);
+  });
+
+  // people + outline + labels
+  let t = '';
+  const n = Math.min(V.p.people, 40);
+  if (n > 0) {
+    const cols = Math.max(1, Math.round(Math.sqrt(n * w / l))), rows = Math.ceil(n / cols);
+    const ppl = [];
+    for (let i = 0; i < n; i++) {
+      const r = Math.sin((i + 1) * 12.9898) * 43758.5453, j = r - Math.floor(r);
+      const r2 = Math.sin((i + 1) * 78.233) * 12345.678, j2 = r2 - Math.floor(r2);
+      const cx = ((i % cols) + .5 + (j - .5) * .5) / cols, cy = (Math.floor(i / cols) + .5 + (j2 - .5) * .5) / rows;
+      ppl.push([w * (.14 + cx * .74), l * (.2 + cy * .7)]);
+    }
+    ppl.sort((a, b) => (a[0] + a[1]) - (b[0] + b[1]));
+    const sw = Math.max(2, .22 * s), hr = Math.max(1.8, .14 * s);
+    for (const [x, y] of ppl) {
+      const [ax, ay] = P(x, y, .04), [bx, by] = P(x, y, 1.18), [hx, hy] = P(x, y, 1.5);
+      t += `<line class="v-person-b" x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke-width="${sw.toFixed(1)}"/><circle class="v-person-h" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="${hr.toFixed(1)}"/>`;
+    }
+  }
+  t += line([0, l, h], [w, l, h], 'v-ceil') + line([w, l, h], [w, 0, h], 'v-ceil') + line([0, l, 0], [0, l, h], 'v-ceil') + line([w, 0, 0], [w, 0, h], 'v-ceil') + line([w, l, 0], [w, l, h], 'v-ceil');
+  const tx = (p, dx, dy, txt, anchor = 'middle') => `<text class="v-dim" x="${(p[0] + dx).toFixed(1)}" y="${(p[1] + dy).toFixed(1)}" text-anchor="${anchor}">${txt}</text>`;
+  const area = S.mode === 'area';
+  t += tx(P(w / 2, l, 0), -10, 20, area ? `≈ ${V.tgt.w.toFixed(1)} ม.` : `กว้าง ${V.tgt.w.toFixed(1)} ม.`);
+  t += tx(P(w, l / 2, 0), 12, 20, area ? `≈ ${V.tgt.l.toFixed(1)} ม.` : `ยาว ${V.tgt.l.toFixed(1)} ม.`);
+  t += tx(P(0, l, h / 2), -8, 4, `สูง ${V.tgt.h.toFixed(2)} ม.`, 'end');
+  if (V.p.people > 40) { const pp = P(w * .5, l * .5, 2.1); t += tx(pp, 0, 0, `+${V.p.people - 40} คน`); }
+  $('#vzTop').innerHTML = t;
+}
+function acGeom(type, w, l, h) {
+  const cx = w / 2;
+  const wallAir = (x, y, z) => [-1, 0, 1].map(d => [[x + d * .26, y, z], [x + d * .6, y + l * .3, z - .05], [x + d * Math.min(w * .32, 1.8), l * .84, .7]]);
+  switch (type) {
+    case 'floor': case 'big': {
+      const big = type === 'big';
+      const bw = Math.min(big ? 1.3 : .62, w * .28), bd = big ? .52 : .4, bh = Math.min(big ? 1.95 : 1.85, h * .85);
+      const x1 = w - .3, x0 = x1 - bw, sx = (x0 + x1) / 2, sy = .1 + bd + .04, sz = bh * .78;
+      return { box: [x0, x1, .1, .1 + bd, 0, bh], air: [
+        [[sx, sy, sz], [sx - w * .08, l * .45, sz + .15], [sx - w * .25, l * .88, .8]],
+        [[sx, sy, sz - .25], [sx - w * .25, l * .38, sz], [Math.max(.3, sx - w * .55), l * .78, .7]],
+        [[sx, sy, sz + .1], [sx + .1, l * .5, sz + .2], [Math.min(w - .2, sx + .2), l * .92, .6]]] };
+    }
+    case 'cassette': {
+      const a = Math.min(.45, w * .12, l * .12), cy = l / 2, z = h - .1;
+      return { box: [cx - a, cx + a, cy - a, cy + a, h - .08, h], air: [
+        [[cx + a, cy, z], [cx + a + w * .12, cy, h - .2], [Math.min(w - .2, cx + w * .4), cy + .2, .9]],
+        [[cx, cy + a, z], [cx, cy + a + l * .12, h - .2], [cx + .2, Math.min(l - .2, cy + l * .4), .9]],
+        [[cx - a, cy, z], [cx - a - w * .12, cy, h - .2], [Math.max(.2, cx - w * .4), cy - .2, .9]],
+        [[cx, cy - a, z], [cx, cy - a - l * .12, h - .2], [cx - .2, Math.max(.2, cy - l * .4), .9]]] };
+    }
+    case 'ceiling': { const a = Math.min(.75, w * .3); return { box: [cx - a, cx + a, 0, .66, h - .26, h - .02], air: wallAir(cx, .7, h - .24) }; }
+    case 'duct': { const a = Math.min(.55, w * .25); return { box: [cx - a, cx + a, 0, .05, h - .38, h - .14], air: wallAir(cx, .08, h - .3) }; }
+    case 'oneway': { const a = Math.min(.6, w * .28); return { box: [cx - a, cx + a, .15, .55, h - .05, h], air: wallAir(cx, .6, h - .08) }; }
+    default: { const a = Math.min(.5, w * .28); return { box: [cx - a, cx + a, 0, .24, h - .52, h - .2], air: wallAir(cx, .28, h - .48) }; }
+  }
+}
+
+/* ---------- size ladder ---------- */
+function ladderPos(v) {
+  const n = STANDARD.length, x = i => 0.04 + i * 0.92 / (n - 1);
+  if (v <= STANDARD[0]) return x(0) * Math.max(0, v) / STANDARD[0];
+  for (let i = 1; i < n; i++) if (v <= STANDARD[i]) return x(i - 1) + (x(i) - x(i - 1)) * (v - STANDARD[i - 1]) / (STANDARD[i] - STANDARD[i - 1]);
+  return 1;
+}
+function buildLadder() {
+  $('#ladderTicks').innerHTML = STANDARD.map(v => `<span class="tick" data-v="${v}" style="left:${(ladderPos(v) * 100).toFixed(2)}%">${v / 1000}k</span>`).join('');
+}
+
+/* ---------- render: readout ---------- */
+let lastR = null, lastPick = null;
+function renderReadout(R) {
+  const inst = $('#inst');
+  inst.classList.toggle('over', R.over);
+  const recNum = $('#recNum');
+  if (R.exact <= 0) {
+    recNum._tok = null; recNum._cur = 0; recNum.textContent = '—';
+    $('#recSub').innerHTML = 'กรอกขนาดห้องและความสูงเพดานเพื่อเริ่มคำนวณ';
+  } else if (R.rec) {
+    tweenNum(recNum, R.rec);
+    const used = Math.round(R.exact / R.rec * 100);
+    $('#recSub').innerHTML = `ภาระความร้อนจริง <b>${fmt(R.exact)} BTU/hr</b> เลือกขนาดมาตรฐานถัดขึ้นไปที่มีขายในไทย ใช้กำลังเครื่อง <b>${used}%</b> เหลือกำลังสำรอง <b>${100 - used}%</b>`;
+  } else {
+    tweenNum(recNum, R.exact);
+    $('#recSub').innerHTML = `ขนาดเกินแอร์บ้านทั่วไป แนะนำระบบแอร์พาณิชย์ขนาดใหญ่ <b>10HP, GMV/VRF หรือ Chiller</b> หรือแบ่งติดตั้งหลายเครื่อง`;
+  }
+  $('#recLabel').textContent = R.over ? 'ภาระความร้อนที่ต้องการ' : 'ขนาดแอร์มาตรฐานที่แนะนำให้เลือกซื้อ';
+  tweenNum($('#stExact'), R.exact);
+  tweenNum($('#stRT'), R.rt, 2);
+  tweenNum($('#stHP'), R.hp, 2);
+  tweenNum($('#stArea'), R.area, 2);
+  tweenNum($('#stArea2'), R.area, 2);
+  // ladder
+  const fillTo = R.exact <= 0 ? 0 : R.rec ? ladderPos(R.rec) : 1;
+  $('#ladderFill').style.transform = `scaleX(${fillTo.toFixed(4)})`;
+  const pin = $('#needPin');
+  pin.style.transform = `translateX(${(Math.min(1, ladderPos(R.exact)) * 100).toFixed(2)}%)`;
+  pin.style.opacity = R.exact > 0 ? 1 : 0;
+  $('#needTxt').textContent = R.over ? `${fmt(R.exact)} (เกิน 60k)` : `ภาระจริง ${fmt(R.exact)}`;
+  $$('#ladderTicks .tick').forEach(el => el.classList.toggle('on', +el.dataset.v === R.rec));
+  // formula
+  $('#fx').innerHTML = `
+    <div class="fx-row"><span>ค่าความร้อนพื้นฐาน</span><b>${fmt(S.base)} BTU/ตร.ม.</b></div>
+    <div class="fx-row"><span>ส่วนเพิ่มแดดบ่าย</span><b>${fmt(S.sun)} BTU/ตร.ม.</b></div>
+    <div class="fx-row"><span>ตัวคูณความสูงเพดาน (${S.h} ÷ 2.6)</span><b>${R.hf.toFixed(4)} เท่า</b></div>
+    <div class="fx-row"><span>ความร้อนจากคนส่วนเกิน 2 คน (${R.extra} × 400)</span><b>${fmt(R.peopleHeat)} BTU/hr</b></div>
+    <div class="fx-eq">(${fmt(S.base)} + ${fmt(S.sun)}) × ${R.area.toFixed(2)} ตร.ม. × ${R.hf.toFixed(4)} + ${fmt(R.peopleHeat)} = ${fmt(R.raw)}<br>ปัดหลักร้อย = <b>${fmt(R.exact)} BTU/hr</b></div>`;
+  // mobile bar
+  $('#mbNum').textContent = R.exact <= 0 ? '—' : R.rec ? `${fmt(R.rec)} BTU` : `${fmt(R.exact)} BTU`;
+  $('#mbSub').textContent = R.exact <= 0 ? 'กรอกขนาดห้อง' : R.rec ? `ภาระจริง ${fmt(R.exact)} BTU/hr` : 'ระบบพาณิชย์ขนาดใหญ่';
+}
+
+/* ---------- render: products ---------- */
+function covBadge(c) {
+  const p = Math.round(c.cov * 100);
+  if (c.cov < 1) return `<span class="bdg warn">เล็กกว่าภาระ ${p}%</span>`;
+  if (c.cov > 1.5) return `<span class="bdg warn">ใหญ่เกิน ${p}%</span>`;
+  return `<span class="bdg ok">รองรับ ${p}%</span>`;
+}
+function rowHTML(c, i, top) {
+  const m = c.m, s = c.s;
+  const max = Math.max(m.btu, lastR.exact) * 1.05;
+  const inCmp = S.compare.includes(m.code);
+  return `<article class="row${top ? ' top' : ''}" style="--i:${i}">
+    <div class="row-ico">${UNIT[s.type]}</div>
+    <div class="row-name"><b>${s.name}</b><span class="code">${m.code}</span>
+      <div class="badges">${top ? '<span class="bdg ok">แนะนำอันดับ 1</span>' : ''}${c.alt ? '<span class="bdg heat">ทางเลือกขนาดเล็กลง</span>' : ''}<span class="bdg">${TYPES[s.type].name}</span>${m.inv ? '<span class="bdg ice">Inverter</span>' : '<span class="bdg">Fixed Speed</span>'}${(m.wifi ?? s.wifi) ? '<span class="bdg">Wi-Fi</span>' : ''}${m.phase === 3 ? '<span class="bdg warn">ไฟ 3 เฟส</span>' : ''}</div></div>
+    <div class="row-data">
+      <div class="cap"><div class="cap-top"><span><b>${fmt(m.btu)}</b> BTU/hr</span>${covBadge(c)}</div>
+        <div class="cap-bar" title="แถบฟ้า = ความเย็นของเครื่อง, เส้นส้ม = ภาระความร้อนจริง"><i style="width:${(m.btu / max * 100).toFixed(1)}%"></i><u style="left:${(lastR.exact / max * 100).toFixed(1)}%"></u></div></div>
+      <div class="mini"><span>${effText(m).split(' ')[0]} <b>${effText(m).split(' ').slice(1).join(' ')}</b></span><span>ฉลาก ${labelHTML(m.stars)}</span>${m.nIn ? `<span>เสียงต่ำสุด <b>${m.nIn[1]}</b> dB</span>` : ''}<span>ค่าไฟ <b>฿${fmt(c.cost)}</b>/เดือน</span></div>
+    </div>
+    <div class="row-act">
+      <button class="icon-btn" data-spec="${m.code}" aria-label="ดูสเปก ${m.code}" title="ดูสเปกเต็ม">${IC.info}</button>
+      <button class="icon-btn" data-cmp="${m.code}" aria-pressed="${inCmp}" aria-label="เปรียบเทียบ ${m.code}" title="เพิ่มในการเปรียบเทียบ">${IC.cmp}</button>
+      <button class="icon-btn" data-add="${m.code}" aria-label="บันทึกห้องนี้พร้อมรุ่น ${m.code}" title="บันทึกห้องนี้พร้อมรุ่นนี้">${IC.plus}</button>
+    </div></article>`;
+}
+function whyList(c, pool) {
+  const m = c.m, out = [];
+  const pct = Math.round(c.cov * 100);
+  out.push(`ทำความเย็นได้ ${fmt(m.btu)} BTU/hr รองรับภาระจริงของห้อง ${pct}%${m.range ? ` และปรับรอบได้ ${fmt(m.range[0])}–${fmt(m.range[1])} BTU/hr` : ''}`);
+  const sameType = pool.filter(x => x.s.type === c.s.type);
+  const worst = pool.reduce((a, b) => (b.cost > a.cost ? b : a), c);
+  if (worst !== c && worst.cost - c.cost > 1) out.push(`${effText(m)} ค่าไฟน้อยกว่า ${worst.s.name} ${worst.m.code} ประมาณ ฿${fmt((worst.cost - c.cost) * 12)} ต่อปี`);
+  else out.push(`${effText(m)} ค่าไฟประมาณ ฿${fmt(c.cost)} ต่อเดือน ที่ ${S.hours} ชม./วัน`);
+  if (m.nIn && (S.base === 800 || m.nIn[1] <= 26)) out.push(`เสียงคอยล์เย็นต่ำสุด ${m.nIn[1]} dB(A)${S.base === 800 ? ' เงียบพอสำหรับห้องนอน' : ''}`);
+  if (m.stars) out.push(`ฉลากประหยัดไฟเบอร์ 5 ${'★'.repeat(m.stars)}`);
+  if (c.s.ai) out.push('ระบบ AI ปรับการทำงานตามสภาพห้อง และสั่งงานผ่าน Wi-Fi');
+  else if (c.s.wifi) out.push('สั่งงานผ่าน Wi-Fi บนมือถือ');
+  if (sameType.length > 1 && sameType.every(x => x === c || x.m.eff <= m.eff)) out.splice(1, 0, `ประสิทธิภาพสูงสุดในกลุ่ม${TYPES[c.s.type].name}ที่รองรับห้องนี้`);
+  return out.slice(0, 4);
+}
+function pickHTML(c, pool) {
+  const m = c.m, s = c.s;
+  const p = Math.round(c.cov * 100);
+  const circ = 2 * Math.PI * 62, frac = Math.min(1, c.cov / 1.5);
+  return `<div class="pick-vis"><span class="pick-tag">เหมาะกับห้องนี้ที่สุด</span>
+      <div class="unit-ill">${UNIT[s.type]}</div>
+      <div class="ring" title="ความเย็นของเครื่องเทียบกับภาระความร้อนจริง (เต็มวง = 150%)"><svg viewBox="0 0 148 148"><circle class="bg" cx="74" cy="74" r="62"/><circle class="fg${c.cov > 1.5 ? ' over' : ''}" id="ringFg" cx="74" cy="74" r="62" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${circ.toFixed(1)}" data-to="${(circ * (1 - frac)).toFixed(1)}"/></svg>
+        <div class="ring-c"><b><span id="ringNum">${p}</span>%</b><span>รองรับ<br>ภาระจริง</span></div></div></div>
+    <div class="pick-body">
+      <div class="pick-series"><h3>${s.name}</h3><span class="code">${m.code}</span></div>
+      <p class="pick-line">${s.tagline}</p>
+      <ul class="why">${whyList(c, pool).map(t => `<li>${IC.check}<span>${t}</span></li>`).join('')}</ul>
+      <dl class="kv">
+        <div><dt>ความเย็น</dt><dd>${fmt(m.btu)} <small>BTU/hr</small></dd></div>
+        <div><dt>ค่าไฟโดยประมาณ</dt><dd>฿${fmt(c.cost)} <small>/เดือน</small></dd></div>
+        <div><dt>ประสิทธิภาพ</dt><dd>${effText(m).replace(' W/W', '')}</dd></div>
+        <div><dt>ฉลาก</dt><dd>${labelHTML(m.stars)}</dd></div>
+        ${m.nIn ? `<div><dt>เสียงคอยล์เย็น</dt><dd>${m.nIn[1]}–${m.nIn[0]} <small>dB(A)</small></dd></div>` : ''}
+        <div><dt>ระบบไฟ</dt><dd style="font-size:15px">${m.phase === 3 ? '3 เฟส 380V' : '1 เฟส 220V'}</dd></div>
+      </dl>
+      <div class="acts">
+        <button class="btn btn-pri" data-add="${m.code}">${IC.plus} บันทึกห้องนี้พร้อมรุ่นนี้</button>
+        <button class="btn btn-line" data-spec="${m.code}">${IC.info} ดูสเปกเต็ม</button>
+        <button class="btn btn-line" data-cmp="${m.code}" aria-pressed="${S.compare.includes(m.code)}">${IC.cmp} เปรียบเทียบ</button>
+      </div></div>`;
+}
+let prodKey = '';
+function renderProducts(R, force) {
+  const key = [R.exact, R.rec, S.tab, S.sort, S.base, S.hours, S.rate, S.h, S.compare.join()].join('|');
+  if (key === prodKey && !force) return; prodKey = key;
+  const all = candidates(R);
+  const rt = recTypes(R);
+  const recPool = all.filter(c => rt.includes(c.s.type) && c.cov <= 1.6);
+  const pool = recPool.length ? recPool : all;
+  const pick = [...pool].sort(SORTS.best)[0] || null;
+  lastPick = pick;
+  // tabs
+  const tabs = [['auto', 'แนะนำ'], ...Object.entries(TYPES).map(([k, v]) => [k, v.name])];
+  const counts = { auto: recPool.length };
+  Object.keys(TYPES).forEach(k => counts[k] = all.filter(c => c.s.type === k).length);
+  $('#tabs').innerHTML = `<span class="tab-ind" id="tabInd"></span>` + tabs.map(([k, n]) =>
+    `<button class="tab" role="tab" data-tab="${k}" aria-selected="${S.tab === k}">${n}<span class="n">${counts[k]}</span></button>`).join('');
+  moveTabInd(true);
+  // sub
+  $('#prodSub').textContent = R.exact <= 0 ? 'กรอกขนาดห้องก่อน ระบบจะคัดรุ่นที่เหมาะให้อัตโนมัติ'
+    : `คัดจาก ${MODELS.length} รุ่นในแคตตาล็อก ให้ขนาดรองรับภาระ ${fmt(R.exact)} BTU/hr${R.rec ? ` และใกล้ขนาดแนะนำ ${fmt(R.rec)} BTU` : ''} ค่าไฟคิดจากใช้งาน ${S.hours} ชม./วัน 30 วัน ที่ ${S.rate.toFixed(2)} บาท/หน่วย`;
+  // pick
+  const pickEl = $('#pick');
+  if (pick) {
+    pickEl.hidden = false; pickEl.innerHTML = pickHTML(pick, pool);
+    const ring = $('#ringFg');
+    requestAnimationFrame(() => requestAnimationFrame(() => { ring.style.strokeDashoffset = ring.dataset.to; }));
+    const rn = $('#ringNum'); rn._cur = 0; tweenNum(rn, Math.round(pick.cov * 100), 0, 900);
+  } else { pickEl.hidden = true; pickEl.innerHTML = ''; }
+  // list
+  const list = S.tab === 'auto' ? recPool : all.filter(c => c.s.type === S.tab);
+  list.sort(SORTS[S.sort] || SORTS.best);
+  if (R.exact <= 0) $('#list').innerHTML = `<div class="empty"><b>ยังไม่มีข้อมูลห้อง</b>กรอกความกว้าง ความยาว หรือพื้นที่ห้องด้านบน</div>`;
+  else if (!list.length) $('#list').innerHTML = R.over && S.tab === 'auto' ? `<div class="empty"><b>ภาระ ${fmt(R.exact)} BTU/hr เกินกำลังแอร์เครื่องเดียวในแคตตาล็อก</b>ดูการแบ่งติดตั้งหลายเครื่อง และระบบ VRF / Chiller ที่ครอบคลุมขนาดนี้ด้านล่าง</div>` : `<div class="empty"><b>ไม่มี${S.tab === 'auto' ? 'รุ่นที่แนะนำ' : TYPES[S.tab].name}เครื่องเดียวที่เหมาะกับ ${fmt(R.exact)} BTU/hr</b>ลองดูแท็บอื่น หรือแบ่งติดตั้งหลายเครื่องตามตัวเลือกด้านล่าง</div>`;
+  else $('#list').innerHTML = list.map((c, i) => rowHTML(c, i, c === pick)).join('');
+  // splits
+  const showSplit = R.exact > 0 && (R.over || (R.rec >= 48000) || !list.length);
+  const splitTypes = S.tab === 'auto' ? (R.over ? ['big', 'cassette', 'ceiling', 'floor', 'duct'] : ['cassette', 'ceiling', 'floor', 'duct', 'wall']) : [S.tab];
+  const sp = showSplit ? splitOptions(splitTypes, R.exact) : [];
+  $('#split').innerHTML = sp.length ? `<h3 class="sub-h">แบ่งติดตั้งหลายเครื่อง</h3><p class="sub-p">กระจายความเย็นได้ทั่วกว่าและสำรองกันได้ถ้าเครื่องหนึ่งเสีย รวมกำลังให้ไม่น้อยกว่าภาระ ${fmt(R.exact)} BTU/hr</p>
+    <div class="splits">${sp.map(o => `<button class="split" data-spec="${o.m.code}"><b>${o.n} × ${o.s.name}</b><span class="code">${o.m.code} เครื่องละ ${fmt(o.m.btu)} BTU</span><p>รวม ${fmt(o.total)} BTU/hr (${Math.round(o.total / R.exact * 100)}%) ${effText(o.m)}</p></button>`).join('')}</div>` : '';
+  // families
+  const showFam = R.exact > 0 && (R.over || S.tab === 'big');
+  if (showFam) {
+    const hit = f => (f.hp && R.hp >= f.hp[0] && R.hp <= f.hp[1]) || (f.rt && R.rt >= f.rt[0] && R.rt <= f.rt[1]) || (f.btu && R.exact >= f.btu[0] && R.exact <= f.btu[1]);
+    $('#families').innerHTML = `<h3 class="sub-h">ระบบขนาดใหญ่ที่ออกแบบตามหน้างาน</h3><p class="sub-p">ห้องนี้ประมาณ ${R.hp.toFixed(1)} HP หรือ ${R.rt.toFixed(1)} RT (คิด 9,000 BTU/HP และ 12,000 BTU/RT ตามสูตรของโปรแกรม) ระบบที่ไฮไลต์คือช่วงขนาดที่ครอบคลุม ควรให้วิศวกร Gree สำรวจและออกแบบ</p>
+      <div class="fams">${FAMILIES.map(f => `<div class="fam${hit(f) ? ' hit' : ''}"><small>${f.group}</small><b>${f.name}</b><p>${f.range}</p>${hit(f) ? '<span class="bdg ok">ครอบคลุมขนาดห้องนี้</span>' : ''}</div>`).join('')}</div>`;
+  } else $('#families').innerHTML = '';
+  renderDock();
+}
+function moveTabInd(instant) {
+  const sel = $('#tabs .tab[aria-selected="true"]'), ind = $('#tabInd');
+  if (!sel || !ind) return;
+  if (instant) ind.style.transition = 'none';
+  ind.style.width = sel.offsetWidth + 'px';
+  ind.style.transform = `translateX(${sel.offsetLeft}px)`;
+  if (instant) { ind.getBoundingClientRect(); ind.style.transition = ''; }
+}
+
+/* ---------- render: tips ---------- */
+function renderTips(R) {
+  const T = [], pick = lastPick;
+  if (R.exact > 0) {
+    if (R.rec) {
+      const used = R.exact / R.rec, idx = STANDARD.indexOf(R.rec), next = STANDARD[idx + 1];
+      if (used > 0.92 && next) T.push({ k: 'warn', i: IC.gauge, t: 'ภาระความร้อนชิดขนาดแอร์มาก', d: `ใช้กำลังเครื่องถึง ${Math.round(used * 100)}% ของ ${fmt(R.rec)} BTU ถ้าห้องมีเครื่องใช้ไฟฟ้า ตู้เย็น หรือคนเพิ่ม ให้ขยับไปขนาด ${fmt(next)} BTU เพื่อไม่ให้คอมเพรสเซอร์ทำงานหนักเกินไป` });
+      else if (used < 0.72) T.push({ k: 'ok', i: IC.gauge, t: 'ขนาดแนะนำมีกำลังเหลือ', d: `ภาระจริงใช้เพียง ${Math.round(used * 100)}% ของ ${fmt(R.rec)} BTU แอร์ Inverter จะลดรอบเองจึงไม่เปลืองไฟ แต่ถ้าเลือก Fixed Speed ให้ดูรุ่น "ทางเลือกขนาดเล็กลง" เพื่อลดการตัดต่อบ่อยและความชื้นในห้อง` });
+    } else T.push({ k: 'warn', i: IC.ruler, t: 'เกินขนาดแอร์บ้าน ต้องออกแบบระบบ', d: `ภาระ ${fmt(R.exact)} BTU/hr (≈ ${R.rt.toFixed(1)} RT) ควรให้วิศวกรสำรวจหน้างาน เพื่อเลือกระหว่าง Big Duct, ตู้ 10HP/20HP, VRF (GMV) หรือ Chiller พร้อมคำนวณท่อน้ำยาและระบบไฟ` });
+    if (S.sun) T.push({ k: 'heat', i: IC.sun, t: 'ลดความร้อนจากแดดบ่าย', d: `แดดบ่ายเพิ่มภาระห้องนี้ราว ${fmt(Math.round(100 * R.area * R.hf / 100) * 100)} BTU/hr ติดฟิล์มกันความร้อนหรือม่านทึบแสงฝั่งตะวันตก และเลือก Inverter ที่ปรับรอบตามแดดได้` });
+    if (S.base === 800) T.push({ k: '', i: IC.volume, t: 'ห้องนอนเน้นความเงียบ', d: 'มองหาคอยล์เย็นที่เสียงต่ำกว่า 25 dB(A) เช่น AIRY (22 dB) หรือ PULAR (25 dB) ตั้งอุณหภูมิ 26–27°C ร่วมกับโหมด Sleep จะหลับสบายและประหยัดไฟ' });
+    if (S.h > 2.8) T.push({ k: '', i: IC.wind, t: `เพดานสูง ${S.h} ม.`, d: `ปริมาตรอากาศมากกว่าห้องมาตรฐาน 2.6 ม. อยู่ ${Math.round((R.hf - 1) * 100)}% แอร์ที่ส่งลมไกล เช่น ตู้ตั้งพื้นหรือฝังฝ้า 4 ทิศทาง จะกระจายความเย็นลงถึงพื้นได้ดีกว่าแบบติดผนัง` });
+    if (S.people >= 8) T.push({ k: '', i: IC.users, t: `ใช้งาน ${S.people} คน`, d: `คนส่วนเกิน ${R.extra} คนเพิ่มความร้อน ${fmt(R.peopleHeat)} BTU/hr ควรมีพัดลมระบายอากาศหรือ Fresh Air Unit เพื่อลดคาร์บอนไดออกไซด์และกลิ่นอับ` });
+    if (S.hours >= 8) T.push({ k: 'ok', i: IC.leaf, t: 'เปิดนานเลือก Inverter', d: `เปิดวันละ ${S.hours} ชม. ระบบ Inverter ช่วยประหยัดพลังงานได้เพิ่มขึ้น 30–40% เมื่อเทียบกับระบบ Fixed Speed และคุมอุณหภูมิได้นิ่งกว่า` });
+    if (pick && pick.m.phase === 3) T.push({ k: 'warn', i: IC.plug, t: 'รุ่นนี้ใช้ไฟ 3 เฟส', d: `${pick.m.code} ต้องใช้ไฟ 380V 3 เฟส ตรวจสอบมิเตอร์และตู้ไฟของอาคารก่อนสั่งซื้อ` });
+    if (R.exact > 36000 && S.base === 1100) T.push({ k: '', i: IC.fan, t: 'พื้นที่กึ่งเปิดหรือโกดัง', d: 'ถ้าพื้นที่ปิดไม่มิดชิด แอร์จะทำงานหนักมาก พัดลมไอเย็น GCA-ACOOL60 (ถังน้ำ 60 ลิตร ลม 1,100 ม³/ชม. ครอบคลุมราว 75 ตร.ม.) เป็นทางเลือกที่ประหยัดกว่า' });
+    if (pick) T.push({ k: '', i: IC.wrench, t: 'ติดตั้งให้เย็นเต็มประสิทธิภาพ', d: `วางคอยล์ร้อนในที่อากาศถ่ายเท ไม่โดนแดดตรง เดินท่อน้ำยาให้สั้นที่สุด ท่อของ ${pick.m.code}: ${pick.m.pipe} ขนาดคอยล์ร้อน ${pick.m.od} มม.` });
+    T.push({ k: '', i: IC.snow, t: 'ดูแลรักษาตามรอบ', d: 'ล้างฟิลเตอร์ทุก 2–4 สัปดาห์ และล้างใหญ่ทุก 6 เดือน คอยล์ที่สกปรกทำให้เย็นช้าและกินไฟมากขึ้น' });
+    if (pick) T.push({ k: 'ok', i: IC.shield, t: 'การรับประกัน', d: `${pick.s.name}: ${WARRANTY[pick.s.warranty]} สอบถาม Gree Contact Center โทร 02-124-3283` });
+  }
+  $('#tipsList').innerHTML = T.length ? T.map(x => `<div class="tip ${x.k}"><div class="tip-i">${x.i}</div><div><b>${x.t}</b><p>${x.d}</p></div></div>`).join('')
+    : `<div class="empty"><b>คำแนะนำจะขึ้นเมื่อกรอกข้อมูลห้อง</b>ระบบปรับคำแนะนำตามแดด จำนวนคน ความสูงเพดาน และรุ่นที่เลือก</div>`;
+}
+
+/* ---------- render: catalog ---------- */
+function renderCatalog(R) {
+  const q = S.catQ.trim().toLowerCase();
+  const rows = MODELS.filter(m => (S.catT === 'all' || m.s.type === S.catT) &&
+    (!q || (m.code + ' ' + m.s.name + ' ' + TYPES[m.s.type].name + ' ' + m.btu).toLowerCase().includes(q)));
+  $('#catCount').textContent = `${rows.length} จาก ${MODELS.length} รุ่น`;
+  $('#catBody').innerHTML = rows.map(m => {
+    let fit = '<span style="color:var(--ink-3)">—</span>';
+    if (R && R.exact > 0) {
+      const cv = m.btu / R.exact;
+      fit = cv >= 1 && cv <= 2 ? `<span class="dot${cv > 1.5 ? ' big' : ''}"></span>${Math.round(cv * 100)}%` : cv < 1 ? `<span style="color:var(--ink-3)">เล็กไป</span>` : `<span style="color:var(--ink-3)">ใหญ่เกิน</span>`;
+    }
+    return `<tr data-spec="${m.code}" tabindex="0"><td><b>${m.s.name}</b><br><span class="code">${m.code}</span></td><td>${TYPES[m.s.type].name}</td>
+      <td class="r"><span class="num">${fmt(m.btu)}</span></td><td>${effText(m)}</td><td>${labelHTML(m.stars)}</td><td>${m.inv ? 'Inverter' : 'Fixed'}</td><td>${m.phase === 3 ? '3 เฟส' : '1 เฟส'}</td><td class="fit">${fit}</td></tr>`;
+  }).join('') || `<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-3)">ไม่พบรุ่นที่ตรงกับ "${S.catQ}" ลองค้นด้วยชื่อซีรีส์ เช่น AIRY หรือขนาด เช่น 18000</td></tr>`;
+}
+
+/* ---------- dialogs ---------- */
+function openDlg(d) { d.classList.remove('closing'); if (!d.open) d.showModal(); }
+function closeDlg(d) {
+  if (!d.open) return;
+  if (RM.matches) { d.close(); return; }
+  d.classList.add('closing');
+  setTimeout(() => { d.close(); d.classList.remove('closing'); }, 230);
+}
+$$('dialog').forEach(d => {
+  d.addEventListener('click', e => { if (e.target === d) closeDlg(d); });
+  d.addEventListener('cancel', e => { e.preventDefault(); closeDlg(d); });
+});
+document.addEventListener('click', e => { const b = e.target.closest('[data-close]'); if (b) closeDlg(b.closest('dialog')); });
+
+function openSpec(code) {
+  const m = byCode[code]; if (!m) return;
+  const s = m.s, R = lastR;
+  const mm = v => /^[\d×]+$/.test(v) ? `${v} มม.` : v;
+  const rows = [
+    ['ประเภท', TYPES[s.type].name],
+    ['ความสามารถทำความเย็น', `${fmt(m.btu)} BTU/hr${m.range ? `<br><small style="color:var(--ink-3)">ปรับรอบได้ ${fmt(m.range[0])}–${fmt(m.range[1])} BTU/hr</small>` : ''}`],
+    ['กำลังไฟฟ้าขณะทำความเย็น', `${fmt(m.w)} W`],
+    ['ประสิทธิภาพ', effText(m)],
+    ['ฉลากประหยัดไฟ', labelHTML(m.stars)],
+    ['คอมเพรสเซอร์', m.inv ? 'Inverter' : 'Fixed Speed (Non-Inverter)'],
+    ['สารทำความเย็น', m.refr],
+    ['ระบบไฟ', powerText(m)],
+    m.nIn ? ['เสียงคอยล์เย็น (สูงสุด–ต่ำสุด)', `${m.nIn[0]}–${m.nIn[1]} dB(A)`] : null,
+    m.nOut ? ['เสียงคอยล์ร้อน', `${m.nOut} dB(A)`] : null,
+    ['ขนาดคอยล์เย็น (ก×ส×ล)', mm(m.id)],
+    ['ขนาดคอยล์ร้อน (ก×ส×ล)', mm(m.od)],
+    m.esp ? ['แรงดันลมภายนอก (ESP)', `${m.esp} Pa`] : null,
+    m.air ? ['ปริมาณลม', `${fmt(m.air)} ม³/ชม.`] : null,
+    ['ท่อน้ำยา', m.pipe],
+    s.fin !== '—' ? ['คอยล์', s.fin] : null,
+    ['การรับประกัน', WARRANTY[s.warranty]],
+    ['แหล่งข้อมูล', `Gree Product Catalog 2026 หน้า ${s.page}`]
+  ].filter(Boolean);
+  let fitHTML = '';
+  if (R && R.exact > 0) {
+    const kwh = R.exact / m.eff / 1000 * S.hours * 30;
+    fitHTML = `<dl class="kv" style="margin-bottom:18px"><div><dt>รองรับห้องนี้</dt><dd>${Math.round(m.btu / R.exact * 100)}%</dd></div><div><dt>ค่าไฟโดยประมาณ</dt><dd>฿${fmt(kwh * S.rate)} <small>/เดือน</small></dd></div><div><dt>พลังงาน</dt><dd>${fmt(kwh)} <small>หน่วย/เดือน</small></dd></div></dl>`;
+  }
+  $('#specBody').innerHTML = `<div class="sheet-h"><div class="row-ico" style="flex:none">${UNIT[s.type]}</div><div class="grow"><h3>${s.name}</h3><p class="code">${m.code}</p><p>${s.tagline}</p></div><button class="icon-btn" data-close aria-label="ปิด">${IC.x}</button></div>
+    <div class="sheet-b">${fitHTML}<table class="spec"><tbody>${rows.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join('')}</tbody></table>
+    <h4 style="font-family:var(--f-display);margin:20px 0 4px;font-size:16px">คุณสมบัติเด่นของซีรีส์</h4><div class="feat">${s.features.map(f => `<span>${f}</span>`).join('')}</div>
+    <div class="acts" style="margin-top:20px"><button class="btn btn-pri" data-add="${m.code}">${IC.plus} บันทึกห้องนี้พร้อมรุ่นนี้</button><button class="btn btn-line" data-cmp="${m.code}" aria-pressed="${S.compare.includes(m.code)}">${IC.cmp} เปรียบเทียบ</button></div></div>`;
+  openDlg($('#specDlg'));
+}
+
+/* ---------- compare ---------- */
+function toggleCompare(code) {
+  const i = S.compare.indexOf(code);
+  if (i >= 0) S.compare.splice(i, 1);
+  else { if (S.compare.length >= 3) { toast('เปรียบเทียบได้สูงสุด 3 รุ่น'); return; } S.compare.push(code); }
+  $$(`[data-cmp="${CSS.escape(code)}"]`).forEach(b => b.setAttribute('aria-pressed', S.compare.includes(code)));
+  renderDock();
+}
+function renderDock() {
+  const n = S.compare.length, d = $('#dock');
+  d.classList.toggle('show', n > 0);
+  document.body.classList.toggle('dock-on', n > 0);
+  $('#dockTxt').textContent = `เลือกเปรียบเทียบ ${n}/3 รุ่น`;
+}
+function openCompare() {
+  const R = lastR, ms = S.compare.map(c => byCode[c]).filter(Boolean);
+  if (!ms.length) return;
+  const cost = m => R && R.exact > 0 ? R.exact / m.eff / 1000 * S.hours * 30 * S.rate : null;
+  const rows = [
+    { k: 'ประเภท', v: m => TYPES[m.s.type].name },
+    { k: 'ความเย็น', v: m => `${fmt(m.btu)} BTU/hr` },
+    { k: 'รองรับห้องนี้', v: m => R && R.exact ? `${Math.round(m.btu / R.exact * 100)}%` : '—' },
+    { k: 'ประสิทธิภาพ', v: m => effText(m), best: 'max', n: m => m.eff },
+    { k: 'ค่าไฟ/เดือน', v: m => cost(m) == null ? '—' : `฿${fmt(cost(m))}`, best: 'min', n: m => cost(m) ?? 0 },
+    { k: 'กำลังไฟฟ้า', v: m => `${fmt(m.w)} W` },
+    { k: 'เสียงคอยล์เย็นต่ำสุด', v: m => m.nIn ? `${m.nIn[1]} dB(A)` : '—', best: 'min', n: m => m.nIn ? m.nIn[1] : 999 },
+    { k: 'ฉลาก', v: m => labelHTML(m.stars), best: 'max', n: m => m.stars ?? -1 },
+    { k: 'คอมเพรสเซอร์', v: m => m.inv ? 'Inverter' : 'Fixed Speed' },
+    { k: 'Wi-Fi', v: m => m.s.wifi ? 'มี' : '—' },
+    { k: 'ระบบไฟ', v: m => m.phase === 3 ? '3 เฟส 380V' : '1 เฟส 220V' },
+    { k: 'สารทำความเย็น', v: m => m.refr },
+    { k: 'คอยล์เย็น (มม.)', v: m => m.id },
+    { k: 'คอยล์ร้อน (มม.)', v: m => m.od },
+    { k: 'รับประกัน', v: m => WARRANTY[m.s.warranty] }
+  ];
+  const body = rows.map(r => {
+    let bestIdx = -1;
+    if (r.best && ms.length > 1) {
+      const vals = ms.map(r.n); const target = r.best === 'max' ? Math.max(...vals) : Math.min(...vals);
+      if (vals.filter(v => v === target).length < ms.length) bestIdx = vals.indexOf(target);
+    }
+    return `<tr><th>${r.k}</th>${ms.map((m, i) => `<td class="${i === bestIdx ? 'best' : ''}">${r.v(m)}</td>`).join('')}</tr>`;
+  }).join('');
+  $('#cmpBody').innerHTML = `<div class="sheet-h"><div class="grow"><h3>เปรียบเทียบรุ่น</h3><p>เครื่องหมาย ✓ คือค่าที่ดีที่สุดในแถวนั้น</p></div><button class="icon-btn" data-close aria-label="ปิด">${IC.x}</button></div>
+    <div class="sheet-b" style="overflow-x:auto"><table class="cmp"><thead><tr><th></th>${ms.map(m => `<th>${m.s.name}<small>${m.code}</small></th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>`;
+  openDlg($('#cmpDlg'));
+}
+
+/* ---------- rooms list ---------- */
+S.rooms = store.get('gree-btu-rooms', []);
+function saveRooms() { store.set('gree-btu-rooms', S.rooms); renderRooms(); }
+function addRoom(code) {
+  const R = lastR; if (!R || R.exact <= 0) { toast('กรอกข้อมูลห้องก่อนบันทึก'); return; }
+  const m = byCode[code] || (lastPick && lastPick.m);
+  const preset = $('.preset[aria-pressed="true"]');
+  const name = preset ? preset.textContent : `ห้องที่ ${S.rooms.length + 1}`;
+  const cost = m ? R.exact / m.eff / 1000 * S.hours * 30 * S.rate : 0;
+  S.rooms.push({ id: Date.now(), name, area: +R.area.toFixed(2), h: S.h, exact: R.exact, rec: R.rec, code: m ? m.code : null, cost: Math.round(cost) });
+  saveRooms();
+  toast(`บันทึก "${name}" แล้ว${m ? ` พร้อมรุ่น ${m.s.name}` : ''}`);
+  const c = $('#roomCount'); c.animate?.([{ transform: 'scale(1.5)' }, { transform: 'scale(1)' }], { duration: 380, easing: 'cubic-bezier(.2,.8,.2,1)' });
+}
+function renderRooms() {
+  const n = S.rooms.length;
+  $('#roomCount').textContent = n; $('#roomCount').dataset.n = n;
+  $('#roomsList').innerHTML = n ? S.rooms.map(r => {
+    const m = r.code && byCode[r.code];
+    return `<div class="room" data-id="${r.id}"><div class="room-top"><input value="${r.name.replace(/"/g, '&quot;')}" data-rename="${r.id}" aria-label="ชื่อห้อง"><button class="icon-btn" data-del="${r.id}" aria-label="ลบห้องนี้">${IC.trash}</button></div>
+      <p>${r.area} ตร.ม. เพดาน ${r.h} ม. ภาระ <b>${fmt(r.exact)}</b> BTU/hr แนะนำ <b>${r.rec ? fmt(r.rec) : 'ระบบใหญ่'}</b></p>
+      ${m ? `<p>รุ่น <b>${m.s.name}</b> ${m.code} (${fmt(m.btu)} BTU) ค่าไฟ ~฿${fmt(r.cost)}/เดือน</p>` : ''}</div>`;
+  }).join('') : `<div class="empty"><b>ยังไม่มีห้องที่บันทึก</b>คำนวณห้องแล้วกด "บันทึกห้องนี้" เพื่อรวมหลายห้องเป็นใบสรุปเดียว</div>`;
+  const tb = S.rooms.reduce((a, r) => a + (r.code ? byCode[r.code]?.btu || 0 : r.exact), 0);
+  const tc = S.rooms.reduce((a, r) => a + (r.cost || 0), 0);
+  $('#roomsTot').textContent = fmt(tb);
+  $('#roomsCost').textContent = `฿${fmt(tc)}`;
+}
+function roomsText() {
+  const d = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+  const lines = [`สรุปขนาดแอร์ Gree ที่แนะนำ (${d})`, ''];
+  S.rooms.forEach((r, i) => {
+    const m = r.code && byCode[r.code];
+    lines.push(`${i + 1}. ${r.name}: ${r.area} ตร.ม. ภาระ ${fmt(r.exact)} BTU/hr แนะนำ ${r.rec ? fmt(r.rec) + ' BTU' : 'ระบบใหญ่'}`);
+    if (m) lines.push(`   รุ่น ${m.s.name} ${m.code} ${fmt(m.btu)} BTU/hr ${effText(m)} ค่าไฟ ~${fmt(r.cost)} บาท/เดือน`);
+  });
+  lines.push('', `รวมความเย็น ${$('#roomsTot').textContent} BTU/hr ค่าไฟรวม ~${$('#roomsCost').textContent.replace('฿', '')} บาท/เดือน`);
+  lines.push('ข้อมูลรุ่นจาก Gree Product Catalog 2026 สอบถาม 02-124-3283');
+  return lines.join('\n');
+}
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch (e) { const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (er) {} ta.remove(); return ok; }
+}
+function printRooms() {
+  const d = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+  $('#printArea').innerHTML = `<h1>สรุปขนาดแอร์ Gree ที่แนะนำ</h1><p>วันที่ ${d}</p><table><thead><tr><th>ห้อง</th><th>พื้นที่ (ตร.ม.)</th><th>ภาระ (BTU/hr)</th><th>ขนาดแนะนำ</th><th>รุ่น</th><th>ค่าไฟ/เดือน</th></tr></thead><tbody>${S.rooms.map(r => { const m = r.code && byCode[r.code]; return `<tr><td>${r.name}</td><td>${r.area}</td><td>${fmt(r.exact)}</td><td>${r.rec ? fmt(r.rec) : 'ระบบใหญ่'}</td><td>${m ? m.s.name + ' ' + m.code : '-'}</td><td>${r.cost ? fmt(r.cost) + ' บาท' : '-'}</td></tr>`; }).join('')}</tbody></table><p style="margin-top:12px">รวมความเย็น ${$('#roomsTot').textContent} BTU/hr ค่าไฟรวมประมาณ ${$('#roomsCost').textContent}/เดือน (ใช้งาน ${S.hours} ชม./วัน ${S.rate} บาท/หน่วย)</p><p>ข้อมูลรุ่นจาก Gree Product Catalog 2026 Gree Contact Center 02-124-3283</p>`;
+  window.print();
+}
+
+/* ---------- toast ---------- */
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
+
+/* ---------- inputs wiring ---------- */
+function syncRange(r) {
+  const min = +r.min, max = +r.max, v = +r.value;
+  r.style.setProperty('--p', `${((v - min) / (max - min) * 100).toFixed(2)}%`);
+}
+function setField(id, v) {
+  const el = $('#' + id); el.value = v;
+  const r = $(`input[type=range][data-for="${id}"]`);
+  if (r) { r.value = Math.min(+r.max, Math.max(+r.min, v)); syncRange(r); }
+}
+$$('input[type=range][data-for]').forEach(r => {
+  syncRange(r);
+  r.addEventListener('input', () => { $('#' + r.dataset.for).value = r.value; syncRange(r); clearPreset(); schedule(); });
+});
+$$('.numbox input, #people').forEach(inp => inp.addEventListener('input', () => {
+  const r = $(`input[type=range][data-for="${inp.id}"]`);
+  if (r && inp.value !== '') { r.value = Math.min(+r.max, Math.max(+r.min, +inp.value)); syncRange(r); }
+  clearPreset(); schedule();
+}));
+$$('input[name="roomType"], #sun').forEach(el => el.addEventListener('change', () => { clearPreset(); schedule(); }));
+$$('input[name="areaMode"]').forEach(el => el.addEventListener('change', () => {
+  const mode = $('input[name="areaMode"]:checked').value;
+  if (mode === 'area') { const a = num('w') * num('l'); if (a > 0) setField('area', +a.toFixed(2)); }
+  $('#wlFields').hidden = mode === 'area'; $('#areaField').hidden = mode !== 'area';
+  $('#areaLbl').textContent = mode === 'area' ? 'พื้นที่ห้องรวม (ตามที่ระบุ)' : 'พื้นที่ห้องรวม (คำนวณให้อัตโนมัติ)';
+  schedule();
+}));
+$('#pMinus').addEventListener('click', () => { setField('people', Math.max(0, num('people') - 1)); clearPreset(); schedule(); });
+$('#pPlus').addEventListener('click', () => { setField('people', num('people') + 1); clearPreset(); schedule(); });
+function clearPreset() { $$('.preset').forEach(b => b.setAttribute('aria-pressed', 'false')); }
+$('#presets').innerHTML = PRESETS.map((p, i) => `<button type="button" class="preset" data-preset="${i}" aria-pressed="false">${p.n}</button>`).join('');
+$('#presets').addEventListener('click', e => {
+  const b = e.target.closest('[data-preset]'); if (!b) return;
+  const p = PRESETS[+b.dataset.preset];
+  $('#mWL').checked = true; $('#wlFields').hidden = false; $('#areaField').hidden = true;
+  $('#areaLbl').textContent = 'พื้นที่ห้องรวม (คำนวณให้อัตโนมัติ)';
+  setField('w', p.w); setField('l', p.l); setField('h', p.h); setField('people', p.p); setField('hours', p.hrs);
+  $(`input[name="roomType"][value="${p.base}"]`).checked = true; $('#sun').checked = !!p.sun;
+  clearPreset(); b.setAttribute('aria-pressed', 'true');
+  schedule();
+});
+
+/* products events */
+$('#tabs').addEventListener('click', e => {
+  const t = e.target.closest('[data-tab]'); if (!t) return;
+  S.tab = t.dataset.tab;
+  $$('#tabs .tab').forEach(x => x.setAttribute('aria-selected', x === t));
+  moveTabInd(false);
+  t.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: RM.matches ? 'auto' : 'smooth' });
+  setTimeout(() => renderProducts(lastR), RM.matches ? 0 : 180);
+});
+$('#sort').addEventListener('change', e => { S.sort = e.target.value; renderProducts(lastR); });
+document.addEventListener('click', e => {
+  const sp = e.target.closest('[data-spec]'); if (sp && !e.target.closest('[data-cmp],[data-add]')) { openSpec(sp.dataset.spec); return; }
+  const cm = e.target.closest('[data-cmp]'); if (cm) { toggleCompare(cm.dataset.cmp); return; }
+  const ad = e.target.closest('[data-add]'); if (ad) { addRoom(ad.dataset.add); return; }
+  const dl = e.target.closest('[data-del]'); if (dl) { S.rooms = S.rooms.filter(r => r.id !== +dl.dataset.del); saveRooms(); }
+});
+$('#catBody').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.dataset.spec) openSpec(e.target.dataset.spec); });
+$('#roomsList').addEventListener('change', e => { const r = e.target.dataset.rename; if (r) { const x = S.rooms.find(q => q.id === +r); if (x) { x.name = e.target.value || x.name; saveRooms(); } } });
+$('#addRoom').addEventListener('click', () => addRoom(lastPick ? lastPick.m.code : null));
+$('#roomsBtn').addEventListener('click', () => { renderRooms(); openDlg($('#roomsDlg')); });
+$('#copyRooms').addEventListener('click', async () => { if (!S.rooms.length) { toast('ยังไม่มีห้องที่บันทึก'); return; } toast(await copyText(roomsText()) ? 'คัดลอกสรุปแล้ว วางในแชตหรืออีเมลได้เลย' : 'คัดลอกไม่สำเร็จ'); });
+$('#printRooms').addEventListener('click', () => { if (!S.rooms.length) { toast('ยังไม่มีห้องที่บันทึก'); return; } printRooms(); });
+$('#clearRooms').addEventListener('click', () => { if (!S.rooms.length) return; S.rooms = []; saveRooms(); toast('ล้างรายการห้องแล้ว'); });
+$('#dockOpen').addEventListener('click', openCompare);
+$('#dockClear').addEventListener('click', () => { S.compare = []; $$('[data-cmp]').forEach(b => b.setAttribute('aria-pressed', 'false')); renderDock(); });
+$('#catQ').addEventListener('input', e => { S.catQ = e.target.value; renderCatalog(lastR); });
+$('#catChips').innerHTML = [['all', 'ทั้งหมด'], ...Object.entries(TYPES).map(([k, v]) => [k, v.name])].map(([k, n]) => `<button type="button" class="fchip" data-cat="${k}" aria-pressed="${k === 'all'}">${n}</button>`).join('');
+$('#catChips').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (!b) return; S.catT = b.dataset.cat; $$('#catChips .fchip').forEach(x => x.setAttribute('aria-pressed', x === b)); renderCatalog(lastR); });
+$('#mbGo').addEventListener('click', () => $('#products').scrollIntoView({ behavior: RM.matches ? 'auto' : 'smooth' }));
+addEventListener('resize', () => moveTabInd(true), { passive: true });
+
+/* theme */
+function applyTheme(t) { if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; $('#themeBtn').innerHTML = isDark() ? IC.sun : IC.moon; }
+const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+$('#themeBtn').addEventListener('click', () => { const t = isDark() ? 'light' : 'dark'; store.set('gree-btu-theme', t); applyTheme(t); });
+applyTheme(store.get('gree-btu-theme', null));
+
+/* refresh-rate meter */
+function measureHz() {
+  const el = $('#hz'); el.textContent = 'วัด…';
+  let last = 0, n = 0; const ds = [];
+  const f = t => {
+    if (last) ds.push(t - last); last = t;
+    if (++n < 100) requestAnimationFrame(f);
+    else {
+      ds.sort((a, b) => a - b);
+      const hz = 1000 / ds[ds.length >> 1];
+      const common = [30, 48, 50, 60, 72, 75, 90, 100, 120, 144, 165, 180, 240];
+      const best = common.reduce((a, b) => Math.abs(b - hz) < Math.abs(a - hz) ? b : a);
+      el.textContent = `${best} Hz`;
+      $('#hzBtn').title = `จอแสดงผลที่ ${hz.toFixed(1)} Hz แอนิเมชันทั้งหมดขับด้วย requestAnimationFrame จึงลื่นตามรีเฟรชเรตของจอ (60/90/120/144Hz) กดเพื่อวัดใหม่`;
+    }
+  };
+  requestAnimationFrame(f);
+}
+$('#hzBtn').addEventListener('click', measureHz);
+
+/* mobile result bar */
+const io = new IntersectionObserver(([en]) => { $('#mbar').classList.toggle('show', !en.isIntersecting && lastR && lastR.exact > 0); }, { threshold: 0.05 });
+io.observe($('#inst'));
+
+/* ---------- update loop ---------- */
+let pending = false, slowT;
+function schedule() { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; update(); }); }
+function update() {
+  readState();
+  const R = calc(); lastR = R;
+  renderReadout(R);
+  const side = S.mode === 'area' ? Math.sqrt(Math.max(0, S.area)) : 0;
+  const dims = S.mode === 'area' ? { w: side || 1, l: side || 1 } : { w: S.w || 1, l: S.l || 1 };
+  // the room's furniture (unit type) follows the current top pick once products have rendered
+  setViz({ ...dims, h: S.h || 2.6 }, { people: S.people, sun: S.sun, base: S.base, type: lastPick ? lastPick.s.type : (R.over ? 'big' : 'wall') });
+  clearTimeout(slowT);
+  slowT = setTimeout(() => {
+    renderProducts(R); renderTips(R); renderCatalog(R);
+    V.p.type = lastPick ? lastPick.s.type : (R.over ? 'big' : 'wall'); drawViz();
+    store.set('gree-btu-inputs', { mode: S.mode, w: S.w, l: S.l, area: S.area, h: S.h, base: S.base, sun: S.sun, people: S.people, hours: S.hours, rate: S.rate });
+  }, 120);
+}
+
+/* restore last inputs */
+const saved = store.get('gree-btu-inputs', null);
+if (saved) {
+  try {
+    if (saved.mode === 'area') { $('#mArea').checked = true; $('#wlFields').hidden = true; $('#areaField').hidden = false; $('#areaLbl').textContent = 'พื้นที่ห้องรวม (ตามที่ระบุ)'; }
+    ['w', 'l', 'area', 'h', 'people', 'hours', 'rate'].forEach(k => { if (saved[k] != null && k !== 'people') setField(k, saved[k]); });
+    if (saved.people != null) setField('people', saved.people);
+    const rt = $(`input[name="roomType"][value="${saved.base}"]`); if (rt) rt.checked = true;
+    $('#sun').checked = !!saved.sun;
+  } catch (e) {}
+}
+$('#resetBtn').addEventListener('click', () => {
+  $('#mWL').checked = true; $('#wlFields').hidden = false; $('#areaField').hidden = true; $('#areaLbl').textContent = 'พื้นที่ห้องรวม (คำนวณให้อัตโนมัติ)';
+  setField('w', 3.9); setField('l', 3.6); setField('area', 14.04); setField('h', 2.65); setField('people', 2); setField('hours', 8); setField('rate', 4.23);
+  $('input[name="roomType"][value="1100"]').checked = true; $('#sun').checked = false; clearPreset(); schedule();
+});
+
+buildLadder();
+renderRooms();
+readState(); V.cur = { w: S.mode === 'area' ? Math.sqrt(S.area) || 1 : S.w || 1, l: S.mode === 'area' ? Math.sqrt(S.area) || 1 : S.l || 1, h: S.h || 2.6 };
+update();
+measureHz();
+window.GreeBTU = { calc: () => (readState(), calc()), candidates: () => candidates(lastR), MODELS };
+})();
+
+</script>
+</body>
+</html>
